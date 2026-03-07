@@ -1,0 +1,2282 @@
+const {
+    sequelize,
+    seed_data_registry,
+    customers,
+    tickets,
+    chatbots,
+    chatbot_campaigns,
+    forms,
+    folders,
+    articles,
+    tasks,
+    teams_channels,
+    teams_members,
+    teams_messages,
+    automations,
+    whatsapp_accounts,
+    whatsapp_contacts,
+    activities,
+    notifications,
+    live_visitors,
+    support_conversations,
+    emails,
+    seo_page_views,
+    seo_sessions,
+    seo_engagements,
+    seo_compliances,
+    seo_performances,
+} = require("../models");
+const {
+    companies,
+    peoples,
+    deals,
+    pipelines,
+    groups,
+    views,
+    pipeline_stage_histories,
+    sequelize: crmSequelize, // Destructure the sequelize instance from crmdb
+    ...crmModels // Capture other models if needed, or just relying on direct imports
+} = require("../models/crm_models/crmdb");
+const crmdb = require("../models/crm_models/crmdb"); // Access full object for checks if needed
+const { Op } = require("sequelize");
+
+/**
+ * Get seed data status for the current organization
+ * @route GET /api/seed-data/status
+ */
+exports.getStatus = async (req, res) => {
+    try {
+        const organizationId = req.user.organization_id;
+
+        if (!organizationId) {
+            return res.status(400).json({
+                success: false,
+                message: "Organization ID not found",
+            });
+        }
+
+        // Count seed data entries for this organization
+        const count = await seed_data_registry.count({
+            where: { organization_id: organizationId },
+        });
+
+        return res.status(200).json({
+            success: true,
+            hasSeedData: count > 0,
+            count: count,
+        });
+    } catch (error) {
+        console.error("Error checking seed data status:", error);
+        return res.status(500).json({
+            success: false,
+            message: "Failed to check seed data status",
+            error: error.message,
+        });
+    }
+};
+
+/**
+ * Add seed data for all features
+ * @route POST /api/seed-data
+ */
+exports.addSeedData = async (req, res) => {
+    const transaction = await sequelize.transaction();
+    const crmTransaction = await crmdb.sequelize.transaction();
+
+    try {
+        const organizationId = req.user.organization_id;
+        const userId = req.user.user_id;
+
+        if (!organizationId) {
+            await transaction.rollback();
+            await crmTransaction.rollback();
+            return res.status(400).json({
+                success: false,
+                message: "Organization ID not found",
+            });
+        }
+
+        // Check if seed data already exists
+        const existingCount = await seed_data_registry.count({
+            where: { organization_id: organizationId },
+            transaction,
+        });
+
+        if (existingCount > 0) {
+            await transaction.rollback();
+            await crmTransaction.rollback();
+            return res.status(400).json({
+                success: false,
+                message: "Seed data already exists for this organization",
+            });
+        }
+
+        const summary = {};
+
+        // Create seed data for each feature
+        summary.seo = await createSeedSEO(organizationId, transaction);
+        summary.crm = await createSeedCRM(organizationId, userId, transaction, crmTransaction);
+        summary.customers = await createSeedCustomers(organizationId, transaction);
+        summary.customerPipeline = await createSeedCustomerPipeline(organizationId, userId, transaction, crmTransaction);
+        summary.tickets = await createSeedTickets(organizationId, userId, transaction);
+        summary.chatbots = await createSeedChatbots(organizationId, transaction);
+        summary.chatbotCampaigns = await createSeedChatbotCampaigns(organizationId, transaction);
+        summary.forms = await createSeedForms(organizationId, summary.chatbots.ids, transaction);
+        summary.knowledgeBase = await createSeedKnowledgeBase(organizationId, transaction);
+        summary.tasks = await createSeedTasks(organizationId, userId, transaction);
+        summary.teamChat = await createSeedTeamChat(organizationId, userId, transaction);
+        summary.automations = await createSeedAutomations(organizationId, transaction);
+        summary.whatsapp = await createSeedWhatsApp(organizationId, transaction);
+
+        summary.liveVisitors = await createSeedLiveVisitors(organizationId, transaction);
+        summary.supportConversations = await createSeedSupportConversations(organizationId, userId, transaction);
+        summary.emails = await createSeedEmails(organizationId, transaction);
+
+        summary.activities = await createSeedActivities(organizationId, userId, transaction);
+        summary.notifications = await createSeedNotifications(organizationId, userId, transaction);
+
+        await transaction.commit();
+        await crmTransaction.commit();
+
+        return res.status(201).json({
+            success: true,
+            message: "Seed data created successfully",
+            summary: summary,
+        });
+    } catch (error) {
+        await transaction.rollback();
+        await crmTransaction.rollback();
+        console.error("Error adding seed data:", error);
+        return res.status(500).json({
+            success: false,
+            message: "Failed to add seed data",
+            error: error.message,
+        });
+    }
+};
+
+/**
+ * Delete all seed data for the current organization
+ * @route DELETE /api/seed-data
+ */
+exports.deleteSeedData = async (req, res) => {
+    const transaction = await sequelize.transaction();
+    const crmTransaction = await crmdb.sequelize.transaction();
+
+    try {
+        const organizationId = req.user.organization_id;
+
+        if (!organizationId) {
+            await transaction.rollback();
+            await crmTransaction.rollback();
+            return res.status(400).json({
+                success: false,
+                message: "Organization ID not found",
+            });
+        }
+
+        // Get all seed data records for this organization
+        const seedRecords = await seed_data_registry.findAll({
+            where: { organization_id: organizationId },
+            transaction,
+        });
+
+        if (seedRecords.length === 0) {
+            await transaction.rollback();
+            await crmTransaction.rollback();
+            return res.status(404).json({
+                success: false,
+                message: "No seed data found for this organization",
+            });
+        }
+
+        const deletionSummary = {};
+
+        // Group records by table
+        const recordsByTable = {};
+        seedRecords.forEach((record) => {
+            if (!recordsByTable[record.table_name]) {
+                recordsByTable[record.table_name] = [];
+            }
+            recordsByTable[record.table_name].push(record.record_id);
+        });
+
+        // Map table names to models  
+        const tableModelMap = {
+            customers, tickets, chatbots, chatbot_campaigns, forms,
+            articles, folders, tasks, teams_channels, teams_members, teams_messages,
+            automations, whatsapp_accounts, whatsapp_contacts,
+            live_visitors, support_conversations, emails, activities, notifications,
+            // CRM
+            companies, peoples, pipelines, deals, groups, views, pipeline_stage_histories,
+            // SEO
+            seo_page_views, seo_sessions, seo_engagements, seo_compliances, seo_performances,
+            // ALIASES for legacy data (Singular)
+            seo_engagement: seo_engagements,
+            seo_compliance: seo_compliances,
+        };
+
+        // Define deletion order (children first to avoid Foreign Key constraints)
+        const deletionOrder = [
+            // Level 4 (Deepest dependencies)
+            "teams_messages", "seo_engagements", "seo_engagement", "deals", "pipeline_stage_histories",
+            // Level 3
+            "support_conversations", "live_visitors",
+            "teams_members", "items",
+            "seo_page_views", "seo_sessions", "seo_compliances", "seo_compliance", "seo_performances",
+            "pipelines", "peoples", "views",
+            // Level 2
+            "forms", "chatbot_campaigns", "teams_channels", "articles", "tasks", "tickets",
+            "whatsapp_contacts", "companies", "groups",
+            // Level 1
+            "folders", "automations", "whatsapp_accounts", "emails", "activities", "notifications",
+            // Level 0 (Parents)
+            "chatbots", "customers",
+        ];
+
+        // 1. Delete in defined order
+        for (const tableName of deletionOrder) {
+            if (recordsByTable[tableName]) {
+                const model = tableModelMap[tableName];
+                if (model) {
+                    // Determine which transaction to use
+                    // Check if model belongs to CRM DB
+                    // We can check if the model name is in known CRM models list or check model.sequelize
+                    const isCrmModel = [
+                        "companies", "peoples", "deals", "pipelines", "groups", "views", "pipeline_stage_histories"
+                    ].includes(tableName) || (model.options && model.options.sequelize === crmdb.sequelize);
+
+                    await model.destroy({
+                        where: { id: recordsByTable[tableName] },
+                        transaction: isCrmModel ? crmTransaction : transaction
+                    });
+                    delete recordsByTable[tableName]; // Remove processed
+                }
+            }
+        }
+
+        // 2. Delete any remaining tables (no specific order)
+        for (const [tableName, recordIds] of Object.entries(recordsByTable)) {
+            const model = tableModelMap[tableName];
+            if (model) {
+                const isCrmModel = [
+                    "companies", "peoples", "deals", "pipelines", "groups", "views", "pipeline_stage_histories"
+                ].includes(tableName);
+
+                await model.destroy({
+                    where: { id: recordIds },
+                    transaction: isCrmModel ? crmTransaction : transaction,
+                });
+            }
+        }
+
+        // Finally, delete registry entries
+        const registryCount = await seed_data_registry.destroy({
+            where: { organization_id: organizationId },
+            transaction,
+        });
+
+        await transaction.commit();
+        await crmTransaction.commit();
+
+        return res.status(200).json({
+            success: true,
+            message: "Seed data deleted successfully",
+            deletionSummary: deletionSummary,
+            registryEntriesDeleted: registryCount,
+        });
+    } catch (error) {
+        await transaction.rollback();
+        await crmTransaction.rollback();
+        console.error("Error deleting seed data:", error);
+        return res.status(500).json({
+            success: false,
+            message: "Failed to delete seed data",
+            error: error.message,
+        });
+    }
+};
+
+// ============================================================================
+// SEED DATA CREATION FUNCTIONS
+// ============================================================================
+
+/**
+ * Helper function to register seed data in the registry
+ */
+async function registerSeedData(tableName, recordId, organizationId, transaction) {
+    await seed_data_registry.create(
+        {
+            table_name: tableName,
+            record_id: recordId,
+            organization_id: organizationId,
+        },
+        { transaction }
+    );
+}
+
+/**
+ * Create seed customers
+ */
+async function createSeedCustomers(organizationId, transaction) {
+    const customersData = [
+        { name: "Alice Johnson", email: "alice.johnson@example.com", phone: "+1234567890" },
+        { name: "Bob Smith", email: "bob.smith@example.com", phone: "+1234567891" },
+        { name: "Carol Williams", email: "carol.williams@example.com", phone: "+1234567892" },
+        { name: "David Brown", email: "david.brown@example.com", phone: "+1234567893" },
+        { name: "Emma Davis", email: "emma.davis@example.com", phone: "+1234567894" },
+        { name: "Frank Miller", email: "frank.miller@example.com", phone: "+1234567895" },
+        { name: "Grace Wilson", email: "grace.wilson@example.com", phone: "+1234567896" },
+    ];
+
+    const createdIds = [];
+    for (const customerData of customersData) {
+        const customer = await customers.create(
+            {
+                organization_id: organizationId,
+                ...customerData,
+            },
+            { transaction }
+        );
+        await registerSeedData("customers", customer.id, organizationId, transaction);
+        createdIds.push(customer.id);
+    }
+
+    return { count: createdIds.length, ids: createdIds };
+}
+
+/**
+ * Create seed customer pipeline (Groups, Views, Pipelines, History)
+ */
+async function createSeedCustomerPipeline(organizationId, userId, transaction, crmTransaction) {
+    // 1. Fetch Customers
+    const existingCustomers = await customers.findAll({
+        where: { organization_id: organizationId },
+        transaction
+    });
+
+    if (!existingCustomers.length) return {};
+    console.log('1');
+    console.log(existingCustomers[0]?.id);
+
+    // 2. CHECK for EXISTING Pipeline (Default Customers) or Create New
+    let pipeline = await pipelines.findOne({
+        where: {
+            organization_id: organizationId,
+            pipeline_manage_type: "default_customers"
+        },
+        transaction: crmTransaction
+    });
+    console.log('2');
+
+    let view, group;
+
+    if (pipeline) {
+        // Use existing pipeline steps
+
+        console.log('3');
+        console.log("Found existing pipeline:", pipeline.id);
+
+        if (pipeline.stages && pipeline.stages.length > 0) {
+            let updatedStages = JSON.parse(JSON.stringify(pipeline.stages));
+
+            // Track used customer IDs to ensure uniqueness (though we iterate the list once)
+            // We'll distribute ALL existing customers
+
+            for (const customer of existingCustomers) {
+                const customerId = customer.id;
+
+                // Pick a random stage
+                const randomStageIndex = Math.floor(Math.random() * updatedStages.length);
+                const stage = updatedStages[randomStageIndex];
+
+                if (!stage.entities) {
+                    stage.entities = [];
+                }
+
+                // Check if already present (sanity check, though we are iterating distinct customers)
+                const alreadyExists = stage.entities.some(e => e.entity_id === customerId && e.entity_type === "default_customers");
+
+                if (!alreadyExists) {
+                    stage.entities.push({
+                        entity_id: customerId,
+                        entity_type: "default_customers",
+                        sort: 0 // You might want to increment this
+                    });
+                }
+            }
+
+            // Update the pipeline with new stages data
+            await pipelines.update({
+                stages: updatedStages
+            }, {
+                where: { id: pipeline.id },
+                transaction: crmTransaction
+            });
+
+            // Update the local pipeline object so downstream logic works with latest data if needed
+            pipeline.stages = updatedStages;
+            console.log("Updated pipeline stages with seeded customers");
+        }
+    } else {
+        // Create Group
+        console.log('4');
+
+        group = await groups.create({
+            organization_id: organizationId,
+            created_by: userId,
+            group_name: "Customer Pipeline Group",
+            manage_type: "default_customers",
+        }, { transaction: crmTransaction });
+        console.log('5');
+        await registerSeedData("groups", group.id, organizationId, transaction);
+
+        console.log('6');
+        // Create View
+        view = await views.create({
+            organization_id: organizationId,
+            created_by: userId,
+            group_id: group.id,
+            view_name: "Customer Pipeline",
+            view_manage_type: "default_customers",
+            view_type: "pipeline",
+        }, { transaction: crmTransaction });
+
+        console.log('7')
+        await registerSeedData("views", view.id, organizationId, transaction);
+
+        console.log('8');
+
+        // Create Pipeline
+        pipeline = await pipelines.create({
+            organization_id: organizationId,
+            view_id: view.id,
+            name: "Customer Onboarding",
+            pipeline_manage_type: "default_customers",
+            stages: [
+                { id: 1, name: "New Lead", color: "#3B82F6" },
+                { id: 2, name: "Contacted", color: "#F59E0B" },
+                { id: 3, name: "Proposal", color: "#8B5CF6" },
+                { id: 4, name: "Active", color: "#10B981" },
+                { id: 5, name: "Churned", color: "#EF4444" }
+            ]
+        }, { transaction: crmTransaction });
+        console.log('9');
+        await registerSeedData("pipelines", pipeline.id, organizationId, transaction);
+        console.log('10');
+    }
+
+    // 3. Add Histories
+    // Use pipeline.stages to determine valid IDs
+    const stages = pipeline.stages || [];
+
+    // Determine Stage IDs for distribution
+    let stageIds = [];
+    if (Array.isArray(stages) && stages.length > 0) {
+        // Existing pipeline stages logic
+        stageIds = stages.map(s => s.id);
+    } else {
+        // Fallback (likely we just created it with IDs 1-5, OR parsed JSON failed?)
+        // If we created it, stages might not be reflected in object unless re-fetched or we manually set
+        stageIds = [1, 2, 3, 4, 5];
+    }
+
+    let historiesCreated = 0;
+    for (let i = 0; i < existingCustomers.length; i++) {
+        const customer = existingCustomers[i];
+
+        // Randomly assign or distribute
+        const stageIndex = i % stageIds.length;
+        const stageId = stageIds[stageIndex];
+
+        const history = await pipeline_stage_histories.create({
+            pipeline_id: pipeline.id,
+            entity_id: customer.id,
+            entity_type: "default_customers",
+            from_stage_id: null,
+            to_stage_id: stageId,
+            moved_by: userId,
+            moved_at: new Date(),
+            duration_in_stage: 0
+        }, { transaction: crmTransaction });
+        console.log('11');
+        await registerSeedData("pipeline_stage_histories", history.id, organizationId, transaction);
+        console.log('12');
+        historiesCreated++;
+    }
+
+    return {
+        pipeline: pipeline.id,
+        histories: historiesCreated
+    };
+}
+
+/**
+ * Create seed tickets
+ */
+async function createSeedTickets(organizationId, userId, transaction) {
+    // First get seed customers
+    const seedCustomerRecords = await seed_data_registry.findAll({
+        where: {
+            organization_id: organizationId,
+            table_name: "customers",
+        },
+        transaction,
+    });
+
+    const customerIds = seedCustomerRecords.map((r) => r.record_id);
+
+    const ticketsData = [
+        {
+            title: "Cannot login to account",
+            description: "I'm having trouble logging into my account. Password reset doesn't work.",
+            status: "Open",
+            priority: "High",
+            conversations: [{ role: "support", text: "I'm looking into your login issue.", timestamp: new Date().toISOString() }]
+        },
+        {
+            title: "Billing inquiry",
+            description: "I was charged twice this month. Please help.",
+            status: "Pending",
+            priority: "Medium",
+            conversations: [{ role: "support", text: "Please provide your transaction ID.", timestamp: new Date().toISOString() }]
+        },
+        {
+            title: "Account upgrade",
+            description: "How do I upgrade to the premium plan?",
+            status: "Closed",
+            priority: "Low",
+            conversations: [{ role: "support", text: "This feature is on our roadmap.", timestamp: new Date().toISOString() }]
+        },
+        {
+            title: "Data export not working",
+            description: "Trying to export my data but getting an error.",
+            status: "Pending",
+            priority: "High",
+            conversations: [{ role: "support", text: "We have reproduced the bug.", timestamp: new Date().toISOString() }]
+        },
+        {
+            title: "Unable to reset password",
+            description: "Password reset email is not being received even after multiple attempts.",
+            status: "Open",
+            priority: "Medium",
+            conversations: [
+                {
+                    role: "support",
+                    text: "We are checking the email delivery logs and will update you shortly.",
+                    timestamp: new Date().toISOString()
+                }
+            ]
+        },
+    ];
+
+    const createdIds = [];
+    for (let i = 0; i < ticketsData.length; i++) {
+        const ticketData = ticketsData[i];
+        const customer_id = customerIds[i % customerIds.length];
+
+        // Generate unique ticket_id (e.g., TKT-1738062000123)
+        const ticket_id = `TKT-${Date.now()}-${i}`;
+
+        const ticket = await tickets.create(
+            {
+                organization_id: organizationId,
+                customer_id: customer_id,
+                assigned_user_id: userId,
+                ticket_id: ticket_id,
+                ...ticketData,
+            },
+            { transaction }
+        );
+        await registerSeedData("tickets", ticket.id, organizationId, transaction);
+        createdIds.push(ticket.id);
+    }
+
+    return { count: createdIds.length, ids: createdIds };
+}
+
+/**
+ * Create seed chatbots
+ */
+async function createSeedChatbots(organizationId, transaction) {
+    // Check if chatbots already exist for this organization
+    const existingChatbots = await chatbots.findAll({
+        where: { organization_id: organizationId },
+        limit: 1,
+        transaction
+    });
+
+    if (existingChatbots.length > 0) {
+        console.log(`Using existing chatbot ID: ${existingChatbots[0].chatbot_id}`);
+        // Register this existing chatbot as "seeded" so other functions can find it via registry
+        // (Optional: standard seed logic relies on registry, but we can also just rely on fetching chatbots)
+
+        // Return existing IDs for downstream functions correctly
+        return {
+            count: existingChatbots.length,
+            ids: existingChatbots.map(b => b.id),
+            // IMPORTANT: We need to make sure downstream functions find THIS chatbot.
+            // Since we aren't creating new ones, we won't add to registry.
+            // But downstream functions look at registry "table_name: chatbots".
+            // So we'll have to adjust downstream functions to look at REAL chatbots table too.
+        };
+    }
+
+    const chatbotsData = [
+        {
+            name: "Customer Support Bot",
+            description: "Handles common customer inquiries and support tickets",
+            is_active: true,
+        },
+        {
+            name: "Sales Assistant",
+            description: "Helps qualify leads and answer product questions",
+            is_active: true,
+        },
+    ];
+
+    const createdIds = [];
+    for (let i = 0; i < chatbotsData.length; i++) {
+        const botData = chatbotsData[i];
+        const chatbot_id = `SED${String(i).padStart(3, '0')}`;
+        const chatbot = await chatbots.create(
+            {
+                organization_id: organizationId,
+                chatbot_id: chatbot_id,
+                ...botData,
+            },
+            { transaction }
+        );
+        await registerSeedData("chatbots", chatbot.id, organizationId, transaction);
+        createdIds.push(chatbot.id);
+    }
+
+    return { count: createdIds.length, ids: createdIds };
+}
+
+/**
+ * Create seed forms
+ */
+async function createSeedForms(organizationId, chatbotIds, transaction) {
+    let chatbot_string_id = null;
+
+    // 1. Try to use passed chatbotIds (which are internal IDs)
+    if (chatbotIds && chatbotIds.length > 0) {
+        const bot = await chatbots.findByPk(chatbotIds[0], { transaction });
+        if (bot) chatbot_string_id = bot.chatbot_id;
+    }
+
+    // 2. Fallback: Lookup any chatbot for this org
+    if (!chatbot_string_id) {
+        const bot = await chatbots.findOne({
+            where: { organization_id: organizationId },
+            transaction
+        });
+        if (bot) chatbot_string_id = bot.chatbot_id;
+    }
+
+    // 3. Last resort
+    if (!chatbot_string_id) chatbot_string_id = "seed_bot_1";
+
+    const formsData = [
+        {
+            name: "Contact Form",
+            description: "General contact and inquiry form",
+            schema: JSON.stringify({
+                fields: [
+                    { name: "name", type: "text", required: true },
+                    { name: "email", type: "email", required: true },
+                    { name: "message", type: "textarea", required: true },
+                ],
+            }),
+        },
+        {
+            name: "Feedback Form",
+            description: "Customer feedback and suggestions",
+            schema: JSON.stringify({
+                fields: [
+                    { name: "rating", type: "number", required: true },
+                    { name: "feedback", type: "textarea", required: true },
+                ],
+            }),
+        },
+    ];
+
+    const createdIds = [];
+    for (const formData of formsData) {
+        const form = await forms.create(
+            {
+                organization_id: organizationId,
+                chatbot_id: chatbot_string_id,
+                ...formData,
+            },
+            { transaction }
+        );
+        await registerSeedData("forms", form.id, organizationId, transaction);
+        createdIds.push(form.id);
+    }
+
+    return { count: createdIds.length, ids: createdIds };
+}
+
+/**
+ * Create seed knowledge base (folders and articles)
+ */
+async function createSeedKnowledgeBase(organizationId, transaction) {
+    // Create folders
+    const foldersData = [
+        { name: "Getting Started", description: "Onboarding guides and tutorials" },
+        { name: "FAQ", description: "Frequently asked questions" },
+        { name: "API Documentation", description: "Developer resources" },
+    ];
+
+    const folderIds = [];
+    for (const folderData of foldersData) {
+        const folder = await folders.create(
+            {
+                organization_id: organizationId,
+                ...folderData,
+            },
+            { transaction }
+        );
+        await registerSeedData("folders", folder.id, organizationId, transaction);
+        folderIds.push(folder.id);
+    }
+
+    // Create articles
+    const articlesData = [
+        {
+            folder_id: folderIds[0],
+            title: "Welcome to Rhinon",
+            content: `<h2>Getting Started with Rhinon</h2>
+<p>
+  Welcome to <strong>Rhinon</strong>, your all-in-one platform for managing conversations,
+  customers, and workflows in one place.<br>
+  This guide is designed to help you quickly understand the core features
+  and start using the platform with confidence.
+</p>
+
+<p>
+  From setting up your first chatbot to tracking visitor activity,
+  Rhinon makes it easy to stay connected with your audience.<br>
+  Use the dashboard to monitor performance, manage leads,
+  and automate repetitive tasks efficiently.
+</p>
+
+<p>
+  <strong>Tip:</strong> Explore the settings section to customize Rhinon
+  based on your business needs and goals.
+</p>`,
+        },
+        {
+            folder_id: folderIds[0],
+            title: "Setting up your account",
+            content: `<h2>Setting up your account</h2>
+                <p>
+                Setting up your account is a simple process.Follow these steps to get started:
+</p>
+
+<ol>
+  <li>
+    <strong>Sign up:</strong> Create an account by providing your email address and a secure password.
+  </li>
+  <li>
+    <strong>Verify your email:</strong> Check your inbox for a verification email and click the link to confirm your account.
+  </li>
+  <li>
+    <strong>Set up your profile:</strong> Add your name, company, and other relevant information to your profile.
+  </li>
+  <li>
+    <strong>Customize your dashboard:</strong> Choose the features you want to use and customize your dashboard to suit your needs.
+  </li>
+</ol>
+
+<p>
+  <strong>Tip:</strong> If you need help setting up your account, contact our support team for assistance.
+</p>`,
+        },
+        {
+            folder_id: folderIds[1],
+            title: "How do I reset my password?",
+            content: `<h3>Resetting Your Password</h3>
+<p>
+  If you’ve forgotten your password, don’t worry — resetting it is quick and easy.<br>
+  Just follow the steps below to regain access to your account.
+</p>
+
+<p>
+  <strong>Step 1:</strong> Go to the login page and click on the <strong>“Forgot Password”</strong> link.<br>
+  <strong>Step 2:</strong> Enter your registered email address and submit the form.<br>
+  <strong>Step 3:</strong> Check your inbox for the password reset email and click the link provided.
+</p>
+
+<p>
+  After creating a new password, you can log in immediately.<br>
+  <strong>Tip:</strong> Choose a strong password that you haven’t used before to keep your account secure.
+</p>
+`,
+        },
+        {
+            folder_id: folderIds[1],
+            title: "What are the pricing plans?",
+            content: `<h3>Understanding Our Pricing Plans</h3>
+<p>
+  We offer flexible pricing plans designed to suit businesses of all sizes.<br>
+  Whether you’re just getting started or scaling a growing team, there’s a plan for you.
+</p>
+
+<p>
+  <strong>Free Plan:</strong> Ideal for individuals and small teams exploring the platform.<br>
+  <strong>Starter Plan:</strong> Best for startups that need core features and basic support.<br>
+  <strong>Pro Plan:</strong> Perfect for growing businesses that require advanced tools and higher limits.
+</p>
+
+<p>
+  Each plan includes access to essential features like chat management,
+  analytics, and integrations.<br>
+  <strong>Note:</strong> You can upgrade, downgrade, or cancel your plan at any time from your account settings.
+</p>
+`,
+        },
+        {
+            folder_id: folderIds[2],
+            title: "API Authentication",
+            content: `<h3>API Authentication Overview</h3>
+<p>
+  To securely access the Rhinon API, all requests must be authenticated.<br>
+  Authentication ensures that only authorized applications can interact
+  with your data and perform actions on your behalf.
+</p>
+
+<p>
+  <strong>Authentication Method:</strong> API Key–based authentication is used for all requests.<br>
+  Include your API key in the request headers with each API call.
+</p>
+
+<p>
+  Keep your API keys private and never expose them in client-side code.<br>
+  <strong>Tip:</strong> You can generate and rotate API keys anytime from the developer settings in your dashboard.
+</p>
+`,
+        },
+        {
+            folder_id: folderIds[2],
+            title: "Rate Limits",
+            content: `<h3>API Rate Limits Explained</h3>
+<p>
+  To ensure fair usage and maintain platform stability, API requests are
+  subject to rate limits.<br>
+  Rate limits define the maximum number of requests that can be made within
+  a specific time window.
+</p>
+
+<p>
+  <strong>How it works:</strong> Each API key has predefined request limits
+  based on your subscription plan.<br>
+  When the limit is exceeded, the API will temporarily block further requests
+  and return a rate limit error response.
+</p>
+
+<p>
+  To avoid interruptions, implement retry logic and monitor response headers.<br>
+  <strong>Best practice:</strong> Batch requests whenever possible and avoid unnecessary polling.
+</p>
+`,
+        },
+    ];
+
+    const articleIds = [];
+    for (const articleData of articlesData) {
+        const article = await articles.create(
+            {
+                organization_id: organizationId,
+                ...articleData,
+            },
+            { transaction }
+        );
+        await registerSeedData("articles", article.id, organizationId, transaction);
+        articleIds.push(article.id);
+    }
+
+    return {
+        folders: { count: folderIds.length },
+        articles: { count: articleIds.length },
+    };
+}
+
+/**
+ * Create seed tasks
+ */
+async function createSeedTasks(organizationId, userId, transaction) {
+    const tasksData = [
+        {
+            title: "Review Q1 metrics",
+            description: "Analyze the quarterly performance data",
+            status: "todo",
+            priority: "high",
+        },
+        {
+            title: "Update documentation",
+            description: "Add new API endpoints to docs",
+            status: "in-progress",
+            priority: "medium",
+        },
+        {
+            title: "Test new feature",
+            description: "QA testing for the latest release",
+            status: "todo",
+            priority: "high",
+        },
+        {
+            title: "Client meeting prep",
+            description: "Prepare slides for tomorrow's meeting",
+            status: "in-progress",
+            priority: "urgent",
+        },
+        {
+            title: "Code review",
+            description: "Review PRs from the team",
+            status: "done",
+            priority: "medium",
+        },
+        {
+            title: "Deploy to staging",
+            description: "Push latest changes to staging environment",
+            status: "todo",
+            priority: "low",
+        },
+    ];
+
+    const createdIds = [];
+    for (let i = 0; i < tasksData.length; i++) {
+        const taskData = tasksData[i];
+        const task_id = `TSK-${Date.now()}-${i}`;
+        const task = await tasks.create(
+            {
+                organization_id: organizationId,
+                task_id: task_id,
+                assignee_id: userId,
+                reporter_id: userId,
+                ...taskData,
+            },
+            { transaction }
+        );
+        await registerSeedData("tasks", task.id, organizationId, transaction);
+        createdIds.push(task.id);
+    }
+
+    return { count: createdIds.length, ids: createdIds };
+}
+
+/**
+ * Create seed team chat (channels and messages)
+ */
+async function createSeedTeamChat(organizationId, userId, transaction) {
+    console.log('🔍 createSeedTeamChat - userId:', userId, 'organizationId:', organizationId);
+
+    const channels = [
+        { name: "general", description: "General team discussion", is_private: false },
+        { name: "support", description: "Customer support coordination", is_private: false },
+    ];
+
+    const channelIds = [];
+    for (const channelData of channels) {
+        console.log('🔍 Creating channel with userId:', userId);
+        const channel = await teams_channels.create(
+            {
+                organization_id: organizationId,
+                name: channelData.name,
+                description: channelData.description,
+                is_private: channelData.is_private || false,
+                created_by: userId,
+            },
+            { transaction }
+        );
+        await registerSeedData("teams_channels", channel.id, organizationId, transaction);
+        channelIds.push(channel.id);
+
+        // Add creator as a member
+        const member = await teams_members.create(
+            {
+                organization_id: organizationId,
+                channel_id: channel.id,
+                user_id: userId,
+                role: "admin",
+            },
+            { transaction }
+        );
+        await registerSeedData("teams_members", member.id, organizationId, transaction);
+
+        // Create some messages in each channel
+        const messages = [
+            { content: "Welcome to the channel!", scope_type: "channel" },
+            { content: "Let's collaborate here!", scope_type: "channel" },
+        ];
+
+        for (const msgData of messages) {
+            const message = await teams_messages.create(
+                {
+                    organization_id: organizationId,
+                    scope_id: channel.id,
+                    sender_id: userId,
+                    ...msgData,
+                },
+                { transaction }
+            );
+            await registerSeedData("teams_messages", message.id, organizationId, transaction);
+        }
+    }
+
+    return { channels: { count: channelIds.length } };
+}
+
+/**
+ * Create seed automations
+ */
+async function createSeedAutomations(organizationId, transaction) {
+    const automationsData = [
+        {
+            name: "Auto-assign new tickets",
+            description: "Automatically assign incoming tickets to available agents",
+            is_active: true,
+            trigger_type: "ticket_created",
+            conditions: JSON.stringify({ priority: "high" }),
+            actions: JSON.stringify({ assign_to: "next_available" }),
+        },
+        {
+            name: "Send welcome email",
+            description: "Send welcome email to new customers",
+            is_active: true,
+            trigger_type: "customer_created",
+            conditions: JSON.stringify({}),
+            actions: JSON.stringify({ send_email: "welcome_template" }),
+        },
+    ];
+
+    const createdIds = [];
+    for (const autoData of automationsData) {
+        const automation = await automations.create(
+            {
+                organization_id: organizationId,
+                ...autoData,
+            },
+            { transaction }
+        );
+        await registerSeedData("automations", automation.id, organizationId, transaction);
+        createdIds.push(automation.id);
+    }
+
+    return { count: createdIds.length, ids: createdIds };
+}
+
+/**
+ * Create seed WhatsApp data (accounts and contacts)
+ */
+async function createSeedWhatsApp(organizationId, transaction) {
+    const account = await whatsapp_accounts.create(
+        {
+            organization_id: organizationId,
+            phone_number_id: "SEED_PHONE_001",
+            waba_id: "SEED_WABA_001",
+            display_phone_number: "+11234567890",
+            access_token: `seed_access_token_${Date.now()}`,
+            status: "active",
+            is_default: true,
+        },
+        { transaction }
+    );
+    await registerSeedData("whatsapp_accounts", account.id, organizationId, transaction);
+
+    const contacts = [
+        { name: "John Doe", phone_number: "+1111111111" },
+        { name: "Jane Smith", phone_number: "+2222222222" },
+    ];
+
+    const contactIds = [];
+    for (const contactData of contacts) {
+        const contact = await whatsapp_contacts.create(
+            {
+                organization_id: organizationId,
+                account_id: account.id,
+                ...contactData,
+            },
+            { transaction }
+        );
+        await registerSeedData("whatsapp_contacts", contact.id, organizationId, transaction);
+        contactIds.push(contact.id);
+    }
+
+    return { account: 1, contacts: contactIds.length };
+}
+
+/**
+ * Create seed activities
+ */
+async function createSeedActivities(organizationId, userId, transaction) {
+    const activitiesData = [
+        {
+            action: "ticket_created",
+            message: "Created a new support ticket",
+            metadata: { ticket_id: "seed_ticket" },
+        },
+        {
+            action: "customer_updated",
+            message: "Updated customer information",
+            metadata: { customer_id: "seed_customer" },
+        },
+        {
+            action: "task_completed",
+            message: "Completed a task",
+            metadata: { task_id: "seed_task" },
+        },
+    ];
+
+    const createdIds = [];
+    for (const activityData of activitiesData) {
+        const activity = await activities.create(
+            {
+                organization_id: organizationId,
+                user_id: userId,
+                ...activityData,
+            },
+            { transaction }
+        );
+        await registerSeedData("activities", activity.id, organizationId, transaction);
+        createdIds.push(activity.id);
+    }
+
+    return { count: createdIds.length, ids: createdIds };
+}
+
+/**
+ * Create seed notifications
+ */
+async function createSeedNotifications(organizationId, userId, transaction) {
+    const notificationsData = [
+        {
+            title: "New ticket assigned",
+            message: "You have been assigned a new support ticket",
+            type: "info",
+            is_read: false,
+        },
+        {
+            title: "Task deadline approaching",
+            message: "Your task is due tomorrow",
+            type: "warning",
+            is_read: false,
+        },
+    ];
+
+    const createdIds = [];
+    for (const notifData of notificationsData) {
+        const notification = await notifications.create(
+            {
+                organization_id: organizationId,
+                user_id: userId,
+                ...notifData,
+            },
+            { transaction }
+        );
+        await registerSeedData("notifications", notification.id, organizationId, transaction);
+        createdIds.push(notification.id);
+    }
+
+    return { count: createdIds.length, ids: createdIds };
+}
+
+/**
+ * Create seed chatbot campaigns
+ */
+async function createSeedChatbotCampaigns(organizationId, transaction) {
+    // Get any valid chatbot for this organization
+    const existingBot = await chatbots.findOne({
+        where: { organization_id: organizationId },
+        transaction
+    });
+
+    if (!existingBot) {
+        return { count: 0, ids: [] };
+    }
+
+    const chatbot_id = existingBot.chatbot_id;
+
+    const campaigns = [
+        {
+            type: "recurring",
+            status: "active",
+            name: "Welcome Campaign",
+            content: {
+                "media": null,
+                "layout": "heading-buttons",
+                "buttons": [
+                    {
+                        "url": "#",
+                        "text": "Book a Demo",
+                        "style": "secondary",
+                        "actionType": "open-url"
+                    }
+                ],
+                "heading": "👋 Welcome! How can we help you today?",
+                "hasImage": false,
+                "subheading": "",
+                "templateId": "2c3d5e70-9bfa-4bd1-a238-3a7f7d2a7c02"
+            },
+            targeting: {
+                "rules": {
+                    "matchType": "match-all",
+                    "conditions": [
+                        {
+                            "field": "current-page-url",
+                            "value": "",
+                            "operator": "contains"
+                        }
+                    ]
+                },
+                "trigger": {
+                    "type": "time-on-page",
+                    "unit": "seconds",
+                    "value": 10
+                },
+                "visitorType": "all"
+            },
+        },
+        {
+            type: "recurring",
+            status: "draft",
+            name: "Discount Offer Campaign",
+            content: {
+                media: null,
+                layout: "image-heading-buttons",
+                buttons: [
+                    {
+                        url: "#",
+                        text: "Get 10% Off",
+                        style: "primary",
+                        actionType: "open-url"
+                    }
+                ],
+                heading: "🎉 Special Offer Just for You!",
+                hasImage: false,
+                subheading: "Enjoy a limited-time discount on your first purchase.",
+                templateId: "7f1a2b44-6cde-4a91-9a3f-1c2d9e8a4f10"
+            },
+            targeting: {
+                rules: {
+                    matchType: "match-any",
+                    conditions: [
+                        {
+                            field: "current-page-url",
+                            value: "/pricing",
+                            operator: "contains"
+                        }
+                    ]
+                },
+                trigger: {
+                    type: "scroll-depth",
+                    unit: "percent",
+                    value: 50
+                },
+                visitorType: "new"
+            },
+        },
+        {
+            type: "one-time",
+            status: "draft",
+            name: "Offer Campaign",
+            content: {
+                "media": null,
+                "layout": "heading-buttons",
+                "buttons": [
+                    {
+                        "url": "#",
+                        "text": "New Button",
+                        "style": "secondary",
+                        "actionType": "open-url"
+                    }
+                ],
+                "heading": "Special Offer: 20% Off!",
+                "hasImage": false,
+                "subheading": "",
+                "templateId": "2c3d5e70-9bfa-4bd1-a238-3a7f7d2a7c02"
+            },
+            targeting: {
+                "rules": {
+                    "matchType": "match-all",
+                    "conditions": [
+                        {
+                            "field": "current-page-url",
+                            "value": "",
+                            "operator": "contains"
+                        }
+                    ]
+                },
+                "trigger": {
+                    "type": "time-on-page",
+                    "unit": "seconds",
+                    "value": 13
+                },
+                "visitorType": "all"
+            },
+        },
+    ];
+
+    const createdIds = [];
+    for (const campaignData of campaigns) {
+        const campaign = await chatbot_campaigns.create(
+            {
+                organization_id: organizationId,
+                chatbot_id: chatbot_id,
+                ...campaignData,
+            },
+            { transaction }
+        );
+        await registerSeedData("chatbot_campaigns", campaign.id, organizationId, transaction);
+        createdIds.push(campaign.id);
+    }
+
+    return { count: createdIds.length, ids: createdIds };
+}
+
+/**
+ * Create seed live visitors
+ */
+async function createSeedLiveVisitors(organizationId, transaction) {
+    // Get any valid chatbot for this organization
+    const existingBot = await chatbots.findOne({
+        where: { organization_id: organizationId },
+        transaction
+    });
+
+    // Use found ID or fallback
+    const chatbot_id = existingBot ? existingBot.chatbot_id : "seed_bot_1";
+
+    const visitors = [
+        {
+            visitor_id: `visitor_seed_${Date.now()}_001`,
+            visitor_email: "visitor1@example.com",
+            room: `room_seed_${Date.now()}_001`,
+            socket_id: "socket_seed_001",
+            chatbot_id: chatbot_id,
+            ip_address: "192.168.1.100",
+            city: "San Francisco",
+            region: "California",
+            country: "United States",
+            latitude: 37.7749,
+            longitude: -122.4194,
+            is_online: false,
+        },
+        {
+            visitor_id: `visitor_seed_${Date.now()}_002`,
+            visitor_email: "visitor2@example.com",
+            room: `room_seed_${Date.now()}_002`,
+            socket_id: "socket_seed_002",
+            chatbot_id: chatbot_id,
+            ip_address: "192.168.1.101",
+            city: "New York",
+            region: "New York",
+            country: "United States",
+            latitude: 40.7128,
+            longitude: -74.006,
+            is_online: false,
+        },
+        {
+            visitor_id: `visitor_seed_${Date.now()}_003`,
+            visitor_email: "visitor3@example.com",
+            room: `room_seed_${Date.now()}_003`,
+            socket_id: "socket_seed_003",
+            chatbot_id: chatbot_id,
+            ip_address: "192.168.1.102",
+            city: "Los Angeles",
+            region: "California",
+            country: "United States",
+            latitude: 34.0522,
+            longitude: -118.2437,
+            is_online: false,
+        },
+        {
+            visitor_id: `visitor_seed_${Date.now()}_004`,
+            visitor_email: "visitor4@example.com",
+            room: `room_seed_${Date.now()}_004`,
+            socket_id: "socket_seed_004",
+            chatbot_id: chatbot_id,
+            ip_address: "192.168.1.103",
+            city: "Chicago",
+            region: "Illinois",
+            country: "United States",
+            latitude: 41.8781,
+            longitude: -87.6298,
+            is_online: false,
+        },
+        {
+            visitor_id: `visitor_seed_${Date.now()}_005`,
+            visitor_email: "visitor5@example.com",
+            room: `room_seed_${Date.now()}_005`,
+            socket_id: "socket_seed_005",
+            chatbot_id: chatbot_id,
+            ip_address: "192.168.1.104",
+            city: "Seattle",
+            region: "Washington",
+            country: "United States",
+            latitude: 47.6062,
+            longitude: -122.3321,
+            is_online: false,
+        },
+        {
+            chatbot_id: "seed_bot_2",
+            visitor_id: `visitor_seed_${Date.now()}_007`,
+            visitor_email: null,
+            room: `room_seed_${Date.now()}_007`,
+            socket_id: "socket_seed_003",
+            ip_address: "192.168.1.102",
+            city: "London",
+            region: "England",
+            country: "United Kingdom",
+            latitude: 51.5074,
+            longitude: -0.1278,
+            is_online: false,
+        },
+    ];
+
+    const createdIds = [];
+    for (const visitorData of visitors) {
+        const visitor = await live_visitors.create(visitorData, { transaction });
+        // Note: live_visitors doesn't have organization_id, but we MUST register it with org ID to allow deletion
+        await registerSeedData("live_visitors", visitor.id, organizationId, transaction);
+        createdIds.push(visitor.id);
+    }
+
+    return { count: createdIds.length, ids: createdIds };
+}
+
+/**
+ * Create seed support conversations
+ */
+async function createSeedSupportConversations(organizationId, userId, transaction) {
+    // Get any valid chatbot for this organization
+    const existingBot = await chatbots.findOne({
+        where: { organization_id: organizationId },
+        transaction
+    });
+
+    // Use found ID or fallback
+    const chatbot_id = existingBot ? existingBot.chatbot_id : "seed_bot_1";
+
+    const conversations = [
+        {
+            user_id: "visitor_seed_001",
+            user_email: "visitor1@example.com",
+            chatbot_id: chatbot_id,
+            chatbot_history: "User asked about pricing plans",
+            assigned_user_id: userId,
+            messages: [
+                { sender: "visitor", text: "Hi, I need help with pricing", timestamp: Date.now() },
+                { sender: "agent", text: "I'd be happy to help! What plan are you interested in?", timestamp: Date.now() + 1000 },
+            ],
+            is_closed: false,
+            is_new: true,
+            is_pinned: false,
+        },
+        {
+            user_id: `visitor_seed_${Date.now()}_002`,
+            user_email: "visitor2@example.com",
+            chatbot_id: chatbot_id,
+            chatbot_history: "User reported a bug",
+            assigned_user_id: userId,
+            messages: [
+                { sender: "visitor", text: "I found a bug in the dashboard", timestamp: Date.now() },
+                { sender: "agent", text: "Thanks for reporting! Can you describe the issue?", timestamp: Date.now() + 1000 },
+                { sender: "visitor", text: "The charts are not loading properly", timestamp: Date.now() + 2000 },
+            ],
+            is_closed: true,
+            is_new: false,
+            is_pinned: true,
+        },
+        {
+            user_id: `visitor_seed_${Date.now()}_003`,
+            user_email: "visitor3@example.com",
+            chatbot_id: chatbot_id,
+            chatbot_history: "Feature request discussion",
+            assigned_user_id: null,
+            messages: [
+                { sender: "visitor", text: "Do you support dark mode?", timestamp: Date.now() - 5000 },
+                { sender: "agent", text: "Not yet, but it's on our roadmap!", timestamp: Date.now() - 4000 },
+                { sender: "visitor", text: "Great, looking forward to it.", timestamp: Date.now() - 3000 },
+            ],
+            is_closed: false,
+            is_new: true, // Unread by agent
+            is_pinned: false,
+        },
+        {
+            user_id: `visitor_seed_${Date.now()}_004`,
+            user_email: "visitor4@example.com",
+            chatbot_id: chatbot_id,
+            chatbot_history: "Billing inquiry conversation",
+            assigned_user_id: userId,
+            messages: [
+                { sender: "visitor", text: "I was charged twice.", timestamp: Date.now() - 10000 },
+                { sender: "agent", text: "Let me check that for you.", timestamp: Date.now() - 9000 },
+            ],
+            is_closed: false,
+            is_new: false,
+            is_pinned: true, // Important
+        },
+        {
+            user_id: `visitor_seed_${Date.now()}_005`,
+            user_email: "visitor5@example.com",
+            chatbot_id: chatbot_id,
+            chatbot_history: "Integration help",
+            assigned_user_id: null,
+            messages: [
+                { sender: "visitor", text: "How do I use the API?", timestamp: Date.now() - 20000 },
+            ],
+            is_closed: false,
+            is_new: true,
+            is_pinned: false,
+        },
+    ];
+
+    const createdIds = [];
+    for (const convData of conversations) {
+        const conversation = await support_conversations.create(convData, { transaction });
+        // support_conversations doesn't have organization_id, so we'll use a dummy org ID for registry
+        await registerSeedData("support_conversations", conversation.id, organizationId, transaction);
+        createdIds.push(conversation.id);
+    }
+
+    return { count: createdIds.length, ids: createdIds };
+}
+
+/**
+ * Create seed emails
+ */
+async function createSeedEmails(organizationId, transaction) {
+    const emailsData = [
+        {
+            email_thread_id: "thread_seed_001",
+            email: "customer1@example.com",
+            in_reply_to: null,
+            organization_id: organizationId,
+            ticket_id: null,
+            subject: "Question about your service",
+            conversations: JSON.stringify([
+                {
+                    from: "customer1@example.com",
+                    to: "support@rhinon.tech",
+                    subject: "Question about your service",
+                    body: "Hi, I have some questions about your platform.",
+                    timestamp: Date.now(),
+                },
+            ]),
+            is_new: true,
+            processed: false,
+        },
+        {
+            email_thread_id: "thread_seed_002",
+            email: "customer2@example.com",
+            in_reply_to: "thread_seed_001",
+            organization_id: organizationId,
+            ticket_id: null,
+            subject: "Re: Follow up",
+            conversations: JSON.stringify([
+                {
+                    from: "customer2@example.com",
+                    to: "support@rhinon.tech",
+                    subject: "Follow up",
+                    body: "Thank you for your help earlier!",
+                    timestamp: Date.now(),
+                },
+                {
+                    from: "support@rhinon.tech",
+                    to: "customer2@example.com",
+                    subject: "Re: Follow up",
+                    body: "You're welcome! Let us know if you need anything else.",
+                    timestamp: Date.now() + 10000,
+                },
+            ]),
+            is_new: false,
+            processed: true,
+        },
+    ];
+
+    const createdIds = [];
+    for (const emailData of emailsData) {
+        const email = await emails.create(emailData, { transaction });
+        await registerSeedData("emails", email.id, organizationId, transaction);
+        createdIds.push(email.id);
+    }
+
+    return { count: createdIds.length, ids: createdIds };
+}
+
+/**
+ * Create seed SEO data (pageviews, sessions, engagement, compliance)
+ */
+async function createSeedSEO(organizationId, transaction) {
+    const baseTimestamp = Date.now();
+    // Get any valid chatbot for this organization
+    const existingBot = await chatbots.findOne({
+        where: { organization_id: organizationId },
+        transaction
+    });
+
+    // Use found ID or fallback
+    const chatbotId = existingBot ? existingBot.chatbot_id : "seed_bot_1";
+
+    // Create pageviews
+    const pageviews = [];
+    for (let i = 0; i < 10; i++) {
+        pageviews.push({
+            chatbot_id: chatbotId,
+            sessionId: `session_seed_${i % 6}`,
+            userId: `user_seed_${i % 6}`,
+            url: `/page-${i % 4}`,
+            referrer: i % 2 === 0 ? "https://google.com" : "https://facebook.com",
+            userAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+            timestamp: baseTimestamp - (i * 3600000), // 1 hour apart
+            utm_source: i % 2 === 0 ? "google" : "facebook",
+            utm_medium: "cpc",
+            utm_campaign: "seed_campaign",
+        });
+    }
+
+    const pageviewIds = [];
+    for (const pvData of pageviews) {
+        const pageview = await seo_page_views.create(pvData, { transaction });
+        await registerSeedData("seo_page_views", pageview.id, organizationId, transaction);
+        pageviewIds.push(pageview.id);
+    }
+
+    // Create sessions
+    const sessions = [
+        {
+            chatbot_id: chatbotId,
+            sessionId: "session_seed_0",
+            userId: "user_seed_0",
+            userAgent: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)",
+            screenSize: "1920x1080",
+            language: "en-US",
+            isReturning: false,
+            country: "United States",
+            timestamp: baseTimestamp,
+        },
+        {
+            chatbot_id: chatbotId,
+            sessionId: "session_seed_0",
+            userId: "user_seed_0",
+            userAgent: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)",
+            screenSize: "1920x1080",
+            language: "en-US",
+            isReturning: true,
+            country: "United States",
+            timestamp: baseTimestamp + 10000,
+        },
+        {
+            chatbot_id: chatbotId,
+            sessionId: "session_seed_2",
+            userId: "user_seed_2",
+            userAgent: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)",
+            screenSize: "1920x1080",
+            language: "en-US",
+            isReturning: true,
+            country: "United States",
+            timestamp: baseTimestamp + 20000,
+        },
+        {
+            chatbot_id: chatbotId,
+            sessionId: "session_seed_4",
+            userId: "user_seed_4",
+            userAgent: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)",
+            screenSize: "1920x1080",
+            language: "en-US",
+            isReturning: false,
+            country: "United States",
+            timestamp: baseTimestamp,
+        },
+        {
+            chatbot_id: chatbotId,
+            sessionId: "session_seed_5",
+            userId: "user_seed_5",
+            userAgent: "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7)",
+            screenSize: "1920x1080",
+            language: "en-US",
+            isReturning: false,
+            country: "United States",
+            timestamp: baseTimestamp,
+        },
+        {
+            chatbot_id: chatbotId,
+            sessionId: "session_seed_1",
+            userId: "user_seed_1",
+            userAgent: "Mozilla/5.0 (iPhone; CPU iPhone OS 14_0 like Mac OS X)",
+            screenSize: "390x844",
+            language: "es-ES",
+            isReturning: true,
+            country: "Spain",
+            timestamp: baseTimestamp - 3600000,
+        },
+        {
+            chatbot_id: chatbotId,
+            sessionId: "session_seed_2",
+            userId: "user_seed_2",
+            userAgent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64)",
+            screenSize: "1366x768",
+            language: "en-GB",
+            isReturning: false,
+            country: "United Kingdom",
+            timestamp: baseTimestamp - 7200000,
+        },
+    ];
+
+    const sessionIds = [];
+    for (const sessionData of sessions) {
+        const session = await seo_sessions.create(sessionData, { transaction });
+        await registerSeedData("seo_sessions", session.id, organizationId, transaction);
+        sessionIds.push(session.id);
+    }
+
+    // Create engagement data
+    const engagements = [
+        {
+            chatbot_id: chatbotId,
+            type: "click",
+            url: "/page-0",
+            metadata: { elementId: "cta_button", text: "Sign Up" },
+            sessionId: "session_seed_0",
+            timestamp: baseTimestamp,
+        },
+        {
+            chatbot_id: chatbotId,
+            type: "timeOnPage",
+            url: "/page-0",
+            metadata: { elementId: "cta_button", timeSpent: 900000, text: "Sign Up" },
+            sessionId: "session_seed_0",
+            timestamp: baseTimestamp,
+        },
+        {
+            chatbot_id: chatbotId,
+            type: "scroll",
+            url: "/page-1",
+            metadata: { elementId: "main_content", depth: 80 },
+            sessionId: "session_seed_1",
+            timestamp: baseTimestamp - 3600000,
+        },
+        {
+            chatbot_id: chatbotId,
+            type: "timeOnPage",
+            url: "/page-1",
+            metadata: { elementId: "main_content", timeSpent: 400000, text: "Sign Up" },
+            sessionId: "session_seed_1",
+            timestamp: baseTimestamp - 3600000,
+        },
+        {
+            chatbot_id: chatbotId,
+            type: "timeOnPage",
+            url: "/page-2",
+            metadata: { elementId: "main_content", timeSpent: 600000, text: "Sign Up" },
+            sessionId: "session_seed_1",
+            timestamp: baseTimestamp - 3600000,
+        },
+        {
+            chatbot_id: chatbotId,
+            type: "timeOnPage",
+            url: "/page-3",
+            metadata: { elementId: "contact_form", timeSpent: 5000000, formId: "contact-1" },
+            sessionId: "session_seed_2",
+            timestamp: baseTimestamp - 7200000,
+        },
+    ];
+
+    const engagementIds = [];
+    for (const engageData of engagements) {
+        const engagement = await seo_engagements.create(engageData, { transaction });
+        await registerSeedData("seo_engagements", engagement.id, organizationId, transaction);
+        engagementIds.push(engagement.id);
+    }
+
+    // Create compliance data
+    const compliances = [
+        {
+            chatbot_id: chatbotId,
+            baseUrl: "https://example.com/products/ai-chatbot-platform",
+            seoScore: "78",
+            passedChecks: 26,
+            totalChecks: 34,
+            categories: [
+                {
+                    category: "Performance",
+                    checks: [
+                        { title: "First Contentful Paint", status: "Good", fix: null },
+                        { title: "Largest Contentful Paint", status: "Needs Improvement", fix: "Optimize hero image and enable compression" },
+                        { title: "Speed Index", status: "Needs Improvement", fix: "Reduce unused JavaScript" },
+                        { title: "Total Blocking Time", status: "Good", fix: null },
+                        { title: "Cumulative Layout Shift", status: "Good", fix: null },
+                        { title: "Unused CSS", status: "Needs Improvement", fix: "Remove unused Tailwind classes and purge CSS" }
+                    ]
+                },
+                {
+                    category: "Accessibility",
+                    checks: [
+                        { title: "ARIA Attributes", status: "Good", fix: null },
+                        { title: "Color Contrast", status: "Critical", fix: "Increase contrast ratio for buttons and links" },
+                        { title: "Image Alt Attributes", status: "Needs Improvement", fix: "Add descriptive alt text to product images" },
+                        { title: "Form Label Association", status: "Good", fix: null },
+                        { title: "Keyboard Navigation", status: "Good", fix: null }
+                    ]
+                },
+                {
+                    category: "Best Practices",
+                    checks: [
+                        { title: "HTTPS Usage", status: "Good", fix: null },
+                        { title: "Console Errors", status: "Needs Improvement", fix: "Fix JavaScript errors in main bundle" },
+                        { title: "Uses Modern Image Formats", status: "Needs Improvement", fix: "Serve images in WebP format" },
+                        { title: "Avoid Deprecated APIs", status: "Good", fix: null },
+                        { title: "Security Headers", status: "Critical", fix: "Add Content-Security-Policy and X-Frame-Options headers" }
+                    ]
+                },
+                {
+                    category: "SEO",
+                    checks: [
+                        { title: "Meta Title", status: "Good", fix: null },
+                        { title: "Meta Description", status: "Needs Improvement", fix: "Add compelling meta description with target keywords" },
+                        { title: "Canonical Tag", status: "Good", fix: null },
+                        { title: "Structured Data", status: "Needs Improvement", fix: "Implement JSON-LD schema for Product" },
+                        { title: "Robots.txt", status: "Good", fix: null },
+                        { title: "XML Sitemap", status: "Good", fix: null },
+                        { title: "Mobile Friendly", status: "Good", fix: null }
+                    ]
+                },
+                {
+                    category: "Content Quality",
+                    checks: [
+                        { title: "Keyword Optimization", status: "Needs Improvement", fix: "Include primary keyword in H1 and first paragraph" },
+                        { title: "Content Length", status: "Good", fix: null },
+                        { title: "Duplicate Content", status: "Good", fix: null },
+                        { title: "Internal Linking", status: "Needs Improvement", fix: "Add 3-5 internal links to related articles" },
+                        { title: "Outbound Links", status: "Good", fix: null }
+                    ]
+                },
+                {
+                    category: "Technical SEO",
+                    checks: [
+                        { title: "URL Structure", status: "Good", fix: null },
+                        { title: "Broken Links", status: "Needs Improvement", fix: "Fix 2 broken internal links" },
+                        { title: "Redirect Chains", status: "Good", fix: null },
+                        { title: "Indexability", status: "Good", fix: null },
+                        { title: "Hreflang Tags", status: "Needs Improvement", fix: "Add hreflang tags for international pages" }
+                    ]
+                }
+            ],
+            actionItems: [
+                {
+                    id: "color-contrast",
+                    label: "Low color contrast detected on primary buttons",
+                    fix: "Increase contrast ratio to at least 4.5:1",
+                    priority: "High"
+                },
+                {
+                    id: "security-headers",
+                    label: "Missing important security headers",
+                    fix: "Add CSP, X-Content-Type-Options, and X-Frame-Options",
+                    priority: "High"
+                },
+                {
+                    id: "meta-description",
+                    label: "Meta description not optimized for target keyword",
+                    fix: "Rewrite meta description including primary keyword",
+                    priority: "Medium"
+                },
+                {
+                    id: "structured-data",
+                    label: "Structured data schema missing",
+                    fix: "Implement JSON-LD schema markup",
+                    priority: "Medium"
+                },
+                {
+                    id: "alt-text",
+                    label: "Images missing descriptive alt text",
+                    fix: "Add relevant alt attributes to all product images",
+                    priority: "Medium"
+                },
+                {
+                    id: "unused-css",
+                    label: "Unused CSS detected",
+                    fix: "Enable CSS purging in production build",
+                    priority: "Low"
+                }
+            ],
+            timestamp: baseTimestamp,
+        }
+        // Second entry omitted/simplified for brevity if needed, but I'll keep one good entry
+    ];
+
+    const complianceIds = [];
+    for (const compData of compliances) {
+        const compliance = await seo_compliances.create(compData, { transaction });
+        await registerSeedData("seo_compliances", compliance.id, organizationId, transaction);
+        complianceIds.push(compliance.id);
+    }
+
+    // Create performance data
+    const performance = await seo_performances.create({
+        chatbot_id: chatbotId,
+        baseUrl: "https://example.com/products/ai-chatbot-platform",
+
+        overallScore: {
+            performance: 76,
+            accessibility: 88,
+            bestPractices: 81,
+            seo: 90
+        },
+
+        metrics: {
+            fcp: "1.4s",
+            lcp: "2.6s",
+            cls: "0.12",
+            tbt: "280ms",
+            speedIndex: "2.1s",
+            ttfb: "180ms"
+        },
+
+        accessibility: {
+            score: 88,
+            issues: 5
+        },
+
+        bestPractices: {
+            score: 81,
+            issues: 4
+        },
+
+        seo: {
+            score: 90,
+            issues: 2
+
+        },
+
+        opportunities: [
+            {
+                title: "Eliminate render-blocking resources",
+                description: "Remove unused CSS and defer non-critical JavaScript",
+                savings: "1.3s"
+            },
+            {
+                title: "Serve images in next-gen formats",
+                description: "Convert PNG/JPEG images to WebP",
+                savings: "800KB"
+            },
+            {
+                title: "Enable text compression",
+                description: "Use gzip or Brotli compression on server",
+                savings: "120KB"
+            }
+        ],
+
+        diagnostics: [
+            {
+                title: "Minimize main-thread work",
+                value: "1.9s",
+                description: "Large JavaScript execution blocking UI thread"
+            },
+            {
+                title: "Reduce unused JavaScript",
+                value: "320KB",
+                description: "Remove dead code from bundle"
+            },
+            {
+                title: "Avoid enormous network payloads",
+                value: "2.4MB",
+                description: "Optimize image and video assets"
+            }
+        ],
+
+        recommendations: [
+            {
+                title: "Implement lazy loading for images",
+                priority: "High",
+                impact: "High",
+                effort: "Low",
+                description: "Lazy load offscreen images to reduce LCP."
+            },
+            {
+                title: "Add Content Security Policy headers",
+                priority: "High",
+                impact: "High",
+                effort: "Medium",
+                description: "Protect against XSS attacks."
+            },
+            {
+                title: "Optimize meta tags for better CTR",
+                priority: "Medium",
+                impact: "Medium",
+                effort: "Low",
+                description: "Improve SERP click-through rate."
+            }
+        ]
+    }
+        , { transaction });
+    await registerSeedData("seo_performances", performance.id, organizationId, transaction);
+
+    return {
+        pageviews: pageviewIds.length,
+        sessions: sessionIds.length,
+        engagement: engagementIds.length,
+        compliance: complianceIds.length,
+        performance: 1,
+    };
+}
+
+/**
+ * Create seed CRM data (companies, deals, peoples, pipelines)
+ */
+async function createSeedCRM(organizationId, userId, transaction, crmTransaction) {
+    // Create companies
+    const companyData = [
+        {
+            name: "Acme Corporation",
+            domain: "acmecorp.com",
+            website: "https://acmecorp.com",
+            industry: "Technology",
+            size: "100-500",
+            location: "San Francisco, CA",
+        },
+        {
+            name: "TechStart Inc",
+            domain: "techstart.io",
+            website: "https://techstart.io",
+            industry: "Software",
+            size: "10-50",
+            location: "Austin, TX",
+        },
+        {
+            name: "Global Enterprises",
+            domain: "globalent.com",
+            website: "https://globalent.com",
+            industry: "Consulting",
+            size: "500+",
+            location: "New York, NY",
+        },
+        {
+            name: "Apex Solutions",
+            domain: "apexsolutions.io",
+            website: "https://apexsolutions.io",
+            industry: "Technology Services",
+            size: "200–500",
+            location: "San Francisco, CA",
+        },
+        {
+            name: "BrightWave Marketing",
+            domain: "brightwavemarketing.com",
+            website: "https://brightwavemarketing.com",
+            industry: "Digital Marketing",
+            size: "50–200",
+            location: "Austin, TX",
+        },
+    ];
+
+    const companyIds = [];
+    for (const data of companyData) {
+        const company = await companies.create(
+            {
+                organization_id: organizationId,
+                created_by: userId,
+                ...data,
+            },
+            { transaction: crmTransaction }
+        );
+        await registerSeedData("companies", company.id, organizationId, transaction);
+        companyIds.push(company.id);
+    }
+
+    // Create peoples (contacts)
+    const peopleData = [
+        {
+            name: "John Smith",
+            email: "john.smith@acmecorp.com",
+            company_id: companyIds[0],
+            position: "CEO",
+            phone: "+1-555-0100",
+        },
+        {
+            name: "Sarah Johnson",
+            email: "sarah.j@techstart.io",
+            company_id: companyIds[1],
+            position: "CTO",
+            phone: "+1-555-0101",
+        },
+        {
+            name: "Michael Brown",
+            email: "m.brown@globalent.com",
+            company_id: companyIds[2],
+            position: "VP of Sales",
+            phone: "+1-555-0102",
+        },
+        {
+            name: "Emily Davis",
+            email: "emily.d@acmecorp.com",
+            company_id: companyIds[0],
+            position: "Product Manager",
+            phone: "+1-555-0103",
+        },
+    ];
+
+    const peopleIds = [];
+    for (const data of peopleData) {
+        const person = await peoples.create(
+            {
+                organization_id: organizationId,
+                created_by: userId,
+                ...data,
+            },
+            { transaction: crmTransaction }
+        );
+        await registerSeedData("peoples", person.id, organizationId, transaction);
+        peopleIds.push(person.id);
+    }
+
+    // Create Group
+    const group = await groups.create({
+        organization_id: organizationId,
+        created_by: userId,
+        group_name: "Sales",
+        manage_type: "company",
+    }, { transaction: crmTransaction });
+    await registerSeedData("groups", group.id, organizationId, transaction);
+
+    // Create View
+    const view = await views.create({
+        organization_id: organizationId,
+        created_by: userId,
+        group_id: group.id,
+        view_name: "pipeline",
+        view_manage_type: "company",
+        view_type: "pipeline", // changed from 'list'
+    }, { transaction: crmTransaction });
+    await registerSeedData("views", view.id, organizationId, transaction);
+
+    const view2 = await views.create({
+        organization_id: organizationId,
+        created_by: userId,
+        group_id: group.id,
+        view_name: "All Companies",
+        view_manage_type: "company",
+        view_type: "table", // changed from 'list'
+        table_columns: [{ key: "name", label: "Company Name", visible: true }],
+    }, { transaction: crmTransaction });
+    await registerSeedData("views", view2.id, organizationId, transaction);
+
+    // Create pipeline
+    const pipeline = await pipelines.create(
+        {
+            organization_id: organizationId,
+            view_id: view.id,
+            name: "Sales Pipeline",
+            pipeline_manage_type: "company",
+            stages: [
+                { id: 1, name: "Lead", color: "#EFF6FF", order: 0, entities: [{ entity_id: companyIds[0], entity_type: "company" }, { entity_id: companyIds[4], entity_type: "company" }] },
+                { id: 2, name: "Qualified", color: "#F5F3FF", order: 1, entities: [{ entity_id: companyIds[1], entity_type: "company" }] },
+                { id: 3, name: "Proposal", color: "#ECFDF5", order: 2, entities: [{ entity_id: companyIds[2], entity_type: "company" }, { entity_id: companyIds[3], entity_type: "company" }] },
+                { id: 4, name: "Negotiation", color: "#FEFCE8", order: 3, entities: [] },
+                { id: 5, name: "Closed Won", color: "#ECFDF5", order: 4, entities: [] },
+            ],
+            created_by: userId,
+        },
+        { transaction: crmTransaction }
+    );
+    await registerSeedData("pipelines", pipeline.id, organizationId, transaction);
+
+    // Create deals
+    const dealsData = [
+        {
+            title: "Enterprise Software License - Acme Corp",
+            company_id: companyIds[0],
+            contact_id: peopleIds[0],
+            status: "Proposal",
+            custom_fields: {
+                dealValue: { type: "number", value: 50000, isVisible: true },
+                priority: { type: "select", value: "High", isVisible: true },
+                probability: { type: "number", value: 75, isVisible: true },
+                currency: { type: "text", value: "USD", isVisible: true },
+            },
+        },
+        {
+            title: "Cloud Migration Services - TechStart",
+            company_id: companyIds[1],
+            contact_id: peopleIds[1],
+            status: "Qualified",
+            custom_fields: {
+                dealValue: { type: "number", value: 25000, isVisible: true },
+                priority: { type: "select", value: "Medium", isVisible: true },
+                probability: { type: "number", value: 50, isVisible: true },
+                currency: { type: "text", value: "USD", isVisible: true },
+            },
+        },
+        {
+            title: "Consulting Package - Global Enterprises",
+            company_id: companyIds[2],
+            contact_id: peopleIds[2],
+            status: "Negotiation",
+            custom_fields: {
+                dealValue: { type: "number", value: 100000, isVisible: true },
+                priority: { type: "select", value: "Critical", isVisible: true },
+                probability: { type: "number", value: 90, isVisible: true },
+                currency: { type: "text", value: "USD", isVisible: true },
+            },
+        },
+        {
+            title: "Product Training - Acme Corp",
+            company_id: companyIds[0],
+            contact_id: peopleIds[3],
+            status: "Lead",
+            custom_fields: {
+                dealValue: { type: "number", value: 5000, isVisible: true },
+                priority: { type: "select", value: "Low", isVisible: true },
+                probability: { type: "number", value: 30, isVisible: true },
+                currency: { type: "text", value: "USD", isVisible: true },
+            },
+        },
+    ];
+
+    const dealIds = [];
+    for (const data of dealsData) {
+        const deal = await deals.create(
+            {
+                organization_id: organizationId,
+                created_by: userId,
+                ...data,
+            },
+            { transaction: crmTransaction }
+        );
+        await registerSeedData("deals", deal.id, organizationId, transaction);
+        dealIds.push(deal.id);
+    }
+
+    // Create pipeline stage history for each deal
+    const stageMap = { "Lead": 1, "Qualified": 2, "Proposal": 3, "Negotiation": 4, "Closed Won": 5 };
+
+    for (let i = 0; i < dealIds.length; i++) {
+        const dealId = dealIds[i];
+        const status = dealsData[i].status;
+        const stageId = stageMap[status];
+
+        if (stageId) {
+            const history = await pipeline_stage_histories.create({
+                pipeline_id: pipeline.id,
+                entity_id: dealId,
+                entity_type: "deal",
+                from_stage_id: null,
+                to_stage_id: stageId,
+                moved_by: userId,
+                moved_at: new Date(),
+                duration_in_stage: 0
+            }, { transaction: crmTransaction });
+            await registerSeedData("pipeline_stage_histories", history.id, organizationId, transaction);
+        }
+    }
+
+    return {
+        pipelines: 1,
+        companies: companyIds.length,
+        peoples: peopleIds.length,
+        deals: dealIds.length,
+    };
+}

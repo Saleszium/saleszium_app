@@ -1,0 +1,69 @@
+services:
+  rtserver:
+    build:
+      context: ./rtserver
+      dockerfile: Dockerfile
+    container_name: rtserver
+    ports:
+      - "5001:5001"
+    env_file:
+      - .env.dev
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      - backendai
+      - redis
+      - postgres
+    networks:
+      - rhinon-network
+    volumes:
+      - ./rtserver:/app
+      - /app/node_modules
+
+  backendai:
+    build:
+      context: ./backendai
+      dockerfile: Dockerfile
+    container_name: backendai
+    ports:
+      - "5002:5002"
+    env_file:
+      - .env.dev
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      - redis
+    networks:
+      - rhinon-network
+    volumes:
+      - ./backendai:/app
+
+  redis:
+    image: redis:7-alpine
+    container_name: redis
+    ports:
+      - "6380:6379"
+    networks:
+      - rhinon-network
+
+  postgres:
+    image: pgvector/pgvector:pg15
+    container_name: postgres
+    ports:
+      - "5435:5435"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=rhinontech_local
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./scripts/init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
+    networks:
+      - rhinon-network
+
+networks:
+  rhinon-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
