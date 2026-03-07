@@ -213,11 +213,11 @@ const triggerTraining = async (req, res) => {
 
     // Call backendai with webhook URL
     const AI_URL = process.env.INTERNAL_AI_API_URL || "http://backendai:5002";
-    const RTSERVER_URL = process.env.INTERNAL_RTSERVER_URL || "http://rtserver:5000";
+    const SZSERVER_URL = process.env.INTERNAL_SZSERVER_URL || "http://sz-server:5000";
 
     const response = await axios.post(`${AI_URL}/api/ingest`, {
       chatbot_id: chatbot.chatbot_id,
-      webhook_url: `${RTSERVER_URL}/api/automations/training-webhook`
+      webhook_url: `${SZSERVER_URL}/api/automations/training-webhook`
     });
 
     // backendai will call webhook which will emit WebSocket events

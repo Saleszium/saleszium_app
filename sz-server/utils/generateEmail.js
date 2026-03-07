@@ -96,7 +96,7 @@ const generateEmailHtml = (confirmationUrl) => `
         <tr>
         <td class="pad" style="width:100%;">
         <div align="center" class="alignment" style="line-height:10px">
-        <div style="max-width: 400px;"><img alt="" height="auto" src="https://rhinontech.com/assets/Logo_Rhinon_Tech_Dark-PD4_9Mk0.png" style="display: block; height: auto; border: 0; width: 100%;" title="" width="400"/></div>
+        <div style="max-width: 400px;"><img alt="Saleszium Logo" height="auto" src="https://saleszium.com/assets/Logo_Saleszium_Dark.png" style="display: block; height: auto; border: 0; width: 100%;" title="" width="400"/></div>
         </div>
         </td>
         </tr>

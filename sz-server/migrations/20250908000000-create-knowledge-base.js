@@ -26,7 +26,7 @@ module.exports = {
       domain: {
         type: Sequelize.STRING,
         allowNull: false,
-        defaultValue: "rhinon.help",
+        defaultValue: "help.saleszium.com",
       },
       created_at: Sequelize.DATE,
       updated_at: Sequelize.DATE,

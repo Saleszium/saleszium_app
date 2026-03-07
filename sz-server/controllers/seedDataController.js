@@ -747,10 +747,10 @@ async function createSeedKnowledgeBase(organizationId, transaction) {
     const articlesData = [
         {
             folder_id: folderIds[0],
-            title: "Welcome to Rhinon",
-            content: `<h2>Getting Started with Rhinon</h2>
+            title: "Welcome to Saleszium",
+            content: `<h2>Getting Started with Saleszium</h2>
 <p>
-  Welcome to <strong>Rhinon</strong>, your all-in-one platform for managing conversations,
+  Welcome to <strong>Saleszium</strong>, your all-in-one platform for managing conversations,
   customers, and workflows in one place.<br>
   This guide is designed to help you quickly understand the core features
   and start using the platform with confidence.
@@ -758,13 +758,13 @@ async function createSeedKnowledgeBase(organizationId, transaction) {
 
 <p>
   From setting up your first chatbot to tracking visitor activity,
-  Rhinon makes it easy to stay connected with your audience.<br>
+  Saleszium makes it easy to stay connected with your audience.<br>
   Use the dashboard to monitor performance, manage leads,
   and automate repetitive tasks efficiently.
 </p>
 
 <p>
-  <strong>Tip:</strong> Explore the settings section to customize Rhinon
+  <strong>Tip:</strong> Explore the settings section to customize Saleszium
   based on your business needs and goals.
 </p>`,
         },
@@ -843,7 +843,7 @@ async function createSeedKnowledgeBase(organizationId, transaction) {
             title: "API Authentication",
             content: `<h3>API Authentication Overview</h3>
 <p>
-  To securely access the Rhinon API, all requests must be authenticated.<br>
+  To securely access the Saleszium API, all requests must be authenticated.<br>
   Authentication ensures that only authorized applications can interact
   with your data and perform actions on your behalf.
 </p>
@@ -1561,7 +1561,7 @@ async function createSeedEmails(organizationId, transaction) {
             conversations: JSON.stringify([
                 {
                     from: "customer1@example.com",
-                    to: "support@rhinon.tech",
+                    to: "support@saleszium.com",
                     subject: "Question about your service",
                     body: "Hi, I have some questions about your platform.",
                     timestamp: Date.now(),
@@ -1580,13 +1580,13 @@ async function createSeedEmails(organizationId, transaction) {
             conversations: JSON.stringify([
                 {
                     from: "customer2@example.com",
-                    to: "support@rhinon.tech",
+                    to: "support@saleszium.com",
                     subject: "Follow up",
                     body: "Thank you for your help earlier!",
                     timestamp: Date.now(),
                 },
                 {
-                    from: "support@rhinon.tech",
+                    from: "support@saleszium.com",
                     to: "customer2@example.com",
                     subject: "Re: Follow up",
                     body: "You're welcome! Let us know if you need anything else.",

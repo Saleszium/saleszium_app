@@ -1,6 +1,6 @@
 #!/bin/bash
 
-BASE=/home/rhinon/nodeserver/rtserver
+BASE=/home/ubuntu/nodeserver/sz-server
 PID=$BASE/log/app.pid
 LOG=$BASE/log/node_service.log
 ERROR=$BASE/log/node_service_error.log

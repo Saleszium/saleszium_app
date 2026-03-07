@@ -384,7 +384,7 @@ const addNewUser = async (req, res) => {
 
     // const customEmail = `${sanitize(first_name)}${sanitize(
     //   last_name
-    // )}.${sanitize(organization.organization_name)}@tickets.rhinontech.com`;
+    // )}.${sanitize(organization.organization_name)}@tickets.saleszium.com`;
 
     const profile = await users_profiles.create({
       user_id: user.id,

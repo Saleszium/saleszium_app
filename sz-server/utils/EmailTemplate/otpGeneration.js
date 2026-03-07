@@ -14,7 +14,7 @@ const otpGeneration = () => `
                     <!-- Header with Logo -->
                     <tr>
                         <td style="background-color: #1e3a8a; padding: 30px; text-align: center; border-radius: 8px 8px 0 0;">
-                            <img src="https://cloudfilesdm.com/postcards/image-1736835666846.png" alt="RhinonTech Logo" style="max-width: 200px; height: auto;">
+                            <img src="https://cloudfilesdm.com/postcards/image-1736835666846.png" alt="Saleszium Logo" style="max-width: 200px; height: auto;">
                         </td>
                     </tr>
                     
@@ -66,7 +66,7 @@ const otpGeneration = () => `
                                 If you didn't request this verification code, please ignore this email.
                             </p>
                             <p style="margin: 0; color: #999999; font-size: 12px; text-align: center;">
-                                © 2025 RhinonTech. All rights reserved.
+                                © 2025 Saleszium. All rights reserved.
                             </p>
                         </td>
                     </tr>

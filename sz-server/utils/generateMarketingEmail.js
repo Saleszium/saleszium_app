@@ -274,7 +274,7 @@ const generateMarketingEmail = () => {
                                         <table border="0" cellpadding="0" cellspacing="0" role="presentation" class="pc-w620-halign-left" align="center" style="border-collapse: separate; border-spacing: 0;">
                                          <tr>
                                           <td valign="top" class="pc-w620-textAlign-left" align="center">
-                                           <a class="pc-font-alt pc-w620-textAlign-left pc-w620-fontSize-14px" href="https://rhinontech.com/plans" target="_blank" style="display: block; text-decoration: none; line-height: 120%; letter-spacing: -0px; font-family: 'Work Sans', Arial, Helvetica, sans-serif; font-size: 16px; font-weight: 500; font-variant-ligatures: normal; color: #ffffff; text-align: center; text-align-last: center;">
+                                           <a class="pc-font-alt pc-w620-textAlign-left pc-w620-fontSize-14px" href="https://saleszium.com/plans" target="_blank" style="display: block; text-decoration: none; line-height: 120%; letter-spacing: -0px; font-family: 'Work Sans', Arial, Helvetica, sans-serif; font-size: 16px; font-weight: 500; font-variant-ligatures: normal; color: #ffffff; text-align: center; text-align-last: center;">
                                             <span>Pricing</span> 
                                            </a>
                                           </td>
@@ -391,7 +391,7 @@ const generateMarketingEmail = () => {
                      <td valign="top" class="pc-w620-padding-0-0-0-0" align="left" style="padding: 0px 0px 0px 0px;">
                       <div class="pc-font-alt" style="text-decoration: none;">
                        <div style="font-size: 15px;line-height: 20px;text-align:left;text-align-last:left;color:#ffffff;font-style:normal;font-weight:700;letter-spacing:-0.2px;font-variant-ligatures:normal;">
-                        <div><span style="font-family: 'Work Sans', Arial, Helvetica, sans-serif; font-size: 15px; line-height: 20px; text-decoration: none; text-transform: none;">Perfect your customer support experience with RhinonTech.</span>
+                        <div><span style="font-family: 'Work Sans', Arial, Helvetica, sans-serif; font-size: 15px; line-height: 20px; text-decoration: none; text-transform: none;">Perfect your customer support experience with Saleszium.</span>
                          <br><span style="font-family: 'Work Sans', Arial, Helvetica, sans-serif; font-weight: 400; font-size: 15px; line-height: 20px; text-decoration: none; text-transform: none;">Enjoy our free trial and discover how we can help you break language barriers, streamline support workflows, and enhance customer satisfaction effortlessly.</span>
                         </div>
                        </div>
@@ -409,13 +409,13 @@ const generateMarketingEmail = () => {
         <table border="0" cellpadding="0" cellspacing="0" role="presentation" align="left" style="border-collapse: separate; border-spacing: 0;">
             <tr>
                 <td valign="middle" align="center" style="border-radius: 85px 85px 85px 85px; background-color: #ffffff; text-align:center; color: #ffffff; padding: 10px 24px 10px 24px; mso-padding-left-alt: 0; margin-left:24px;" bgcolor="#ffffff">
-                                    <a class="pc-font-alt" style="display: inline-block; text-decoration: none; font-variant-ligatures: normal; font-family: 'Work Sans', Arial, Helvetica, sans-serif; text-align: center;" href="https://app.rhinontech.com/auth/signup" target="_blank"><span style="font-size: 16px;line-height: 24px;color:#1e3a8a;letter-spacing:-0.2px;font-weight:500;font-style:normal;display:inline-block;font-variant-ligatures:normal;"><span style="display:inline-block;"><span style="font-family: 'Work Sans', Arial, Helvetica, sans-serif; font-size: 16px; line-height: 24px; text-decoration: none; text-transform: none;">Let’s get trial</span></span></span></a>
+                                    <a class="pc-font-alt" style="display: inline-block; text-decoration: none; font-variant-ligatures: normal; font-family: 'Work Sans', Arial, Helvetica, sans-serif; text-align: center;" href="https://app.saleszium.com/auth/signup" target="_blank"><span style="font-size: 16px;line-height: 24px;color:#1e3a8a;letter-spacing:-0.2px;font-weight:500;font-style:normal;display:inline-block;font-variant-ligatures:normal;"><span style="display:inline-block;"><span style="font-family: 'Work Sans', Arial, Helvetica, sans-serif; font-size: 16px; line-height: 24px; text-decoration: none; text-transform: none;">Let’s get trial</span></span></span></a>
                                 </td>
             </tr>
         </table>
         <![endif]-->
                    <!--[if !mso]><!-- -->
-                   <a class="pc-w620-padding-12-20-12-20" style="display: inline-block; box-sizing: border-box; border-radius: 85px 85px 85px 85px; background-color: #ffffff; padding: 10px 24px 10px 24px; font-family: 'Work Sans', Arial, Helvetica, sans-serif; vertical-align: top; text-align: center; text-align-last: center; text-decoration: none; -webkit-text-size-adjust: none;" href="https://app.rhinontech.com/auth/signup" target="_blank"><span style="font-size: 16px;line-height: 24px;color:#1e3a8a;letter-spacing:-0.2px;font-weight:500;font-style:normal;display:inline-block;font-variant-ligatures:normal;"><span style="display:inline-block;"><span style="font-family: 'Work Sans', Arial, Helvetica, sans-serif; font-size: 16px; line-height: 24px; text-decoration: none; text-transform: none;">Let’s get trial</span></span></span></a>
+                   <a class="pc-w620-padding-12-20-12-20" style="display: inline-block; box-sizing: border-box; border-radius: 85px 85px 85px 85px; background-color: #ffffff; padding: 10px 24px 10px 24px; font-family: 'Work Sans', Arial, Helvetica, sans-serif; vertical-align: top; text-align: center; text-align-last: center; text-decoration: none; -webkit-text-size-adjust: none;" href="https://app.saleszium.com/auth/signup" target="_blank"><span style="font-size: 16px;line-height: 24px;color:#1e3a8a;letter-spacing:-0.2px;font-weight:500;font-style:normal;display:inline-block;font-variant-ligatures:normal;"><span style="display:inline-block;"><span style="font-family: 'Work Sans', Arial, Helvetica, sans-serif; font-size: 16px; line-height: 24px; text-decoration: none; text-transform: none;">Let’s get trial</span></span></span></a>
                    <!--<![endif]-->
                   </th>
                  </tr>
@@ -453,7 +453,7 @@ const generateMarketingEmail = () => {
                      <td valign="top" align="center" style="padding: 0px 0px 0px 0px;">
                       <div class="pc-font-alt" style="text-decoration: none;">
                        <div style="font-size: 28px;line-height: 120%;text-align:center;text-align-last:center;color:#1e3a8a;font-style:normal;font-weight:700;letter-spacing:0px;font-variant-ligatures:normal;">
-                        <div><span style="font-family: 'Work Sans', Arial, Helvetica, sans-serif; font-size: 28px; line-height: 120%; text-decoration: none; text-transform: none;">Why RhinonTech?</span>
+                        <div><span style="font-family: 'Work Sans', Arial, Helvetica, sans-serif; font-size: 28px; line-height: 120%; text-decoration: none; text-transform: none;">Why Saleszium?</span>
                         </div>
                        </div>
                       </div>
@@ -526,13 +526,13 @@ const generateMarketingEmail = () => {
         <table border="0" cellpadding="0" cellspacing="0" role="presentation" align="center" width="306" style="border-collapse: separate; border-spacing: 0; margin-right: auto; margin-left: auto;">
             <tr>
                 <td valign="middle" align="center" style="width: 306px; border-top: 1px solid #243361; border-right: 1px solid #243361; border-bottom: 1px solid #243361; border-left: 1px solid #243361; background-color: transparent; text-align:center; color: #ffffff; padding: 12px 20px 12px 20px; mso-padding-left-alt: 0; margin-left:20px;" bgcolor="transparent">
-                                    <a class="pc-font-alt" style="display: inline-block; text-decoration: none; font-variant-ligatures: normal; font-family: 'Work Sans', Arial, Helvetica, sans-serif; text-align: center;" href="mailto:info@rhinontech.com" target="_blank"><span style="font-size: 16px;line-height: 24px;color:#1e3a8a;letter-spacing:0px;font-weight:500;font-style:normal;display:inline-block;font-variant-ligatures:normal;"><span style="display:inline-block;"><span style="font-family: 'Work Sans', Arial, Helvetica, sans-serif; font-size: 16px; line-height: 24px; text-decoration: none; text-transform: none;">info@rhinontech.com</span></span></span></a>
+                                    <a class="pc-font-alt" style="display: inline-block; text-decoration: none; font-variant-ligatures: normal; font-family: 'Work Sans', Arial, Helvetica, sans-serif; text-align: center;" href="mailto:info@saleszium.com" target="_blank"><span style="font-size: 16px;line-height: 24px;color:#1e3a8a;letter-spacing:0px;font-weight:500;font-style:normal;display:inline-block;font-variant-ligatures:normal;"><span style="display:inline-block;"><span style="font-family: 'Work Sans', Arial, Helvetica, sans-serif; font-size: 16px; line-height: 24px; text-decoration: none; text-transform: none;">info@saleszium.com</span></span></span></a>
                                 </td>
             </tr>
         </table>
         <![endif]-->
                                <!--[if !mso]><!-- -->
-                               <a style="display: inline-block; box-sizing: border-box; border-top: 1px solid #243361; border-right: 1px solid #243361; border-bottom: 1px solid #243361; border-left: 1px solid #243361; background-color: transparent; padding: 12px 20px 12px 20px; width: 306px; font-family: 'Work Sans', Arial, Helvetica, sans-serif; vertical-align: top; text-align: center; text-align-last: center; text-decoration: none; -webkit-text-size-adjust: none; mso-hide: all;" href="mailto:info@rhinontech.com" target="_blank"><span style="font-size: 16px;line-height: 24px;color:#1e3a8a;letter-spacing:0px;font-weight:500;font-style:normal;display:inline-block;font-variant-ligatures:normal;"><span style="display:inline-block;"><span style="font-family: 'Work Sans', Arial, Helvetica, sans-serif; font-size: 16px; line-height: 24px; text-decoration: none; text-transform: none;">info@rhinontech.com</span></span></span></a>
+                               <a style="display: inline-block; box-sizing: border-box; border-top: 1px solid #243361; border-right: 1px solid #243361; border-bottom: 1px solid #243361; border-left: 1px solid #243361; background-color: transparent; padding: 12px 20px 12px 20px; width: 306px; font-family: 'Work Sans', Arial, Helvetica, sans-serif; vertical-align: top; text-align: center; text-align-last: center; text-decoration: none; -webkit-text-size-adjust: none; mso-hide: all;" href="mailto:info@saleszium.com" target="_blank"><span style="font-size: 16px;line-height: 24px;color:#1e3a8a;letter-spacing:0px;font-weight:500;font-style:normal;display:inline-block;font-variant-ligatures:normal;"><span style="display:inline-block;"><span style="font-family: 'Work Sans', Arial, Helvetica, sans-serif; font-size: 16px; line-height: 24px; text-decoration: none; text-transform: none;">info@saleszium.com</span></span></span></a>
                                <!--<![endif]-->
                               </th>
                              </tr>
@@ -1218,7 +1218,7 @@ const generateMarketingEmail = () => {
                                <table align="center" border="0" cellpadding="0" cellspacing="0" role="presentation">
                                 <tr>
                                  <td valign="top">
-                                  <a class="pc-font-alt" href="https://www.linkedin.com/company/rhinontech/" target="_blank" style="text-decoration: none;">
+                                  <a class="pc-font-alt" href="https://www.linkedin.com/company/saleszium/" target="_blank" style="text-decoration: none;">
                                    <img src="https://cloudfilesdm.com/postcards/da5980efe2580dcd4451fb5fe960df47.png" class="" width="32" height="32" style="display: block; border: 0; outline: 0; line-height: 100%; -ms-interpolation-mode: bicubic; width: 32px; height: 32px;" alt="" />
                                   </a>
                                  </td>
@@ -1241,7 +1241,7 @@ const generateMarketingEmail = () => {
                                <table align="center" border="0" cellpadding="0" cellspacing="0" role="presentation">
                                 <tr>
                                  <td valign="top">
-                                  <a class="pc-font-alt" href="https://www.instagram.com/rhinontech/" target="_blank" style="text-decoration: none;">
+                                  <a class="pc-font-alt" href="https://www.instagram.com/saleszium/" target="_blank" style="text-decoration: none;">
                                    <img src="https://cloudfilesdm.com/postcards/d88024b445496250a1fef25606f0eceb.png" class="" width="32" height="32" style="display: block; border: 0; outline: 0; line-height: 100%; -ms-interpolation-mode: bicubic; width: 32px; height: 32px;" alt="" />
                                   </a>
                                  </td>

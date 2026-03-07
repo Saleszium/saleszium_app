@@ -33,7 +33,7 @@ module.exports = (sequelize, DataTypes) => {
     domain: {
       type: DataTypes.STRING,
       allowNull: false,
-      defaultValue: "rhinon.help",
+      defaultValue: "help.saleszium.com",
     },
     theme: {
       type: DataTypes.JSONB,

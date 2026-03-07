@@ -38,7 +38,7 @@ const sendEmailGoogle = async (req, res) => {
 
   try {
     const info = await transporter.sendMail({
-      from: `"Rhinon Tech" <${process.env.EMAIL_USER}>`,
+      from: `"Saleszium" <${process.env.EMAIL_USER}>`,
       to: email,
       subject: `New Contact Form Submission`,
       html: emailContent,
@@ -65,7 +65,7 @@ const sendEmailGoogle = async (req, res) => {
 const sendEmail = async (to, subject, content, isHtml = false) => {
   try {
     const info = await transporter.sendMail({
-      from: `"Rhinon Tech" <${process.env.EMAIL_USER}>`,
+      from: `"Saleszium" <${process.env.EMAIL_USER}>`,
       to,
       subject,
       [isHtml ? "html" : "text"]: content,

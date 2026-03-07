@@ -1,6 +1,5 @@
 provider "aws" {
   region  = "ap-south-1"
-  profile = "saleszium"
 }
 
 resource "aws_s3_bucket" "terraform_state" {

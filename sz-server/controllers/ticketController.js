@@ -648,8 +648,8 @@ const sendTicketReplyEmail = async (req, res) => {
   const originalMessageId = organization.company_email || null;
   const toEmail = ticket.customer.email;
 
-  // -------------- RHINON EMAIL HELPER -----------------
-  const sendRhinonEmail = async (recipientEmail, subject, htmlBody) => {
+  // -------------- SALESZIUM EMAIL HELPER -----------------
+  const sendSalesziumEmail = async (recipientEmail, subject, htmlBody) => {
     // Configure AWS SES client
     const sesClient = new SESClient({
       region: process.env.AWS_REGION || "ap-south-1",
@@ -678,22 +678,22 @@ const sendTicketReplyEmail = async (req, res) => {
     try {
       const command = new SendEmailCommand(params);
       const response = await sesClient.send(command);
-      console.log("RHINON Email sent:", response.MessageId);
+      console.log("SALESZIUM Email sent:", response.MessageId);
       return response;
     } catch (err) {
-      console.error("RHINON email send failed:", err);
+      console.error("SALESZIUM email send failed:", err);
       throw err;
     }
   };
   // ----------------------------------------------------
 
-  // RHINON provider flow
+  // SALESZIUM provider flow
   if (provider === "SUPPORT") {
     try {
-      await sendRhinonEmail(toEmail, `${subject} #${ticket_id}`, message);
+      await sendSalesziumEmail(toEmail, `${subject} #${ticket_id}`, message);
     } catch (err) {
       return res.status(500).json({
-        message: "Failed to send RHINON email",
+        message: "Failed to send SALESZIUM email",
         error: err.message,
       });
     }

@@ -74,7 +74,7 @@ const crypto = require("crypto");
 //     const sanitize = (str) => str.toLowerCase().replace(/[^a-z0-9]/g, "");
 //     const customEmail = `${sanitize(first_name)}${sanitize(
 //       last_name
-//     )}.${sanitize(organization.organization_name)}@tickets.rhinontech.com`;
+//     )}.${sanitize(organization.organization_name)}@tickets.saleszium.com`;
 
 //     await users_profiles.create(
 //       {
@@ -607,7 +607,7 @@ const completeOnboarding = async (req, res) => {
 
     // Helper: generate unique company_email
     const generateUniqueOrgEmail = async (baseOrgName) => {
-      let baseEmail = `support@${sanitize(baseOrgName)}.rhinontech.in`;
+      let baseEmail = `support@${sanitize(baseOrgName)}.saleszium.com`;
       let uniqueEmail = baseEmail;
       let counter = 1;
 
@@ -620,7 +620,7 @@ const completeOnboarding = async (req, res) => {
       ) {
         uniqueEmail = `support@${sanitize(
           baseOrgName
-        )}${counter}.rhinontech.in`;
+        )}${counter}.saleszium.com`;
         counter++;
       }
 
@@ -939,7 +939,7 @@ const previewEmail = async (req, res) => {
     const emailHtml = generateEmailHtml(confirmationUrl);
 
     await sendEmail(
-      "rhinontech@gmail.com",
+      "prabhat@saleszium.com",
       "Confirm your email",
       emailHtml,
       true

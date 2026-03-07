@@ -75,13 +75,13 @@ const linkedInAuthRoutes = require("./routes/linkedin_authRoutes.js");
 const socketHandler = require("./utils/socket.js");
 
 app.get("/", (req, res) => {
-  res.send("Hello, Rhinon Tech Server is LIVE!");
+  res.send("Hello, Saleszium Server is LIVE!");
 });
 
 // Health check endpoint
 app.get("/health", async (req, res) => {
   const healthStatus = {
-    service: "rtserver",
+    service: "sz-server",
     status: "healthy",
     timestamp: new Date().toISOString(),
     checks: {}

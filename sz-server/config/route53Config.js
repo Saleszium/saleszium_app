@@ -15,7 +15,7 @@ const route53Client = new Route53Client({
 // Configuration
 const config = {
     hostedZoneId: "Z02887102VOIX6P1TU1VN",
-    domain: "rhinon.help",
+    domain: "help.saleszium.com",
     ttl: 300,
     targetIP: "3.109.172.202",
 };
@@ -37,17 +37,17 @@ router.get('/check-config', authenticateAPI, async (req, res) => {
         // Test AWS credentials by listing hosted zones
         const command = new ListHostedZonesCommand({});
         const response = await route53Client.send(command);
-        
-        const rhinonZone = response.HostedZones.find(zone => 
-            zone.Name === 'rhinon.help.'
+
+        const salesziumZone = response.HostedZones.find(zone =>
+            zone.Name === 'help.saleszium.com.'
         );
-        
+
         res.json({
             success: true,
             message: 'AWS configuration is valid',
             data: {
-                hostedZoneFound: !!rhinonZone,
-                hostedZoneId: rhinonZone ? rhinonZone.Id.split('/').pop() : null,
+                hostedZoneFound: !!salesziumZone,
+                hostedZoneId: salesziumZone ? salesziumZone.Id.split('/').pop() : null,
                 configuredZoneId: config.hostedZoneId,
                 targetIP: config.targetIP,
                 domain: config.domain
@@ -91,7 +91,7 @@ router.post('/setup-wildcard', authenticateAPI, async (req, res) => {
 
         const command = new ChangeResourceRecordSetsCommand(params);
         const response = await route53Client.send(command);
-        
+
         res.json({
             success: true,
             message: 'Wildcard DNS setup completed',
@@ -117,7 +117,7 @@ router.post('/setup-wildcard', authenticateAPI, async (req, res) => {
 // ============================================
 router.post('/create-subdomain', authenticateAPI, async (req, res) => {
     const { subdomain, targetIP } = req.body;
-    
+
     // Validate input
     if (!subdomain) {
         return res.status(400).json({
@@ -125,7 +125,7 @@ router.post('/create-subdomain', authenticateAPI, async (req, res) => {
             message: 'Subdomain is required'
         });
     }
-    
+
     // Validate subdomain format
     if (!/^[a-z0-9-]{3,30}$/.test(subdomain)) {
         return res.status(400).json({
@@ -133,7 +133,7 @@ router.post('/create-subdomain', authenticateAPI, async (req, res) => {
             message: 'Invalid subdomain format. Use only lowercase letters, numbers, and hyphens (3-30 characters)'
         });
     }
-    
+
     try {
         const params = {
             HostedZoneId: config.hostedZoneId,
@@ -159,7 +159,7 @@ router.post('/create-subdomain', authenticateAPI, async (req, res) => {
 
         const command = new ChangeResourceRecordSetsCommand(params);
         const response = await route53Client.send(command);
-        
+
         res.json({
             success: true,
             message: 'Subdomain created successfully',
@@ -180,7 +180,7 @@ router.post('/create-subdomain', authenticateAPI, async (req, res) => {
                 error: error.message
             });
         }
-        
+
         res.status(500).json({
             success: false,
             message: 'Failed to create subdomain',
@@ -194,14 +194,14 @@ router.post('/create-subdomain', authenticateAPI, async (req, res) => {
 // ============================================
 router.put('/update-subdomain', authenticateAPI, async (req, res) => {
     const { subdomain, newTargetIP } = req.body;
-    
+
     if (!subdomain || !newTargetIP) {
         return res.status(400).json({
             success: false,
             message: 'Subdomain and newTargetIP are required'
         });
     }
-    
+
     try {
         const params = {
             HostedZoneId: config.hostedZoneId,
@@ -227,7 +227,7 @@ router.put('/update-subdomain', authenticateAPI, async (req, res) => {
 
         const command = new ChangeResourceRecordSetsCommand(params);
         const response = await route53Client.send(command);
-        
+
         res.json({
             success: true,
             message: 'Subdomain updated successfully',
@@ -253,14 +253,14 @@ router.put('/update-subdomain', authenticateAPI, async (req, res) => {
 router.delete('/delete-subdomain/:subdomain', authenticateAPI, async (req, res) => {
     const { subdomain } = req.params;
     const { targetIP } = req.query; // Need current IP to delete
-    
+
     if (!subdomain) {
         return res.status(400).json({
             success: false,
             message: 'Subdomain is required'
         });
     }
-    
+
     try {
         const params = {
             HostedZoneId: config.hostedZoneId,
@@ -286,7 +286,7 @@ router.delete('/delete-subdomain/:subdomain', authenticateAPI, async (req, res) 
 
         const command = new ChangeResourceRecordSetsCommand(params);
         const response = await route53Client.send(command);
-        
+
         res.json({
             success: true,
             message: 'Subdomain deleted successfully',
@@ -314,14 +314,14 @@ router.get('/list-subdomains', authenticateAPI, async (req, res) => {
             HostedZoneId: config.hostedZoneId,
             MaxItems: 100
         };
-        
+
         const command = new ListResourceRecordSetsCommand(params);
         const response = await route53Client.send(command);
-        
+
         // Filter for A records that are subdomains
         const subdomains = response.ResourceRecordSets
-            .filter(record => 
-                record.Type === 'A' && 
+            .filter(record =>
+                record.Type === 'A' &&
                 record.Name.endsWith(`.${config.domain}.`) &&
                 record.Name !== `${config.domain}.` &&
                 record.Name !== `www.${config.domain}.`
@@ -333,7 +333,7 @@ router.get('/list-subdomains', authenticateAPI, async (req, res) => {
                 ttl: record.TTL,
                 type: record.Type
             }));
-        
+
         res.json({
             success: true,
             message: 'Subdomains retrieved successfully',
@@ -356,14 +356,14 @@ router.get('/list-subdomains', authenticateAPI, async (req, res) => {
 // ============================================
 router.get('/check-availability/:subdomain', async (req, res) => {
     const { subdomain } = req.params;
-    
+
     if (!subdomain) {
         return res.status(400).json({
             success: false,
             message: 'Subdomain is required'
         });
     }
-    
+
     // Validate subdomain format
     if (!/^[a-z0-9-]{3,30}$/.test(subdomain)) {
         return res.status(400).json({
@@ -372,7 +372,7 @@ router.get('/check-availability/:subdomain', async (req, res) => {
             available: false
         });
     }
-    
+
     try {
         const params = {
             HostedZoneId: config.hostedZoneId,
@@ -380,14 +380,14 @@ router.get('/check-availability/:subdomain', async (req, res) => {
             StartRecordType: 'A',
             MaxItems: 1
         };
-        
+
         const command = new ListResourceRecordSetsCommand(params);
         const response = await route53Client.send(command);
-        
-        const exists = response.ResourceRecordSets.some(record => 
+
+        const exists = response.ResourceRecordSets.some(record =>
             record.Name === `${subdomain}.${config.domain}.`
         );
-        
+
         res.json({
             success: true,
             data: {
@@ -411,21 +411,21 @@ router.get('/check-availability/:subdomain', async (req, res) => {
 // ============================================
 router.post('/batch-create', authenticateAPI, async (req, res) => {
     const { subdomains } = req.body; // Array of {subdomain, targetIP}
-    
+
     if (!Array.isArray(subdomains) || subdomains.length === 0) {
         return res.status(400).json({
             success: false,
             message: 'Subdomains array is required'
         });
     }
-    
+
     if (subdomains.length > 10) {
         return res.status(400).json({
             success: false,
             message: 'Maximum 10 subdomains per batch'
         });
     }
-    
+
     try {
         const changes = subdomains.map(item => ({
             Action: "CREATE",
@@ -440,7 +440,7 @@ router.post('/batch-create', authenticateAPI, async (req, res) => {
                 ]
             }
         }));
-        
+
         const params = {
             HostedZoneId: config.hostedZoneId,
             ChangeBatch: {
@@ -451,7 +451,7 @@ router.post('/batch-create', authenticateAPI, async (req, res) => {
 
         const command = new ChangeResourceRecordSetsCommand(params);
         const response = await route53Client.send(command);
-        
+
         res.json({
             success: true,
             message: `${subdomains.length} subdomains created successfully`,
