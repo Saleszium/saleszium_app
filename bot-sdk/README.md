@@ -1,4 +1,4 @@
-# @rhinon/botsdk
+# @saleszium/botsdk
 
 A lightweight, framework-agnostic JavaScript SDK for integrating Rhinon chatbot into your web applications. Built with TypeScript and React, this SDK provides seamless chatbot integration across various platforms and frameworks.
 
@@ -23,13 +23,13 @@ Install the package using your preferred package manager:
 
 ```bash
 # using npm
-npm install @rhinon/botsdk
+npm install @saleszium/botsdk
 
 # using yarn
-yarn add @rhinon/botsdk
+yarn add @saleszium/botsdk
 
 # using pnpm
-pnpm add @rhinon/botsdk
+pnpm add @saleszium/botsdk
 ```
 
 <br>
@@ -39,11 +39,11 @@ pnpm add @rhinon/botsdk
 ### Basic Usage (Vanilla JavaScript)
 
 ```javascript
-import Rhinontech from '@rhinon/botsdk';
+import Saleszium from '@saleszium/botsdk';
 
 // Initialize when DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
-  Rhinontech({
+  Saleszium({
     app_id: 'YOUR_APP_ID',
     chatbot_config: {
       isBgFade: true
@@ -60,11 +60,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
 ```jsx
 import { useEffect } from 'react';
-import Rhinontech from '@rhinon/botsdk';
+import Saleszium from '@saleszium/botsdk';
 
 export default function Chatbot() {
   useEffect(() => {
-    Rhinontech({
+    Saleszium({
       app_id: 'YOUR_APP_ID',
       chatbot_config: {
         isBgFade: true
@@ -104,11 +104,11 @@ export default function ChatbotWrapper() {
 ```tsx
 // components/Chatbot/Chatbot.tsx
 import { useEffect } from 'react';
-import Rhinontech from '@rhinon/botsdk';
+import Saleszium from '@saleszium/botsdk';
 
 export default function Chatbot() {
   useEffect(() => {
-    Rhinontech({
+    Saleszium({
       app_id: 'YOUR_APP_ID',
       chatbot_config: {
         isBgFade: true
@@ -162,9 +162,9 @@ export class AppComponent implements AfterViewInit {
 
   ngAfterViewInit() {
     if (isPlatformBrowser(this.platformId)) {
-      import('@rhinon/botsdk').then((RhinontechModule) => {
-        const Rhinontech = RhinontechModule.default;
-        Rhinontech({
+      import('@saleszium/botsdk').then((SalesziumModule) => {
+        const Saleszium = SalesziumModule.default;
+        Saleszium({
           app_id: 'YOUR_APP_ID',
           chatbot_config: {
             isBgFade: true
@@ -189,13 +189,13 @@ export class AppComponent implements AfterViewInit {
 
 <script>
 import { onMounted } from 'vue';
-import Rhinontech from '@rhinon/botsdk';
+import Saleszium from '@saleszium/botsdk';
 
 export default {
   name: 'App',
   setup() {
     onMounted(() => {
-      Rhinontech({
+      Saleszium({
         app_id: 'YOUR_APP_ID',
         chatbot_config: {
           isBgFade: true
@@ -214,7 +214,7 @@ export default {
 The SDK accepts the following configuration options:
 
 ```typescript
-interface RhinontechConfig {
+interface SalesziumConfig {
   app_id: string;              // Required: Your unique chatbot app ID
   admin?: boolean;             // Optional: Enable admin mode
   container?: HTMLElement;     // Optional: Custom container element
@@ -228,7 +228,7 @@ interface RhinontechConfig {
 ### Basic Configuration
 
 ```javascript
-Rhinontech({
+Saleszium({
   app_id: 'YOUR_APP_ID',
   chatbot_config: {
     isBgFade: true
@@ -239,7 +239,7 @@ Rhinontech({
 ### Advanced Configuration
 
 ```javascript
-Rhinontech({
+Saleszium({
   app_id: 'YOUR_APP_ID',
   admin: false,
   container: document.getElementById('custom-container'),
@@ -253,12 +253,12 @@ Rhinontech({
 
 ## API Reference
 
-### `Rhinontech(config: RhinontechConfig): ChatBotElement`
+### `Saleszium(config: SalesziumConfig): ChatBotElement`
 
 Initializes and returns a chatbot instance.
 
 **Parameters:**
-- `config` (RhinontechConfig): Configuration object for the chatbot
+- `config` (SalesziumConfig): Configuration object for the chatbot
 
 **Returns:**
 - `ChatBotElement`: The chatbot custom element instance
@@ -280,16 +280,16 @@ Initializes and returns a chatbot instance.
 This package includes TypeScript type definitions. No additional `@types` package is required.
 
 ```typescript
-import Rhinontech, { RhinontechConfig, ChatBotElement } from '@rhinon/botsdk';
+import Saleszium, { SalesziumConfig, ChatBotElement } from '@saleszium/botsdk';
 
-const config: RhinontechConfig = {
+const config: SalesziumConfig = {
   app_id: 'YOUR_APP_ID',
   chatbot_config: {
     isBgFade: true
   }
 };
 
-const chatbot: ChatBotElement = Rhinontech(config);
+const chatbot: ChatBotElement = Saleszium(config);
 ```
 
 <br>
@@ -315,7 +315,7 @@ If you encounter `HTMLElement is not defined` or similar errors:
 
 ## Examples
 
-Check out our [examples repository](https://github.com/rhinontech/botsdk-examples) for complete implementation examples in various frameworks.
+Check out our [examples repository](https://github.com/saleszium/botsdk-examples) for complete implementation examples in various frameworks.
 
 <br>
 
@@ -323,9 +323,9 @@ Check out our [examples repository](https://github.com/rhinontech/botsdk-example
 
 For issues, questions, or contributions:
 
-- 📧 Email: support@rhinontech.com
-- 🐛 Issues: [GitHub Issues](https://github.com/rhinontech/botsdk/issues)
-- 📚 Documentation: [docs.rhinontech.com](https://docs.rhinontech.com)
+- 📧 Email: support@saleszium.com
+- 🐛 Issues: [GitHub Issues](https://github.com/saleszium/botsdk/issues)
+- 📚 Documentation: [docs.saleszium.com](https://docs.saleszium.com)
 
 <br>
 
@@ -343,6 +343,6 @@ Contributions are welcome! Please read our [Contributing Guide](CONTRIBUTING.md)
 
 ---
 
-Made with ❤️ by [Rhinon Tech](https://rhinontech.com)
+Made with ❤️ by [Saleszium](https://saleszium.com)
 
 <!-- trigger release test 2 -->

@@ -3,7 +3,7 @@
 export const LOGOS = {
   primaryLight: 'https://www.saleszium.com/assets/Saleszium_Light_Logo_small.png',
   primaryDark: 'https://www.saleszium.com/assets/Saleszium_Dark_Logo_small.png',
-  rhinonWhite: 'https://www.saleszium.com/assets/Saleszium_Light_Logo.png',
+  salesziumWhite: 'https://www.saleszium.com/assets/Saleszium_Light_Logo.png',
 } as const;
 
 export const AVATARS = {

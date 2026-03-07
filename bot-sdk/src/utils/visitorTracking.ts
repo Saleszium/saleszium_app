@@ -4,7 +4,7 @@
  * Check if the current visitor is returning or first-time
  */
 export const isReturningVisitor = (): boolean => {
-    const hasVisited = localStorage.getItem('rhinon_visitor_returning');
+    const hasVisited = localStorage.getItem('saleszium_visitor_returning');
     return hasVisited === 'true';
 };
 
@@ -12,7 +12,7 @@ export const isReturningVisitor = (): boolean => {
  * Mark visitor as returning for future visits
  */
 export const markVisitorAsReturning = (): void => {
-    localStorage.setItem('rhinon_visitor_returning', 'true');
+    localStorage.setItem('saleszium_visitor_returning', 'true');
 };
 
 /**

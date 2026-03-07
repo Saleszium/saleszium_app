@@ -10,7 +10,7 @@ interface UserState {
   userEmail: string | null;
   sessionId: string | null;
   isEmailAvailable: boolean;
-  
+
   // Actions
   initUser: () => void;
   setUserEmail: (email: string) => void;
@@ -20,7 +20,7 @@ interface UserState {
   getSessionId: () => string;
 }
 
-const generateId = (): string => 
+const generateId = (): string =>
   `${Date.now()}-${Math.random().toString(36).substring(2, 15)}`;
 
 export const useUserStore = create<UserState>()(
@@ -72,7 +72,7 @@ export const useUserStore = create<UserState>()(
       getUserId: () => {
         const state = get();
         if (state.userId) return state.userId;
-        
+
         let userId = localStorage.getItem(STORAGE_KEYS.USER_ID);
         if (!userId) {
           userId = generateId();
@@ -84,7 +84,7 @@ export const useUserStore = create<UserState>()(
       getSessionId: () => {
         const state = get();
         if (state.sessionId) return state.sessionId;
-        
+
         let sessionId = sessionStorage.getItem(STORAGE_KEYS.SESSION_ID);
         if (!sessionId) {
           sessionId = generateId();
@@ -93,8 +93,8 @@ export const useUserStore = create<UserState>()(
         return sessionId;
       },
     }),
-    { 
-      name: 'rhinon-user',
+    {
+      name: 'saleszium-user',
       partialize: (state) => ({ userId: state.userId }), // Only persist userId
     }
   )

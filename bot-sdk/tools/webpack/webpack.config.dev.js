@@ -13,9 +13,9 @@ module.exports = {
   },
   output: {
     path: path.resolve(__dirname, '../../dist'),
-    filename: 'rhinonbot.js',
+    filename: 'salesziumbot.js',
     library: {
-      name: 'RhinonBot',
+      name: 'SalesziumBot',
       type: 'umd',
     },
     globalObject: 'this',
@@ -28,10 +28,10 @@ module.exports = {
       'process.env.NODE_ENV': JSON.stringify('development'),
       'process.env.REACT_APP_NEW_SERVER_API_URL': JSON.stringify(
         process.env.REACT_APP_NEW_SERVER_API_URL ||
-        'https://api.rhinontech.com/api',
+        'https://api.saleszium.com/api',
       ),
       'process.env.REACT_APP_SOCKET_URL': JSON.stringify(
-        process.env.REACT_APP_SOCKET_URL || 'https://api.rhinontech.com/api',
+        process.env.REACT_APP_SOCKET_URL || 'https://api.saleszium.com/api',
       ),
       'process.env.REACT_APP_API_KEY': JSON.stringify(
         process.env.REACT_APP_API_KEY || 'dev_key',
@@ -40,7 +40,7 @@ module.exports = {
         process.env.npm_package_version || '1.0.0',
       ),
       'process.env.REACT_APP_API_URL_AI': JSON.stringify(
-        process.env.REACT_APP_API_URL_AI || 'https://ai.rhinontech.com',
+        process.env.REACT_APP_API_URL_AI || 'https://ai.saleszium.com',
       ),
       // Add any other env vars you need here
     }),
