@@ -6,6 +6,7 @@ variable "ssh_allowed_ips" { type = list(string) }
 variable "instance_type" {}
 variable "key_name" {}
 variable "db_name" {}
+variable "crm_db_name" {}
 variable "db_username" {}
 variable "db_password" { sensitive = true }
 variable "domain" {}

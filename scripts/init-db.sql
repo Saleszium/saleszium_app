@@ -1,5 +1,5 @@
 -- Create main database
-CREATE DATABASE rhinontech_local;
+CREATE DATABASE saleszium_local;
 
 -- Create CRM database
-CREATE DATABASE rhinontech_crm_local;
+CREATE DATABASE saleszium_crm_local;

@@ -62,6 +62,7 @@ module "rds" {
   subnet_ids             = module.vpc.public_subnet_ids
   vpc_security_group_ids = [module.security_groups.rds_sg_id]
   db_name                = var.db_name
+  crm_db_name            = var.crm_db_name
   db_username            = var.db_username
   db_password            = var.db_password
 }

@@ -3,7 +3,7 @@ provider "aws" {
 }
 
 resource "aws_s3_bucket" "terraform_state" {
-  bucket = "saleszium-terraform-state"
+  bucket = "saleszium-tf-state"
   lifecycle { prevent_destroy = true }
 }
 
