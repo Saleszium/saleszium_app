@@ -249,12 +249,12 @@ const WorkflowBuilderContent = ({
         workflowStorage.save(updatedWorkflow);
         toast.success("Workflow saved successfully!");
         console.log(updatedWorkflow.metadata.id);
-        
+
         return updatedWorkflow.metadata.id;
       }
 
       // Fallback: save a transient copy to localStorage
-      localStorage.setItem("rhinon-workflow", JSON.stringify(flow));
+      localStorage.setItem("saleszium-workflow", JSON.stringify(flow));
       toast.success("Workflow saved locally!");
     }
     return undefined;
@@ -270,7 +270,7 @@ const WorkflowBuilderContent = ({
   const onRestore = useCallback(() => {
     const restoreFlow = async () => {
       const flow = JSON.parse(
-        localStorage.getItem("rhinon-workflow") || "null"
+        localStorage.getItem("saleszium-workflow") || "null"
       );
 
       if (flow) {
@@ -328,13 +328,13 @@ const WorkflowBuilderContent = ({
         nds.map((n) =>
           n.id === currentNode.id
             ? {
-                ...n,
-                style: {
-                  ...n.style,
-                  border: "2px solid #22c55e",
-                  boxShadow: "0 0 10px #22c55e",
-                },
-              }
+              ...n,
+              style: {
+                ...n.style,
+                border: "2px solid #22c55e",
+                boxShadow: "0 0 10px #22c55e",
+              },
+            }
             : n
         )
       );

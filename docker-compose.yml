@@ -5,7 +5,7 @@ services:
       dockerfile: Dockerfile
     container_name: sz-server
     ports:
-      - "5001:5001"
+      - "5001:3000"
     env_file:
       - .env.dev
     extra_hosts:

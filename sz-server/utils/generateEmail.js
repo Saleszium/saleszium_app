@@ -96,7 +96,7 @@ const generateEmailHtml = (confirmationUrl) => `
         <tr>
         <td class="pad" style="width:100%;">
         <div align="center" class="alignment" style="line-height:10px">
-        <div style="max-width: 400px;"><img alt="Saleszium Logo" height="auto" src="https://saleszium.com/assets/Logo_Saleszium_Dark.png" style="display: block; height: auto; border: 0; width: 100%;" title="" width="400"/></div>
+        <div style="max-width: 400px;"><img alt="Saleszium Logo" height="auto" src="https://www.saleszium.com/assets/Saleszium_Dark_Logo.png" style="display: block; height: auto; border: 0; width: 100%;" title="" width="400"/></div>
         </div>
         </td>
         </tr>

@@ -21,7 +21,7 @@ export interface SavedWorkflow {
     };
 }
 
-const STORAGE_KEY = "rhinon-workflows";
+const STORAGE_KEY = "saleszium-workflows";
 
 export const workflowStorage = {
     // Get all workflows

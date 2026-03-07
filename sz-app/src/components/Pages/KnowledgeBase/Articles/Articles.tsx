@@ -111,10 +111,10 @@ export default function Articles() {
       const uuid = response.uuid;
 
       // Backend stores only subdomain, reconstruct full URL
-      if (theme?.help_center_url && theme.help_center_url.trim() !== "") {
-        setKbUrl(`https://${theme.help_center_url}.rhinon.help`);
-      } else if (uuid) {
-        setKbUrl(`https://${uuid}.rhinon.help`);
+      if (theme?.help_center_url) {
+        setKbUrl(`https://${theme.help_center_url}.saleszium.help`);
+      } else {
+        setKbUrl(`https://${uuid}.saleszium.help`);
       }
 
       if (response.folders && response.folders.length > 0) {
