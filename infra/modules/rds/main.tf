@@ -28,3 +28,20 @@ resource "aws_db_instance" "main" {
     Environment = var.environment
   }
 }
+
+# Automatically create the CRM database after RDS is ready
+resource "null_resource" "create_crm_db" {
+  depends_on = [aws_db_instance.main]
+
+  provisioner "local-exec" {
+    command = <<EOT
+      PGPASSWORD='${var.db_password}' psql \
+        "postgresql://${var.db_username}@${aws_db_instance.main.address}:5432/${var.db_name}?sslmode=require" \
+        -c "SELECT 1 FROM pg_database WHERE datname='${var.crm_db_name}'" | grep -q 1 || \
+      PGPASSWORD='${var.db_password}' psql \
+        "postgresql://${var.db_username}@${aws_db_instance.main.address}:5432/${var.db_name}?sslmode=require" \
+        -c "CREATE DATABASE ${var.crm_db_name};"
+    EOT
+  }
+}
+
