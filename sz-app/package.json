@@ -1,8 +1,8 @@
 {
   "name": "rhinon",
   "version": "0.1.0",
-  "description": "Rhinon - All-in-one customer engagement platform",
-  "author": "Rhinon Tech",
+  "description": "Saleszium - All-in-one customer engagement platform",
+  "author": "Saleszium",
   "private": true,
   "main": "main.js",
   "scripts": {

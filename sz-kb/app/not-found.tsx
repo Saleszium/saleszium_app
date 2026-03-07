@@ -10,18 +10,18 @@ export default function NotFound() {
                     {/* Placeholder for Company Logo - using text as per prompt or generic icon */}
                     <div className="flex items-center gap-2">
                         <div className="h-8 w-8 bg-blue-900 rounded-md flex items-center justify-center text-white font-bold text-xs">
-                            RT
+                            SZ
                         </div>
                         <span className="font-semibold text-lg tracking-tight">Help Center</span>
                     </div>
                 </div>
                 <a
-                    href="https://rhinon.tech"
+                    href="https://saleszium.com"
                     target="_blank"
                     rel="noreferrer"
                     className="text-sm text-gray-500 hover:text-gray-900 transition-colors"
                 >
-                    Visit rhinon.tech
+                    Visit saleszium.com
                 </a>
             </header>
 
@@ -32,7 +32,7 @@ export default function NotFound() {
                     Page not found
                 </h2>
                 <p className="text-lg text-gray-600 mb-12 max-w-lg">
-                    Sorry, we can’t find the page you are looking for.
+                    Sorry, we can&apos;t find the page you are looking for.
                 </p>
 
                 {/* Helpful Links */}
@@ -46,10 +46,10 @@ export default function NotFound() {
                             </Link>
                         </li>
                         <li>
-                            <a href="#" className="group flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 transition-colors border border-transparent hover:border-gray-200">
+                            <Link href="#" className="group flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 transition-colors border border-transparent hover:border-gray-200">
                                 <span className="text-blue-600 font-medium">See how to set up your Help Center</span>
                                 <ChevronRight className="w-4 h-4 text-gray-400 group-hover:text-blue-600" />
-                            </a>
+                            </Link>
                         </li>
                     </ul>
 
@@ -65,7 +65,7 @@ export default function NotFound() {
 
             {/* Footer */}
             <footer className="py-8 text-center text-sm text-gray-400">
-                &copy; {new Date().getFullYear()} Rhinon Tech. All rights reserved.
+                &copy; {new Date().getFullYear()} Saleszium. All rights reserved.
             </footer>
         </div>
     );

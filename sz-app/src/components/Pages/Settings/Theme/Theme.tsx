@@ -53,9 +53,9 @@ export default function Theme() {
     popupMessage: "Hey, I am Rhinon AI Assistant, How can I help you?",
     greetings: ["Hi there👋", "How can we help?"],
     primaryLogo:
-      "https://rhinontech.s3.ap-south-1.amazonaws.com/rhinon-live/Logo_Rhinon_Tech_White.png",
+      "https://www.saleszium.com/assets/Saleszium_Light_Logo_small.png",
     secondaryLogo:
-      "https://rhinontech.s3.ap-south-1.amazonaws.com/rhinon-live/Logo_Rhinon_Tech_Dark+2.png",
+      "https://www.saleszium.com/assets/Saleszium_Dark_Logo_small.png",
     selectedPage: "Home",
     theme: "system",
     isChatHistory: false,
@@ -88,10 +88,10 @@ export default function Theme() {
         greetings: config.greetings ?? ["Hi there👋", "How can we help?"],
         primaryLogo:
           config.primaryLogo ??
-          "https://rhinontech.s3.ap-south-1.amazonaws.com/rhinon-live/Logo_Rhinon_Tech_White.png",
+          "https://www.saleszium.com/assets/Saleszium_Light_Logo_small.png",
         secondaryLogo:
           config.secondaryLogo ??
-          "https://rhinontech.s3.ap-south-1.amazonaws.com/rhinon-live/Logo_Rhinon_Tech_Dark+2.png",
+          "https://www.saleszium.com/assets/Saleszium_Dark_Logo_small.png",
         selectedPage: "Home",
         theme: config.theme ?? "system",
         isChatHistory: config.isChatHistory ?? true,

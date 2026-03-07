@@ -417,17 +417,17 @@ export default function SignupPage() {
           </div>
           <div className="text-center text-xs text-muted-foreground pt-4">
             You agree to our{" "}
-            <a href="https://rhinon.tech/terms-and-conditions" className="text-primary hover:underline">
+            <a href="https://saleszium.com/terms-and-conditions" className="text-primary hover:underline">
               Terms of Use
             </a>{" "}
             and{" "}
-            <a href="https://rhinon.tech/terms-and-conditions" className="text-primary hover:underline">
+            <a href="https://saleszium.com/terms-and-conditions" className="text-primary hover:underline">
               Privacy Policy
             </a>
           </div>
           <div className="text-center text-xs text-muted-foreground pt-3">
             powered by{" "}
-            <span className="font-semibold text-foreground">Rhinon Tech</span>
+            <span className="font-semibold text-foreground">Saleszium</span>
           </div>
         </form>
       </div>

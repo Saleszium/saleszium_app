@@ -18,8 +18,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Rhinon Tech",
-  description: "Rhinon Tech - Your AI Assistant",
+  title: "Saleszium",
+  description: "Saleszium - Your AI Assistant",
 };
 
 export default function RootLayout({

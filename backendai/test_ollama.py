@@ -48,7 +48,7 @@ def test_ollama_with_system():
     try:
         ollama = get_ai_provider("ollama")
         
-        system = "You are a helpful customer support assistant for Rhinon Tech, a customer engagement platform."
+        system = "You are a helpful customer support assistant for Saleszium, a customer engagement platform."
         prompt = "How can I reset my password?"
         
         print(f"\n📋 System: {system}")

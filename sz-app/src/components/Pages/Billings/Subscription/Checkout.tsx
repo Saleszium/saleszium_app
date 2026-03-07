@@ -155,7 +155,7 @@ export default function Checkout() {
                 key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
                 amount: values.amount,
                 currency: values.currency,
-                name: "RhinonTech",
+                name: "Saleszium",
                 description: "Subscription Payment",
                 image: logo,
                 order_id,

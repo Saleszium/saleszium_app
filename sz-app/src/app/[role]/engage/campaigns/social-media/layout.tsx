@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Social Media Campaigns - Rhinontech",
+  title: "Social Media Campaigns - Saleszium",
   description:
     "Manage your social media campaigns across LinkedIn and other platforms.",
 };

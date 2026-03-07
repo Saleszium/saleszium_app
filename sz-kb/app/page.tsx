@@ -49,7 +49,7 @@ export async function generateMetadata(): Promise<Metadata> {
   }
 
   return {
-    title: theme.seo.title || "Rhinon Tech | Knowledge Base",
+    title: theme.seo.title || "Saleszium | Knowledge Base",
     description: theme.seo.description || "Knowledge Base",
     icons: favicon ? [
       {
@@ -58,7 +58,7 @@ export async function generateMetadata(): Promise<Metadata> {
       },
     ] : undefined,
     openGraph: {
-      title: theme.seo.title || "Rhinon Tech | Knowledge Base",
+      title: theme.seo.title || "Saleszium | Knowledge Base",
       description: theme.seo.description || "Knowledge Base",
       images: previewImage ? [{ url: previewImage }] : undefined,
     },
