@@ -541,10 +541,10 @@ export const DEFAULT_CONFIG: ChatbotConfig = {
 
 // src/constants/urls.ts
 export const LOGOS = {
-  primaryLight: 'https://rhinontech.s3.ap-south-1.amazonaws.com/rhinon-live/Logo_Rhinon_Tech_White.png',
-  primaryDark: 'https://rhinontech.s3.ap-south-1.amazonaws.com/rhinon-live/Logo_Rhinon_Tech_Dark+2.png',
-  supportAvatar: 'https://rhinontech.s3.ap-south-1.amazonaws.com/rhinon-live/support_avatar.png',
-  botAvatar: 'https://rhinontech.s3.ap-south-1.amazonaws.com/rhinon-live/rhinonbot.png',
+  primaryLight: 'https://www.saleszium.com/assets/Saleszium_Light_Logo_small.png',
+  primaryDark: 'https://www.saleszium.com/assets/Saleszium_Dark_Logo_small.png',
+  supportAvatar: 'https://www.saleszium.com/assets/support_avatar.png',
+  botAvatar: 'https://www.saleszium.com/assets/bot.png',
 };
 ```
 

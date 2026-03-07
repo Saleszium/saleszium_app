@@ -6,6 +6,7 @@ import { Loader } from '@/components/common';
 import type { ChatbotConfig, ConversationItem, ChatHistoryScreenProps } from '@/types';
 import { getConversationByUserId } from '@/services/chat';
 import { resolveS3Key } from '@/utils/s3KeyResolver';
+import { AVATARS } from '@/constants/urls';
 
 const ChatHistoryScreen: React.FC<ChatHistoryScreenProps> = ({
   isFreePlan,
@@ -203,12 +204,12 @@ const ChatHistoryScreen: React.FC<ChatHistoryScreenProps> = ({
                       />
                     ) : chat.title === 'Support Chat' || chat.type === 'support' ? (
                       <img
-                        src='https://rhinontech.s3.ap-south-1.amazonaws.com/rhinon-live/support_avatar.png'
+                        src={AVATARS.SUPPORT}
                         alt='support profile'
                       />
                     ) : (
                       <img
-                        src='https://rhinontech.s3.ap-south-1.amazonaws.com/rhinon-live/rhinonbot.png'
+                        src={AVATARS.BOT}
                         alt="bot"
                       />
                     )}

@@ -186,10 +186,10 @@ export function useMessengerState(
                 : ['Hi there👋', 'How can we help?'],
               primaryLogo:
                 cfg.primaryLogo ||
-                'https://rhinontech.s3.ap-south-1.amazonaws.com/rhinon-live/Logo_Rhinon_Tech_White.png',
+                'https://www.saleszium.com/assets/Saleszium_Light_Logo_small.png',
               secondaryLogo:
                 cfg.secondaryLogo ||
-                'https://rhinontech.s3.ap-south-1.amazonaws.com/rhinon-live/Logo_Rhinon_Tech_Dark+2.png',
+                'https://www.saleszium.com/assets/Saleszium_Dark_Logo_small.png',
               preChatForm: formResponse.pre_chat_form,
               postChatForm: formResponse.post_chat_form,
               ticketForm: formResponse.ticket_form,

@@ -73,14 +73,12 @@ function autoInit() {
   if (!manuallyInitialized && !document.querySelector('chat-bot')) {
     if (process.env.NODE_ENV === 'development') {
       const defaultConfig = {
-        app_id: 'ICMY0M',
+        app_id: 'F6J5S6',
         // admin: true,
         // chatbot_config: {
         //   isBgFade: false,
         //   isBackgroundImage: true,
         //   selectedPage: 'Home',
-        //   backgroundImage:
-        //     'https://rhinontech.s3.ap-south-1.amazonaws.com/new-rhinontech/attachments/Screenshot%202025-09-10%20141134-1758786082229.png',
         //   primaryColor: '#272196f5',
         //   secondaryColor: '#f3f6ff',
         //   chatbotName: 'Rhinon',
@@ -88,9 +86,9 @@ function autoInit() {
         //   popupMessage: 'Hey, I am Rhinon AI Assistant, How can I help you?',
         //   greetings: ['Hi there👋', 'How can we help?'],
         //   primaryLogo:
-        //     'https://rhinontech.s3.ap-south-1.amazonaws.com/rhinon-live/Logo_Rhinon_Tech_White.png',
+        //     'https://www.saleszium.com/assets/Saleszium_Dark_Logo_small.png',
         //   secondaryLogo:
-        //     'https://rhinontech.s3.ap-south-1.amazonaws.com/rhinon-live/Logo_Rhinon_Tech_Dark+2.png',
+        //     'https://www.saleszium.com/assets/Saleszium_Dark_Logo_small.png',
 
         //   preChatForm: [
         //     {

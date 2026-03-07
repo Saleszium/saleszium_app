@@ -41,8 +41,7 @@ export const useConfigStore = create<ConfigState>()(
         isFreePlan: false,
         currentPlan: 'Trail',
         isBackgroundImage: false,
-        backgroundImage:
-          'https://rhinontech.s3.ap-south-1.amazonaws.com/new-rhinontech/attachments/Screenshot%202025-09-10%20141134-1758786082229.png',
+        backgroundImage:'',
         isBgFade: true,
         primaryColor: '#1403ac',
         secondaryColor: '#f3f6ff',
@@ -51,9 +50,9 @@ export const useConfigStore = create<ConfigState>()(
         popupMessage: 'Hey, I am Rhinon AI Assistant, How can I help you?',
         greetings: ['Hi there👋', 'How can we help?'],
         primaryLogo:
-          'https://rhinontech.s3.ap-south-1.amazonaws.com/rhinon-live/Logo_Rhinon_Tech_White.png',
+          'https://www.saleszium.com/assets/Saleszium_Light_Logo_small.png',
         secondaryLogo:
-          'https://rhinontech.s3.ap-south-1.amazonaws.com/rhinon-live/Logo_Rhinon_Tech_Dark+2.png',
+          'https://www.saleszium.com/assets/Saleszium_Dark_Logo_small.png',
         preChatForm: [
           {
             id: 'email-1757579831083',

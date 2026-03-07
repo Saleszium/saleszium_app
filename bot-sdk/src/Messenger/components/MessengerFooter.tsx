@@ -12,10 +12,10 @@ export const MessengerFooter: React.FC<MessengerFooterProps> = memo(({ effective
       <img
         src={
           effectiveTheme === 'dark'
-            ? 'https://rhinon.tech/assets/rhinonlogo.png'
-            : 'https://rhinontech.s3.ap-south-1.amazonaws.com/rhinon-live/Logo_Rhinon_Tech_Dark+2.png'
+            ? 'https://www.saleszium.com/assets/Saleszium_Light_Logo.png'
+            : 'https://www.saleszium.com/assets/Saleszium_Dark_Logo.png'
         }
-        alt='Rhinon Logo'
+        alt='Saleszium Logo'
         style={{ width: 50 }}
         loading='lazy'
       />

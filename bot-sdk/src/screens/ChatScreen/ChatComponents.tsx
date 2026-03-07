@@ -26,6 +26,7 @@ import type { Message } from '@/types';
 import { saveCustomerPhone } from '@/services/config';
 import { getSecureViewUrl } from '@/services/chat/fileService';
 import { SecureImage } from '@/components/common';
+import { AVATARS } from '@/constants/urls';
 
 export type { Message };
 
@@ -120,12 +121,12 @@ export const ChatHeader: React.FC<{
           <div className='avatar'>
             {isSpeakingWithRealPerson ? (
               <SecureImage
-                src={supportImage || 'https://rhinontech.s3.ap-south-1.amazonaws.com/rhinon-live/support_avatar.png'}
+                src={supportImage || AVATARS.SUPPORT}
                 alt={supportName}
               />
             ) : (
               <img
-                src='https://rhinontech.s3.ap-south-1.amazonaws.com/rhinon-live/rhinonbot.png'
+                src={AVATARS.BOT}
                 alt='bot'
               />
             )}
@@ -417,7 +418,7 @@ export const MessageItem: React.FC<{
       <div key={index} className='message bot'>
         <div className='message-avatar'>
           <SecureImage
-            src={supportImage || 'https://rhinontech.s3.ap-south-1.amazonaws.com/rhinon-live/rhinonbot.png'}
+            src={supportImage || AVATARS.BOT}
             alt='Support'
           />
         </div>
@@ -526,7 +527,7 @@ export const MessageItem: React.FC<{
       <div key={index} className='message bot'>
         <div className='message-avatar'>
           <SecureImage
-            src={supportImage || 'https://rhinontech.s3.ap-south-1.amazonaws.com/rhinon-live/support_avatar.png'}
+            src={supportImage || AVATARS.SUPPORT}
             alt='Support'
           />
         </div>
@@ -668,7 +669,7 @@ export const MessageItem: React.FC<{
         <div style={{ display: 'flex', gap: '8px', maxWidth: '85%' }}>
           <div className='message-avatar'>
             <SecureImage
-              src={supportImage || 'https://rhinontech.s3.ap-south-1.amazonaws.com/rhinon-live/support_avatar.png'}
+              src={supportImage || AVATARS.SUPPORT}
               alt='Support'
             />
           </div>
@@ -790,12 +791,12 @@ export const MessageItem: React.FC<{
         <div className='message-avatar'>
           {msg.role === 'support' ? (
             <SecureImage
-              src={supportImage || 'https://rhinontech.s3.ap-south-1.amazonaws.com/rhinon-live/support_avatar.png'}
+              src={supportImage || AVATARS.SUPPORT}
               alt='Support'
             />
           ) : (
             <img
-              src='https://rhinontech.s3.ap-south-1.amazonaws.com/rhinon-live/rhinonbot.png'
+              src={AVATARS.BOT}
               alt='bot'
             />
           )}
@@ -851,7 +852,7 @@ export const TypingIndicator: React.FC<{
           <img src={supportImage} alt={'Bot'} />
         ) : (
           <img
-            src='https://rhinontech.s3.ap-south-1.amazonaws.com/rhinon-live/rhinonbot.png'
+            src={AVATARS.BOT}
             alt='bot'
           />
         )}

@@ -1,14 +1,14 @@
 // Static URLs and CDN paths
 
 export const LOGOS = {
-  primaryLight: 'https://rhinontech.s3.ap-south-1.amazonaws.com/rhinon-live/Logo_Rhinon_Tech_White.png',
-  primaryDark: 'https://rhinontech.s3.ap-south-1.amazonaws.com/rhinon-live/Logo_Rhinon_Tech_Dark+2.png',
-  rhinonWhite: 'https://rhinon.tech/assets/rhinonlogo.png',
+  primaryLight: 'https://www.saleszium.com/assets/Saleszium_Light_Logo_small.png',
+  primaryDark: 'https://www.saleszium.com/assets/Saleszium_Dark_Logo_small.png',
+  rhinonWhite: 'https://www.saleszium.com/assets/Saleszium_Light_Logo.png',
 } as const;
 
 export const AVATARS = {
-  SUPPORT: 'https://rhinontech.s3.ap-south-1.amazonaws.com/rhinon-live/support_avatar.png',
-  BOT: 'https://rhinontech.s3.ap-south-1.amazonaws.com/rhinon-live/rhinonbot.png',
+  SUPPORT: 'https://www.saleszium.com/assets/support_avatar.png',
+  BOT: 'https://www.saleszium.com/assets/bot.png',
   DEFAULT_USER: 'https://img.freepik.com/premium-photo/beautiful-woman-with-natural-makeup-women-with-clean-fresh-skin-dark-hear-blue-eyes_150254-452.jpg?semt=ais_hybrid&w=740',
 } as const;
 

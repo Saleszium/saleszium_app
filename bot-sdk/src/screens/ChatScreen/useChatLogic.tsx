@@ -94,7 +94,7 @@ export const useChatLogic = ({
     const unlock = () => {
       try {
         speechSynthesis.getVoices();
-        audioRef.current = new Audio('https://rhinontech.s3.ap-south-1.amazonaws.com/rhinon-live/confident-543-1.mp3');
+        audioRef.current = new Audio('https://www.saleszium.com/assets/confident-543.mp3');
         audioRef.current.volume = 0.7;
         audioRef.current.load();
 

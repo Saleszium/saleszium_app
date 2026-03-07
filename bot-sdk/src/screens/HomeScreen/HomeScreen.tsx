@@ -18,6 +18,7 @@ import { getTicketsStatus, updateTicketRating } from '@/services/ticket';
 // Assets
 import svgIcons from '@assets/svgIcons';
 import { resolveS3Key, getInitialSrc } from '@/utils/s3KeyResolver';
+import { AVATARS } from '@/constants/urls';
 
 interface IConversationIds {
   conversation_id: string;
@@ -550,14 +551,14 @@ const HomeScreen: React.FC<HomeScreenProps> = ({
                   />
                 ) : conversationIds?.title === 'Support Chat' || conversationIds?.type === 'support' ? (
                   <img
-                    src='https://rhinontech.s3.ap-south-1.amazonaws.com/rhinon-live/support_avatar.png'
+                    src={AVATARS.SUPPORT}
                     width={50}
                     style={{ borderRadius: '8px' }}
                     alt='support profile'
                   />
                 ) : (
                   <img
-                    src='https://rhinontech.s3.ap-south-1.amazonaws.com/rhinon-live/rhinonbot.png'
+                    src={AVATARS.BOT}
                     width={50}
                     style={{ borderRadius: '8px' }}
                     alt="bot"

@@ -429,7 +429,7 @@ const Voice: React.FC<VoiceScreenProps> = ({ appId, onButtonClick, isAdmin, user
       >
         Talk to 
         <img
-          src='https://rhinontech.s3.ap-south-1.amazonaws.com/rhinon-live/rhinonbot2.png'
+          src='https://www.saleszium.com/assets/bot.png'
           alt='artical-img'
           width={50}
           style={{ borderRadius: '8px', marginTop:'-10px'  }}
