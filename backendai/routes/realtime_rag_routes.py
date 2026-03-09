@@ -200,7 +200,8 @@ async def generate_realtime_session(request: RealtimeSessionRequest):
                 f"4. FIRST: Call 'handoff_to_support' with urgency='later' to save lead.\n"
                 f"5. THEN ASK: 'Would you like to connect with an agent right now?'\n"
                 f"6. IF YES: Call 'handoff_to_support' AGAIN with urgency='immediate'.\n"
-                f"7. IF NO: Say 'Okay, our team will contact you soon!'"
+                f"7. IF NO: Say 'Okay, our team will contact you soon!'\n"
+                f"8. CRITICAL: NEVER output the text 'handoff_to_support' or the collected user details in your chat response. Perform the tool call silently."
             )
             
         else:
@@ -333,7 +334,8 @@ async def generate_realtime_session(request: RealtimeSessionRequest):
                         f"4. FIRST: Call 'handoff_to_support' with urgency='later' to save lead.\n"
                         f"5. THEN ASK: 'Would you like to connect with an agent right now?'\n"
                         f"6. IF YES: Call 'handoff_to_support' AGAIN with urgency='immediate'.\n"
-                        f"7. IF NO: Say 'Okay, our team will contact you soon!'"
+                        f"7. IF NO: Say 'Okay, our team will contact you soon!'\n"
+                        f"8. CRITICAL: NEVER output the text 'handoff_to_support' or the collected user details in your chat response. Perform the tool call silently."
                     )
              else:
                 print(f"⚠️ DEBUG: No form_config found for chatbot_id={chatbot_id}")

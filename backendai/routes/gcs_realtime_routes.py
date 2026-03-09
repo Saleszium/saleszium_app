@@ -284,7 +284,8 @@ async def gcs_generate_realtime_session(request: RealtimeSessionRequest):
                 f"4. FIRST: Call 'handoff_to_support' with urgency='later' to save lead.\n"
                 f"5. THEN ASK: 'Would you like to connect with an agent right now?'\n"
                 f"6. IF YES: Call 'handoff_to_support' AGAIN with urgency='immediate'.\n"
-                f"7. IF NO: Say 'Okay, our team will contact you soon!'"
+                f"7. IF NO: Say 'Okay, our team will contact you soon!'\n"
+                f"8. CRITICAL: NEVER output the text 'handoff_to_support' or the collected user details in your chat response. Perform the tool call silently."
             )
             
         else:
@@ -402,6 +403,7 @@ async def gcs_generate_realtime_session(request: RealtimeSessionRequest):
                 f"3. AFTER saving, ASK the user: 'I have added you to our priority queue. would you like to connect with a support agent immediately?'\n"
                 f"4. IF USER SAYS YES: Call 'handoff_to_support' AGAIN with urgency='immediate'.\n"
                 f"5. IF USER SAYS NO: Say 'Great! Our team will reach out to you shortly.'\n"
+                f"6. CRITICAL: NEVER output the text 'handoff_to_support' or the collected user details in your chat response. Perform the tool call silently.\n"
             )
 
         

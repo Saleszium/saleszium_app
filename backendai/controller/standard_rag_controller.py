@@ -547,6 +547,7 @@ class StandardRAGController:
                     f"3. AFTER saving, ASK the user: 'I have added you to our priority queue. would you like to connect with a support agent immediately?'\n"
                     f"4. IF USER SAYS YES: Call 'handoff_to_support' AGAIN with urgency='immediate'.\n"
                     f"5. IF USER SAYS NO: Say 'Great! Our team will reach out to you shortly.'\n"
+                    f"6. CRITICAL: NEVER output the text 'handoff_to_support' or the collected user details in your chat response. Perform the tool call silently.\n"
                 )
 
         # 3. Manage Thread/Conversation
