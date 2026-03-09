@@ -128,8 +128,8 @@ export const evaluateTargeting = (
 ): boolean => {
     const { targeting } = campaign;
 
-    // Check if campaign is active
-    if (campaign.status !== 'active') {
+    // Check if campaign is active (allow all in development for testing)
+    if (campaign.status !== 'active' && process.env.NODE_ENV !== 'development') {
         return false;
     }
 

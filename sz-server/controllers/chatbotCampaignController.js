@@ -1,4 +1,5 @@
 const { chatbots, chatbot_campaigns } = require("../models");
+const { generateSignedDownloadUrl } = require("./awsController");
 
 /**
  * Get all campaigns for the authenticated organization
@@ -44,11 +45,23 @@ const getAllCampaignsForChatbot = async (req, res) => {
 
     try {
         const campaigns = await chatbot_campaigns.findAll({
-            where: { organization_id: chatbot.organization_id },
+            where: { organization_id: chatbot.organization_id }, // Removed status: "active" for development/testing
             order: [["created_at", "DESC"]],
         });
 
-        return res.status(200).json(campaigns);
+        // Resolve secure image keys to signed URLs for the public widget
+        const resolvedCampaigns = await Promise.all(campaigns.map(async (camp) => {
+            const campaignData = camp.toJSON();
+            if (campaignData.content?.hasImage && campaignData.content.media?.src) {
+                const signedUrl = await generateSignedDownloadUrl(campaignData.content.media.src);
+                if (signedUrl) {
+                    campaignData.content.media.src = signedUrl;
+                }
+            }
+            return campaignData;
+        }));
+
+        return res.status(200).json(resolvedCampaigns);
     } catch (error) {
         console.error("Error fetching campaigns:", error.message);
         return res.status(500).json({ error: "Internal server error" });

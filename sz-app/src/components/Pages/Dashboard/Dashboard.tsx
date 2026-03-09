@@ -394,8 +394,9 @@ export default function ModernDashboard() {
           <div className="max-w-7xl mx-auto py-10">
             <div className="mb-8">
               <div className="flex items-center gap-6 mb-6">
-                <div className="w-16 h-16 bg-primary rounded-2xl flex items-center justify-center shadow-lg">
-                  <Sparkles className="w-8 h-8 text-primary-foreground" />
+                <div className="w-16 h-16 bg-primary rounded-2xl flex items-center justify-center shadow-lg p-2">
+                  {/* <Sparkles className="w-8 h-8 text-primary-foreground" /> */}
+                  <img src="https://www.saleszium.com/assets/Saleszium_Light_Logo_small.png" alt="" />
                 </div>
                 <div className="flex-1">
                   <h1 className="text-4xl font-bold text-foreground mb-2">
@@ -566,8 +567,8 @@ export default function ModernDashboard() {
                                 animate={{ rotate: isOpen ? 180 : 0 }}
                                 transition={{ duration: 0.3 }}
                                 className={`p-2.5 rounded-lg ${isOpen
-                                    ? "bg-primary/10 text-primary"
-                                    : "bg-muted text-muted-foreground"
+                                  ? "bg-primary/10 text-primary"
+                                  : "bg-muted text-muted-foreground"
                                   }`}>
                                 <ChevronDown className="w-4 h-4" />
                               </motion.div>

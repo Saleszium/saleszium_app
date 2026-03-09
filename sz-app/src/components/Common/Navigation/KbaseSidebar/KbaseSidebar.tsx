@@ -7,6 +7,18 @@ import { ChevronDown } from "lucide-react";
 import { useState, useEffect } from "react";
 import Cookies from "js-cookie";
 
+type SidebarItem = {
+  id: string;
+  label: string;
+  isIcon: boolean;
+  path?: string;
+  submenu?: {
+    id: string;
+    label: string;
+    path: string;
+  }[];
+};
+
 export default function KbaseSidebar({
   children,
 }: Readonly<{
@@ -54,7 +66,7 @@ export default function KbaseSidebar({
     }));
   };
 
-  const sidebarItems = [
+  const sidebarItems: SidebarItem[] = [
     {
       id: "articles",
       label: "Articles",
@@ -77,18 +89,18 @@ export default function KbaseSidebar({
         },
       ],
     },
-    {
-      id: "help-center",
-      label: "Help Center",
-      isIcon: false,
-      path: `${BASE_PATH}/help-center`,
-    },
-    {
-      id: "reports",
-      label: "Reports",
-      isIcon: false,
-      path: `${BASE_PATH}/reports`,
-    },
+    // {
+    //   id: "help-center",
+    //   label: "Help Center",
+    //   isIcon: false,
+    //   path: `${BASE_PATH}/help-center`,
+    // },
+    // {
+    //   id: "reports",
+    //   label: "Reports",
+    //   isIcon: false,
+    //   path: `${BASE_PATH}/reports`,
+    // },
   ];
 
   return (
@@ -100,7 +112,7 @@ export default function KbaseSidebar({
         })}
       >
         <div className="flex items-center justify-between h-[60px] p-4 bg-sidebar">
-          <h2 className="text-lg font-semibold">Knowledge Base</h2>
+          <h2 className="text-lg font-semibold">FAQs</h2>
         </div>
 
         <ScrollArea className="flex-1 h-0">
@@ -116,7 +128,7 @@ export default function KbaseSidebar({
                   <div
                     className={cn(
                       "flex cursor-pointer items-center justify-between gap-2 rounded-lg p-2 px-3 text-sm transition-colors hover:bg-accent",
-                      pathName.includes(item.path) &&
+                      item.path && pathName.includes(item.path) &&
                       !(
                         item.submenu &&
                         item.submenu.some((sub) =>
@@ -128,7 +140,7 @@ export default function KbaseSidebar({
                     onClick={() => {
                       if (item.submenu) {
                         toggleSubmenu(item.id);
-                      } else {
+                      } else if (item.path) {
                         router.push(item.path);
                       }
                     }}

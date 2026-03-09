@@ -94,18 +94,18 @@ const allNavItems = {
     },
     {
       id: "view_knowledge_base",
-      title: "Knowledge Base",
+      title: "FAQs",
       path: "knowledge-base",
       icon: BookOpenIcon,
       isExternal: false,
     },
-    {
-      id: "team_space",
-      title: "Spaces",
-      path: "spaces",
-      icon: CollaborationIcon,
-      isExternal: false,
-    },
+    // {
+    //   id: "team_space",
+    //   title: "Spaces",
+    //   path: "spaces",
+    //   icon: CollaborationIcon,
+    //   isExternal: false,
+    // },
   ],
   navFooter: [
     {

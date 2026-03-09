@@ -73,7 +73,7 @@ function autoInit() {
   if (!manuallyInitialized && !document.querySelector('chat-bot')) {
     if (process.env.NODE_ENV === 'development') {
       const defaultConfig = {
-        app_id: 'F6J5S6',
+        app_id: 'BFOQJV',
         // admin: true,
         // chatbot_config: {
         //   isBgFade: false,

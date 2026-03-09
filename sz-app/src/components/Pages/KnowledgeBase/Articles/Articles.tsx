@@ -301,14 +301,14 @@ export default function Articles() {
           />
 
           <div className="flex items-center gap-5">
-            <p
+            {/* <p
               onClick={() => window.open(kbUrl || `/kb`, "_blank")}
               className="text-sm font-medium hover:text-blue-800 underline cursor-pointer"
             >
               {kbUrl
                 ? kbUrl.replace("https://", "").replace("http://", "")
                 : "Your Knowledge Base"}
-            </p>
+            </p> */}
             <Button onClick={() => setIsCreateTopicOpen(true)}>
               <Plus className="h-4 w-4 mr-2" />
               Add Topic

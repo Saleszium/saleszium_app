@@ -70,7 +70,7 @@ export function SiteHeader() {
               {/* <WorkTracker /> */}
               <NotificationBell />
               <SeedDataButton />
-              <TeamChatDrawer />
+              {/* <TeamChatDrawer /> */}
               <AiHelp />
             </>
           )}

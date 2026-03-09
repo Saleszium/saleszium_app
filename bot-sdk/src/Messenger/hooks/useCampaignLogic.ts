@@ -69,8 +69,10 @@ export function useCampaignLogic({
       try {
         const response = await getCampaignsChatbot(appId);
         if (response && response.length > 0) {
-          // Filter only active campaigns
-          campaignsRef.current = response.filter((c: Campaign) => c.status === 'active');
+          // Filter active campaigns (allow all in development for testing)
+          campaignsRef.current = response.filter((c: Campaign) =>
+            process.env.NODE_ENV === 'development' ? true : c.status === 'active'
+          );
           // Initial check immediately after fetch
           checkCampaigns();
         }

@@ -17,7 +17,7 @@ export default function KbLayout({
       <header className="flex items-center z-20 sticky top-0 justify-between px-6 py-4 bg-white border-b border-gray-800">
         <div className="flex items-center gap-3">
           <img
-            src="https://www.saleszium.com/assets/Saleszium_Dark_Logo.png"
+            src="https://www.saleszium.com/assets/Saleszium_Dark_Logo_small.png"
             alt="Saleszium Logo"
             className="w-8 h-8 object-contain"
           />
