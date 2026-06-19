@@ -39,7 +39,7 @@ jobs:
           if [ "$BRANCH_NAME" = "main" ]; then
             PACKAGE_NAME="@rhinon/botsdk"
           elif [ "$BRANCH_NAME" = "beta" ]; then
-            PACKAGE_NAME="@rhinon/botsdk-test"
+            PACKAGE_NAME="@rhinon/botsdk"
           else
             echo "Branch $BRANCH_NAME is not configured for automatic release."
             exit 1
