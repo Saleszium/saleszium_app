@@ -97,6 +97,9 @@ export function PerformanceAudit({ chatbotId }: SeoPerformanceProps) {
   const [performanceTriggered, setPerformanceTriggered] = useState(false);
   const [remainingTime, setRemainingTime] = useState<number | null>(null);
   const intervalRef = useRef<any>(null);
+  // TEMP: low-RAM host — backend trigger route is disabled (launches Chromium/OOM).
+  // Keep the button visible but disabled so the demo doesn't 404. Flip to false on A1 box.
+  const SEO_TRIGGER_DISABLED = true;
 
   const orgPlan = useUserStore((state) => state.userData.orgPlan);
   const count = useUserStore(
@@ -290,7 +293,7 @@ export function PerformanceAudit({ chatbotId }: SeoPerformanceProps) {
           )}
           <Button
             onClick={handleTrigger}
-            disabled={performanceTriggered}
+            disabled={performanceTriggered || SEO_TRIGGER_DISABLED}
             className="bg-blue-600 hover:bg-blue-700 text-white">
             <RefreshCcw className="h-4 w-4 mr-2" />
             {performanceTriggered ? "Running..." : "Run SEO Performance"}
@@ -337,7 +340,7 @@ export function PerformanceAudit({ chatbotId }: SeoPerformanceProps) {
             Last trained: {new Date(seoData.updated_at).toLocaleString()}
           </div>
         )}
-        <Button onClick={handleTrigger} disabled={performanceTriggered}>
+        <Button onClick={handleTrigger} disabled={performanceTriggered || SEO_TRIGGER_DISABLED}>
           <RefreshCcw className="h-4 w-4 mr-2" />
           {performanceTriggered ? "Running..." : "Run SEO performance"}
         </Button>

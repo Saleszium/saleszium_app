@@ -26,8 +26,11 @@ router.get("/complaints", verifyToken, getSeoCompliance);
 router.get("/performance", verifyToken, getSeoPerformance);
 
 // train the seo
-router.post("/trigger-complaint", verifyToken, triggerSeoCompliance);
-router.post("/trigger-performance", verifyToken, triggerPerformance);
+// TEMP: disabled for low-RAM host (1GB box) — these are the ONLY endpoints that
+// launch Chromium/Puppeteer and would OOM-kill the server. GET routes above still
+// serve seed data, so the SEO pages stay viewable. Re-enable on the A1 (24GB) box.
+// router.post("/trigger-complaint", verifyToken, triggerSeoCompliance);
+// router.post("/trigger-performance", verifyToken, triggerPerformance);
 
 // getting detils from users ,tracking routes
 router.post("/pageview", trackPageView);
