@@ -150,12 +150,12 @@ export default function Messenger() {
           tabs: ["npm", "basic-js"],
           content: {
             npm: {
-              command: "npm install @rhinon/botsdk",
+              command: "npm install @saleszium/botsdk",
               description:
                 "To initialize Rhinon, copy and paste this code snippet on every page or in a common component where you want the messenger to appear.",
               note: "This must be done in your client-side code.",
               code: `import { useEffect } from 'react';
-import Rhinontech from '@rhinon/botsdk';
+import Rhinontech from '@saleszium/botsdk';
 
 export default function Chatbot() {
   useEffect(() => {
@@ -168,7 +168,7 @@ export default function Chatbot() {
 }`,
             },
             "basic-js": {
-              command: "npm install @rhinon/botsdk",
+              command: "npm install @saleszium/botsdk",
               description:
                 "To initialize Rhinon, copy and paste this code snippet on every page where you want the messenger to appear.",
               note: "Add this script after the DOM is fully loaded.",
@@ -190,13 +190,13 @@ export default function Chatbot() {
           tabs: ["npm"],
           content: {
             npm: {
-              command: "npm install @rhinon/botsdk",
+              command: "npm install @saleszium/botsdk",
               description:
                 "Add Rhinon Tech to your project using the following snippet:",
               note: "To initialize Rhinon Tech, copy and paste this code snippet on every page or in a common component where you want the messenger to appear.",
               additionalNote: "This must be done in your client-side code.",
               code: `import { useEffect } from 'react';
-import Rhinontech from '@rhinon/botsdk';
+import Rhinontech from '@saleszium/botsdk';
 
 export default function Chatbot() {
   useEffect(() => {
@@ -217,7 +217,7 @@ export default function Chatbot() {
           hasStep3: true,
           content: {
             npm: {
-              command: "npm install @rhinon/botsdk",
+              command: "npm install @saleszium/botsdk",
               description:
                 "Install the Rhinon SDK and create a client component wrapper for the chatbot.",
               note: "Step 1: Create a client component wrapper",
@@ -235,7 +235,7 @@ export default function ChatbotWrapper() {
 }`,
               step2Filename: "components/Chatbot/Chatbot.tsx",
               step2Code: `import { useEffect } from 'react';
-import Rhinontech from '@rhinon/botsdk';
+import Rhinontech from '@saleszium/botsdk';
 
 export default function Chatbot() {
   useEffect(() => {
@@ -255,12 +255,12 @@ export default function Chatbot() {
           tabs: ["npm"],
           content: {
             npm: {
-              command: "npm install @rhinon/botsdk",
+              command: "npm install @saleszium/botsdk",
               description:
                 "Install the Rhinon SDK and create a plugin for client-side initialization.",
               note: "Step 1: Create a Nuxt plugin",
               filename: "plugins/rhinon.client.ts",
-              code: `import Rhinontech from '@rhinon/botsdk';
+              code: `import Rhinontech from '@saleszium/botsdk';
 
 export default defineNuxtPlugin(() => {
   if (process.client) {
@@ -284,7 +284,7 @@ export default defineNuxtPlugin(() => {
           tabs: ["npm"],
           content: {
             npm: {
-              command: "npm install @rhinon/botsdk",
+              command: "npm install @saleszium/botsdk",
               description:
                 "Install the Rhinon SDK and initialize it in your Angular component.",
               note: "To initialize the chatbot, copy and paste this Angular code snippet into your root component or where you want the chatbot to appear.",
@@ -305,7 +305,7 @@ export class AppComponent {
 
   ngAfterViewInit() {
     if (isPlatformBrowser(this.platformId)) {
-      import('@rhinon/botsdk').then((RhinontechModule) => {
+      import('@saleszium/botsdk').then((RhinontechModule) => {
         const Rhinontech = RhinontechModule.default;
         Rhinontech({
           app_id: '${chatbotId}'
@@ -323,7 +323,7 @@ export class AppComponent {
           tabs: ["npm"],
           content: {
             npm: {
-              command: "npm install @rhinon/botsdk",
+              command: "npm install @saleszium/botsdk",
               description:
                 "Install the Rhinon SDK and initialize it in your Vue component.",
               note: "To initialize the chatbot, copy and paste this Vue code snippet into your root component or where you want the chatbot to appear.",
@@ -336,7 +336,7 @@ export class AppComponent {
 
 <script setup>
 import { onMounted } from 'vue';
-import Rhinontech from '@rhinon/botsdk';
+import Rhinontech from '@saleszium/botsdk';
 
 onMounted(() => {
   Rhinontech({
@@ -353,12 +353,12 @@ onMounted(() => {
           tabs: ["npm"],
           content: {
             npm: {
-              command: "npm install @rhinon/botsdk",
+              command: "npm install @saleszium/botsdk",
               description:
                 "Install the Rhinon SDK and initialize it in your Ember application.",
               note: "Step 1: Create an initializer for the chatbot",
               filename: "app/initializers/rhinon-chatbot.js",
-              code: `import Rhinontech from '@rhinon/botsdk';
+              code: `import Rhinontech from '@saleszium/botsdk';
 
 export function initialize() {
   if (typeof FastBoot === 'undefined') {
@@ -394,7 +394,7 @@ loadInitializers(App, config.modulePrefix);`,
           tabs: ["npm"],
           content: {
             npm: {
-              command: "npm install @rhinon/botsdk",
+              command: "npm install @saleszium/botsdk",
               description:
                 "Install the Rhinon SDK and add it to your HTML template for client-side rendering.",
               note: "Add this script to your HTML template (e.g., in your main.hbs or index.html file served by NestJS).",
@@ -446,7 +446,7 @@ bootstrap();`,
           tabs: ["npm"],
           content: {
             npm: {
-              command: "npm install @rhinon/botsdk",
+              command: "npm install @saleszium/botsdk",
               description: "Default installation method",
               code: "// Default code",
             },

@@ -1,4 +1,4 @@
-# @rhinon/botsdk
+# @saleszium/botsdk
 
 A lightweight, framework-agnostic JavaScript SDK for integrating Rhinon chatbot into your web applications. Built with TypeScript and React, this SDK provides seamless chatbot integration across various platforms and frameworks.
 
@@ -23,13 +23,13 @@ Install the package using your preferred package manager:
 
 ```bash
 # using npm
-npm install @rhinon/botsdk
+npm install @saleszium/botsdk
 
 # using yarn
-yarn add @rhinon/botsdk
+yarn add @saleszium/botsdk
 
 # using pnpm
-pnpm add @rhinon/botsdk
+pnpm add @saleszium/botsdk
 ```
 
 <br>
@@ -39,7 +39,7 @@ pnpm add @rhinon/botsdk
 ### Basic Usage (Vanilla JavaScript)
 
 ```javascript
-import Rhinontech from '@rhinon/botsdk';
+import Rhinontech from '@saleszium/botsdk';
 
 // Initialize when DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
@@ -60,7 +60,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 ```jsx
 import { useEffect } from 'react';
-import Rhinontech from '@rhinon/botsdk';
+import Rhinontech from '@saleszium/botsdk';
 
 export default function Chatbot() {
   useEffect(() => {
@@ -104,7 +104,7 @@ export default function ChatbotWrapper() {
 ```tsx
 // components/Chatbot/Chatbot.tsx
 import { useEffect } from 'react';
-import Rhinontech from '@rhinon/botsdk';
+import Rhinontech from '@saleszium/botsdk';
 
 export default function Chatbot() {
   useEffect(() => {
@@ -162,7 +162,7 @@ export class AppComponent implements AfterViewInit {
 
   ngAfterViewInit() {
     if (isPlatformBrowser(this.platformId)) {
-      import('@rhinon/botsdk').then((RhinontechModule) => {
+      import('@saleszium/botsdk').then((RhinontechModule) => {
         const Rhinontech = RhinontechModule.default;
         Rhinontech({
           app_id: 'YOUR_APP_ID',
@@ -189,7 +189,7 @@ export class AppComponent implements AfterViewInit {
 
 <script>
 import { onMounted } from 'vue';
-import Rhinontech from '@rhinon/botsdk';
+import Rhinontech from '@saleszium/botsdk';
 
 export default {
   name: 'App',
@@ -280,7 +280,7 @@ Initializes and returns a chatbot instance.
 This package includes TypeScript type definitions. No additional `@types` package is required.
 
 ```typescript
-import Rhinontech, { RhinontechConfig, ChatBotElement } from '@rhinon/botsdk';
+import Rhinontech, { RhinontechConfig, ChatBotElement } from '@saleszium/botsdk';
 
 const config: RhinontechConfig = {
   app_id: 'YOUR_APP_ID',
