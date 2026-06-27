@@ -170,4 +170,6 @@ export default initRhinontech;
 if (typeof window !== 'undefined') {
   (window as any).RhinonBot = initRhinontech;
   (window as any).Rhinontech = initRhinontech;
+  (window as any).Saleszium = initRhinontech;
+  (window as any).SalesziumBot = initRhinontech;
 }
