@@ -39,7 +39,7 @@ pnpm add @saleszium/botsdk
 ### Basic Usage (Vanilla JavaScript)
 
 ```javascript
-import Saleszium from '@saleszium/botsdk';
+import Rhinontech from '@saleszium/botsdk';
 
 // Initialize when DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
@@ -60,7 +60,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 ```jsx
 import { useEffect } from 'react';
-import Saleszium from '@saleszium/botsdk';
+import Rhinontech from '@saleszium/botsdk';
 
 export default function Chatbot() {
   useEffect(() => {
@@ -104,7 +104,7 @@ export default function ChatbotWrapper() {
 ```tsx
 // components/Chatbot/Chatbot.tsx
 import { useEffect } from 'react';
-import Saleszium from '@saleszium/botsdk';
+import Rhinontech from '@saleszium/botsdk';
 
 export default function Chatbot() {
   useEffect(() => {
@@ -162,9 +162,9 @@ export class AppComponent implements AfterViewInit {
 
   ngAfterViewInit() {
     if (isPlatformBrowser(this.platformId)) {
-      import('@saleszium/botsdk').then((SalesziumModule) => {
-        const Saleszium = SalesziumModule.default;
-        Saleszium({
+      import('@saleszium/botsdk').then((RhinontechModule) => {
+        const Rhinontech = RhinontechModule.default;
+        Rhinontech({
           app_id: 'YOUR_APP_ID',
           chatbot_config: {
             isBgFade: true
@@ -189,7 +189,7 @@ export class AppComponent implements AfterViewInit {
 
 <script>
 import { onMounted } from 'vue';
-import Saleszium from '@saleszium/botsdk';
+import Rhinontech from '@saleszium/botsdk';
 
 export default {
   name: 'App',
@@ -280,7 +280,7 @@ Initializes and returns a chatbot instance.
 This package includes TypeScript type definitions. No additional `@types` package is required.
 
 ```typescript
-import Saleszium, { SalesziumConfig, ChatBotElement } from '@saleszium/botsdk';
+import Rhinontech, { RhinontechConfig, ChatBotElement } from '@saleszium/botsdk';
 
 const config: SalesziumConfig = {
   app_id: 'YOUR_APP_ID',

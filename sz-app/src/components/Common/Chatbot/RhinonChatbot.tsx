@@ -35,7 +35,7 @@ export function RhinonChatbot({
 
         const initializeChatbot = async () => {
             try {
-                const { default: Saleszium } = await import("@saleszium/botsdk-test");
+                const { default: Rhinontech } = await import("@saleszium/botsdk");
 
                 // Remove existing instance if app_id changed
                 if (chatbotInstanceRef.current) {

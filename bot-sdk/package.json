@@ -1,6 +1,6 @@
 {
-  "name": "@saleszium/botsdk-test",
-  "version": "0.0.3",
+  "name": "@saleszium/botsdk",
+  "version": "0.0.2",
   "description": "",
   "license": "MIT",
   "publishConfig": {

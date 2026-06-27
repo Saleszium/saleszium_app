@@ -44,6 +44,9 @@ Thumbs.db
 id_rsa*
 .env*
 !.env.example
+aws-creds.md
+*aws-creds*
+*.creds
 
 # Terraform
 .terraform/

@@ -155,7 +155,7 @@ export default function Messenger() {
                 "To initialize Saleszium, copy and paste this code snippet on every page or in a common component where you want the messenger to appear.",
               note: "This must be done in your client-side code.",
               code: `import { useEffect } from 'react';
-import Saleszium from '@saleszium/botsdk';
+import Rhinontech from '@saleszium/botsdk';
 
 export default function Chatbot() {
   useEffect(() => {
@@ -196,7 +196,7 @@ export default function Chatbot() {
               note: "To initialize Saleszium Tech, copy and paste this code snippet on every page or in a common component where you want the messenger to appear.",
               additionalNote: "This must be done in your client-side code.",
               code: `import { useEffect } from 'react';
-import Saleszium from '@saleszium/botsdk';
+import Rhinontech from '@saleszium/botsdk';
 
 export default function Chatbot() {
   useEffect(() => {
@@ -235,7 +235,7 @@ export default function ChatbotWrapper() {
 }`,
               step2Filename: "components/Chatbot/Chatbot.tsx",
               step2Code: `import { useEffect } from 'react';
-import Saleszium from '@saleszium/botsdk';
+import Rhinontech from '@saleszium/botsdk';
 
 export default function Chatbot() {
   useEffect(() => {
@@ -260,7 +260,7 @@ export default function Chatbot() {
                 "Install the Saleszium SDK and create a plugin for client-side initialization.",
               note: "Step 1: Create a Nuxt plugin",
               filename: "plugins/rhinon.client.ts",
-              code: `import Saleszium from '@saleszium/botsdk';
+              code: `import Rhinontech from '@saleszium/botsdk';
 
 export default defineNuxtPlugin(() => {
   if (process.client) {
@@ -305,9 +305,9 @@ export class AppComponent {
 
   ngAfterViewInit() {
     if (isPlatformBrowser(this.platformId)) {
-      import('@saleszium/botsdk').then((SalesziumModule) => {
-        const Saleszium = SalesziumModule.default;
-        Saleszium({
+      import('@saleszium/botsdk').then((RhinontechModule) => {
+        const Rhinontech = RhinontechModule.default;
+        Rhinontech({
           app_id: '${chatbotId}'
         });
       });
@@ -336,7 +336,7 @@ export class AppComponent {
 
 <script setup>
 import { onMounted } from 'vue';
-import Saleszium from '@saleszium/botsdk';
+import Rhinontech from '@saleszium/botsdk';
 
 onMounted(() => {
   Saleszium({
@@ -357,8 +357,8 @@ onMounted(() => {
               description:
                 "Install the Saleszium SDK and initialize it in your Ember application.",
               note: "Step 1: Create an initializer for the chatbot",
-              filename: "app/initializers/saleszium-chatbot.js",
-              code: `import Saleszium from '@saleszium/botsdk';
+              filename: "app/initializers/rhinon-chatbot.js",
+              code: `import Rhinontech from '@saleszium/botsdk';
 
 export function initialize() {
   if (typeof FastBoot === 'undefined') {

@@ -106,6 +106,9 @@ export function SEOCompliance({ chatbotId }: SeoComplianceProps) {
   const [loading, setLoading] = useState(true);
   const [complianceTriggered, setComplianceTriggered] = useState(false);
   const [remainingTime, setRemainingTime] = useState<number | null>(null);
+  // TEMP: low-RAM host — backend trigger route is disabled (launches Chromium/OOM).
+  // Keep the button visible but disabled so the demo doesn't 404. Flip to false on A1 box.
+  const SEO_TRIGGER_DISABLED = true;
 
   const orgPlan = useUserStore((state) => state.userData.orgPlan);
   const count = useUserStore(
@@ -307,7 +310,7 @@ export function SEOCompliance({ chatbotId }: SeoComplianceProps) {
           )}
           <Button
             onClick={handleTriggerCompliance}
-            disabled={complianceTriggered}
+            disabled={complianceTriggered || SEO_TRIGGER_DISABLED}
             className="bg-blue-600 hover:bg-blue-700 text-white">
             <RefreshCcw className="h-4 w-4 mr-2" />
             {complianceTriggered ? "Running..." : "Run SEO Compliance"}
@@ -336,7 +339,7 @@ export function SEOCompliance({ chatbotId }: SeoComplianceProps) {
         )}
         <Button
           onClick={handleTriggerCompliance}
-          disabled={complianceTriggered}>
+          disabled={complianceTriggered || SEO_TRIGGER_DISABLED}>
           <RefreshCcw className="h-4 w-4 mr-2" />
           {complianceTriggered ? "Running..." : "Run SEO Compliance"}
         </Button>

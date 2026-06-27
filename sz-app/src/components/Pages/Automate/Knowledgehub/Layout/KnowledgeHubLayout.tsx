@@ -42,9 +42,9 @@ export default function KnowledgeHubLayout({
         popupMessage: "Hey, I am Saleszium AI Assistant, How can I help you?",
         greetings: ["Hi there👋", "How can we help?"],
         primaryLogo:
-            "https://www.saleszium.com/assets/Saleszium_Light_Logo_small.png",
+            "https://saleszium-live-assets.s3.ap-south-1.amazonaws.com/platform-uploads/Rhinon_Tech_Light_Logo.png",
         secondaryLogo:
-            "https://www.saleszium.com/assets/Saleszium_Dark_Logo_small.png",
+            "https://saleszium-live-assets.s3.ap-south-1.amazonaws.com/platform-uploads/Rhinon_Tech_Dark_Logo.png",
         selectedPage: "chats",
         theme: "light",
         isChatHistory: false,
@@ -75,10 +75,10 @@ export default function KnowledgeHubLayout({
                 greetings: config.greetings ?? ["Hi there👋", "How can we help?"],
                 primaryLogo:
                     config.primaryLogo ??
-                    "https://www.saleszium.com/assets/Saleszium_Light_Logo_small.png",
+                    "https://saleszium-live-assets.s3.ap-south-1.amazonaws.com/platform-uploads/Rhinon_Tech_Light_Logo.png",
                 secondaryLogo:
                     config.secondaryLogo ??
-                    "https://www.saleszium.com/assets/Saleszium_Dark_Logo_small.png",
+                    "https://saleszium-live-assets.s3.ap-south-1.amazonaws.com/platform-uploads/Rhinon_Tech_Dark_Logo.png",
                 selectedPage: "chats",
                 theme: config.theme ?? "light",
                 isChatHistory: config.isChatHistory ?? false,
