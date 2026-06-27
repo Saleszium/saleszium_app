@@ -48,7 +48,7 @@ export function RhinonChatbot({
                 }
 
                 // Create new instance
-                chatbotInstanceRef.current = Rhinontech({
+                chatbotInstanceRef.current = Saleszium({
                     app_id: appId,
                     admin,
                     adminTestingMode,

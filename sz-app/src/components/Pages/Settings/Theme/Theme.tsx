@@ -48,9 +48,9 @@ export default function Theme() {
     secondaryColor: "#f3f6ff",
     isBackgroundImage: false,
     backgroundImage: "",
-    chatbotName: "Rhinon",
+    chatbotName: "Saleszium",
     navigationOptions: ["Home", "Messages"],
-    popupMessage: "Hey, I am Rhinon AI Assistant, How can I help you?",
+    popupMessage: "Hey, I am Saleszium AI Assistant, How can I help you?",
     greetings: ["Hi there👋", "How can we help?"],
     primaryLogo:
       "https://saleszium-live-assets.s3.ap-south-1.amazonaws.com/platform-uploads/Rhinon_Tech_Light_Logo.png",
@@ -80,11 +80,11 @@ export default function Theme() {
         secondaryColor: config.secondaryColor ?? "#f3f6ff",
         isBackgroundImage: config.isBackgroundImage ?? false,
         backgroundImage: config.backgroundImage ?? "",
-        chatbotName: config.chatbotName ?? "Rhinon",
+        chatbotName: config.chatbotName ?? "Saleszium",
         navigationOptions: config.navigationOptions ?? ["Home", "Messages"],
         popupMessage:
           config.popupMessage ??
-          "Hey, I am Rhinon AI Assistant, How can I help you?",
+          "Hey, I am Saleszium AI Assistant, How can I help you?",
         greetings: config.greetings ?? ["Hi there👋", "How can we help?"],
         primaryLogo:
           config.primaryLogo ??

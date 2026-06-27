@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Upload } from "lucide-react";
 import { TemplateMedia } from "../TemplateSelection/templates";
 import { ButtonElement } from "../store/useCampaignStore";
+import { SecureImage } from "@/components/Common/SecureImage";
 
 interface ChatbotPreviewCardProps {
     heading: string;
@@ -27,7 +28,7 @@ export const ChatbotPreviewCard = ({
             {hasImage && (
                 <div className="relative w-full">
                     {media ? (
-                        <img
+                        <SecureImage
                             src={media.src}
                             alt={media.alt || "Campaign image"}
                             className="object-cover w-full h-48"

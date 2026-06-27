@@ -23,7 +23,6 @@ import {
   validatePayment,
 } from "@/services/billing/transactionService";
 import Cookies from "js-cookie";
-import logo from "@/assets/logo/Logo_Rhinon_Tech_Dark.png";
 import { toast } from "sonner";
 
 interface RazorPayInterface {

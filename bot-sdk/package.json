@@ -6,7 +6,7 @@
   "publishConfig": {
     "access": "public"
   },
-  "main": "dist/rhinonbot.js",
+  "main": "dist/salesziumbot.js",
   "types": "dist/types.d.ts",
   "scripts": {
     "dev": "cross-env NODE_ENV=development webpack serve --config tools/webpack/webpack.config.dev.js",

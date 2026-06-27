@@ -1,6 +1,6 @@
 // Campaign frequency capping utilities
 
-const STORAGE_KEY = 'rhinon_campaign_views';
+const STORAGE_KEY = 'saleszium_campaign_views';
 const DEFAULT_MAX_VIEWS = 3;
 const DEFAULT_COOLDOWN_HOURS = 24;
 

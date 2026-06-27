@@ -11,16 +11,16 @@ services:
       - /etc/letsencrypt:/etc/letsencrypt:ro
       - /var/www/certbot:/var/www/certbot
     depends_on:
-      - rtserver
+      - szserver
       - backendai
     networks:
       - rhinon-network
 
-  rtserver:
+  szserver:
     build:
-      context: ./rtserver
+      context: ./sz-server
       dockerfile: Dockerfile
-    container_name: rtserver
+    container_name: szserver
     restart: always
     expose:
       - "5000"

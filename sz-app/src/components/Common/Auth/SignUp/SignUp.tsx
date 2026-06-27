@@ -206,7 +206,7 @@ export function SignUp({ className, ...props }: React.ComponentProps<"div">) {
               <div className="flex flex-col items-center text-center">
                 <h1 className="text-2xl font-bold">Create your account</h1>
                 <p className="text-muted-foreground">
-                  Sign up to your Rhinon Tech account
+                  Sign up to your Saleszium account
                 </p>
               </div>
 

@@ -30,7 +30,7 @@ export function SiteHeader() {
 
   const dynamicTeams = roles.map((role: string) => {
     return {
-      name: "RhinonTech",
+      name: "Saleszium",
       logo: GalleryVerticalEnd,
       role: role,
     };
@@ -70,7 +70,7 @@ export function SiteHeader() {
               {/* <WorkTracker /> */}
               <NotificationBell />
               <SeedDataButton />
-              <TeamChatDrawer />
+              {/* <TeamChatDrawer /> */}
               <AiHelp />
             </>
           )}

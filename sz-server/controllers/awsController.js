@@ -272,6 +272,28 @@ const getPresignedDownloadUrl = async (req, res) => {
   }
 };
 
+// Helper function to generate a signed URL internally (without req/res)
+const generateSignedDownloadUrl = async (key) => {
+  if (!key) return null;
+
+  // If it's already a full HTTP URL or data string from old campaigns or tests, return it directly
+  if (key.startsWith("http") || key.startsWith("data:")) {
+    return key;
+  }
+
+  const command = new GetObjectCommand({
+    Bucket: process.env.S3_BUCKET_NAME,
+    Key: key,
+  });
+
+  try {
+    return await getSignedUrl(s3, command, { expiresIn: 3600 }); // 1 hour
+  } catch (err) {
+    console.error("Internal Presigned Download URL error:", err);
+    return null;
+  }
+};
+
 module.exports = {
   uploadSingleImage,
   uploadSingleFile,
@@ -284,5 +306,6 @@ module.exports = {
   uploadKBFile,
   handleKBFileUpload,
   getPresignedUploadUrl,
-  getPresignedDownloadUrl
+  getPresignedDownloadUrl,
+  generateSignedDownloadUrl
 };

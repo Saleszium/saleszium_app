@@ -56,7 +56,7 @@ export const StepDetails = ({ data, updateData }: StepDetailsProps) => {
                     <Label htmlFor="fromName">From Name</Label>
                     <Input
                         id="fromName"
-                        placeholder="e.g. Rhinon Tech"
+                        placeholder="e.g. Saleszium"
                         value={data.fromName || ""}
                         onChange={(e) => updateData({ ...data, fromName: e.target.value })}
                     />

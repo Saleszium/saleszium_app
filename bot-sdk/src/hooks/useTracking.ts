@@ -224,7 +224,7 @@ export const useTracking = (appId: string | undefined, enabled: boolean = true) 
 
     const onClick = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
-      if (target.closest('.rhinon-chatbot-wrapper')) {
+      if (target.closest('.saleszium-chatbot-wrapper')) {
         interactedWithChatbot = true;
         sendToTrackingServer('/seo/click', {
           chatbot_id: appId,

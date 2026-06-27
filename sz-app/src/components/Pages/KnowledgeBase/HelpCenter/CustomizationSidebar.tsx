@@ -66,9 +66,8 @@ export const CustomizationSidebar: React.FC<CustomizationSidebarProps> = ({
     // For help_center_url, extract subdomain only for storage
     let valueToStore = value;
     if (field === "help_center_url" && typeof value === "string") {
-      // Extract subdomain from full URL
-      const subdomainMatch = value.match(/https?:\/\/([^.]+)\.rhinon\.help/);
-      valueToStore = subdomainMatch ? subdomainMatch[1] : value.replace(/https?:\/\//, "").replace(".rhinon.help", "");
+      const subdomainMatch = value.match(/https?:\/\/([^.]+)\.saleszium\.help/);
+      valueToStore = subdomainMatch ? subdomainMatch[1] : value.replace(/https?:\/\//, "").replace(".saleszium.help", "");
     }
 
     onThemeUpdate({ [field]: valueToStore });
@@ -406,7 +405,7 @@ export const CustomizationSidebar: React.FC<CustomizationSidebarProps> = ({
                       placeholder="subdomain"
                     />
                     <div className="px-3 py-3 bg-muted/50 border-l border-border text-muted-foreground text-sm font-medium select-none whitespace-nowrap">
-                      .rhinon.help
+                      .saleszium.help
                     </div>
                   </div>
                   <p className="text-[10px] text-muted-foreground ml-1">

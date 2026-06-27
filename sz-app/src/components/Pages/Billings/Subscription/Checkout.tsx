@@ -13,7 +13,6 @@ import {
     validatePayment,
 } from "@/services/billing/transactionService";
 import Cookies from "js-cookie";
-import logo from "@/assets/logo/Logo_Rhinon_Tech_Dark.png";
 import { toast } from "sonner";
 import {
     validateCoupon,
@@ -155,9 +154,9 @@ export default function Checkout() {
                 key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
                 amount: values.amount,
                 currency: values.currency,
-                name: "RhinonTech",
+                name: "Saleszium",
                 description: "Subscription Payment",
-                image: logo,
+                image: "https://www.saleszium.com/assets/Saleszium_Dark_Logo.png",
                 order_id,
                 handler: async (response: RazorPayInterface) => {
                     setLoading(true);
@@ -233,320 +232,320 @@ export default function Checkout() {
 
                 {/* Content */}
                 <ScrollArea className="flex-1 h-0">
-                <div className="flex-1 p-6">
-                    <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-6">
-                        {/* Features Column (Left) */}
-                        <div className="order-2 lg:order-1">
-                            {planDetails && (
-                                <Card className="h-full">
-                                    <CardHeader>
-                                        <CardTitle className="flex items-center gap-2">
-                                            <PlanIcon className="h-5 w-5" />
-                                            {planName} Features
-                                        </CardTitle>
-                                        <p className="text-sm text-muted-foreground mt-1">
-                                            {planDetails.description}
-                                        </p>
-                                    </CardHeader>
-                                    <CardContent>
-                                        <div className="space-y-4">
-                                            <div className="space-y-3">
-                                                <div className="flex items-start gap-3">
-                                                    <Check className="h-5 w-5 text-green-600 dark:text-green-400 mt-0.5 flex-shrink-0" />
-                                                    <div>
-                                                        <p className="font-medium">AI Chatbot</p>
-                                                        <p className="text-sm text-muted-foreground">{planDetails.features.aiChatbot}</p>
-                                                    </div>
-                                                </div>
-
-                                                <div className="flex items-start gap-3">
-                                                    <Check className="h-5 w-5 text-green-600 dark:text-green-400 mt-0.5 flex-shrink-0" />
-                                                    <div>
-                                                        <p className="font-medium">Users</p>
-                                                        <p className="text-sm text-muted-foreground">{planDetails.features.users} users</p>
-                                                    </div>
-                                                </div>
-
-                                                <div className="flex items-start gap-3">
-                                                    <Check className="h-5 w-5 text-green-600 dark:text-green-400 mt-0.5 flex-shrink-0" />
-                                                    <div>
-                                                        <p className="font-medium">Training Data Sources</p>
-                                                        <p className="text-sm text-muted-foreground">{planDetails.features.trainingSources}</p>
-                                                    </div>
-                                                </div>
-
-                                                <div className="flex items-start gap-3">
-                                                    <Check className="h-5 w-5 text-green-600 dark:text-green-400 mt-0.5 flex-shrink-0" />
-                                                    <div>
-                                                        <p className="font-medium">Knowledge Hub</p>
-                                                        <p className="text-sm text-muted-foreground">{planDetails.features.knowledgeHub}</p>
-                                                    </div>
-                                                </div>
-
-                                                <div className="flex items-start gap-3">
-                                                    <Check className="h-5 w-5 text-green-600 dark:text-green-400 mt-0.5 flex-shrink-0" />
-                                                    <div>
-                                                        <p className="font-medium">SEO Analytics Report</p>
-                                                        <p className="text-sm text-muted-foreground">{planDetails.features.seoAnalytics}</p>
-                                                    </div>
-                                                </div>
-
-                                                <div className="flex items-start gap-3">
-                                                    <Check className="h-5 w-5 text-green-600 dark:text-green-400 mt-0.5 flex-shrink-0" />
-                                                    <div>
-                                                        <p className="font-medium">Campaigns</p>
-                                                        <p className="text-sm text-muted-foreground">{planDetails.features.campaigns} campaigns</p>
-                                                    </div>
-                                                </div>
-
-                                                <div className="flex items-start gap-3">
-                                                    <Check className="h-5 w-5 text-green-600 dark:text-green-400 mt-0.5 flex-shrink-0" />
-                                                    <div>
-                                                        <p className="font-medium">Voice Bot</p>
-                                                        <p className="text-sm text-muted-foreground">{planDetails.features.voiceBot}</p>
-                                                    </div>
-                                                </div>
-
-                                                {planDetails.features.individualKnowledgeBase && (
+                    <div className="flex-1 p-6">
+                        <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-6">
+                            {/* Features Column (Left) */}
+                            <div className="order-2 lg:order-1">
+                                {planDetails && (
+                                    <Card className="h-full">
+                                        <CardHeader>
+                                            <CardTitle className="flex items-center gap-2">
+                                                <PlanIcon className="h-5 w-5" />
+                                                {planName} Features
+                                            </CardTitle>
+                                            <p className="text-sm text-muted-foreground mt-1">
+                                                {planDetails.description}
+                                            </p>
+                                        </CardHeader>
+                                        <CardContent>
+                                            <div className="space-y-4">
+                                                <div className="space-y-3">
                                                     <div className="flex items-start gap-3">
                                                         <Check className="h-5 w-5 text-green-600 dark:text-green-400 mt-0.5 flex-shrink-0" />
                                                         <div>
-                                                            <p className="font-medium">Individual Knowledge Base</p>
-                                                            <p className="text-sm text-muted-foreground">Included</p>
+                                                            <p className="font-medium">AI Chatbot</p>
+                                                            <p className="text-sm text-muted-foreground">{planDetails.features.aiChatbot}</p>
                                                         </div>
                                                     </div>
-                                                )}
 
-                                                {planDetails.features.liveTrafficChat && (
                                                     <div className="flex items-start gap-3">
                                                         <Check className="h-5 w-5 text-green-600 dark:text-green-400 mt-0.5 flex-shrink-0" />
                                                         <div>
-                                                            <p className="font-medium">Live Traffic Chat</p>
-                                                            <p className="text-sm text-muted-foreground">Included</p>
+                                                            <p className="font-medium">Users</p>
+                                                            <p className="text-sm text-muted-foreground">{planDetails.features.users} users</p>
                                                         </div>
                                                     </div>
-                                                )}
 
-                                                {planDetails.features.directCalling && (
                                                     <div className="flex items-start gap-3">
                                                         <Check className="h-5 w-5 text-green-600 dark:text-green-400 mt-0.5 flex-shrink-0" />
                                                         <div>
-                                                            <p className="font-medium">Direct Calling</p>
-                                                            <p className="text-sm text-muted-foreground">Included</p>
+                                                            <p className="font-medium">Training Data Sources</p>
+                                                            <p className="text-sm text-muted-foreground">{planDetails.features.trainingSources}</p>
                                                         </div>
                                                     </div>
-                                                )}
 
-                                                <div className="flex items-start gap-3">
-                                                    <Check className="h-5 w-5 text-green-600 dark:text-green-400 mt-0.5 flex-shrink-0" />
-                                                    <div>
-                                                        <p className="font-medium">CRM</p>
-                                                        <p className="text-sm text-muted-foreground">{planDetails.features.crm}</p>
+                                                    <div className="flex items-start gap-3">
+                                                        <Check className="h-5 w-5 text-green-600 dark:text-green-400 mt-0.5 flex-shrink-0" />
+                                                        <div>
+                                                            <p className="font-medium">Knowledge Hub</p>
+                                                            <p className="text-sm text-muted-foreground">{planDetails.features.knowledgeHub}</p>
+                                                        </div>
                                                     </div>
-                                                </div>
 
-                                                <Separator />
-
-                                                <div className="flex items-start gap-3">
-                                                    <div className="h-5 w-5 flex items-center justify-center mt-0.5 flex-shrink-0">
-                                                        <div className="h-2 w-2 rounded-full bg-muted-foreground" />
+                                                    <div className="flex items-start gap-3">
+                                                        <Check className="h-5 w-5 text-green-600 dark:text-green-400 mt-0.5 flex-shrink-0" />
+                                                        <div>
+                                                            <p className="font-medium">SEO Analytics Report</p>
+                                                            <p className="text-sm text-muted-foreground">{planDetails.features.seoAnalytics}</p>
+                                                        </div>
                                                     </div>
-                                                    <div>
-                                                        <p className="font-medium">Workflow Automation</p>
-                                                        <p className="text-sm text-muted-foreground">{planDetails.features.workflowAutomation}</p>
+
+                                                    <div className="flex items-start gap-3">
+                                                        <Check className="h-5 w-5 text-green-600 dark:text-green-400 mt-0.5 flex-shrink-0" />
+                                                        <div>
+                                                            <p className="font-medium">Campaigns</p>
+                                                            <p className="text-sm text-muted-foreground">{planDetails.features.campaigns} campaigns</p>
+                                                        </div>
+                                                    </div>
+
+                                                    <div className="flex items-start gap-3">
+                                                        <Check className="h-5 w-5 text-green-600 dark:text-green-400 mt-0.5 flex-shrink-0" />
+                                                        <div>
+                                                            <p className="font-medium">Voice Bot</p>
+                                                            <p className="text-sm text-muted-foreground">{planDetails.features.voiceBot}</p>
+                                                        </div>
+                                                    </div>
+
+                                                    {planDetails.features.individualKnowledgeBase && (
+                                                        <div className="flex items-start gap-3">
+                                                            <Check className="h-5 w-5 text-green-600 dark:text-green-400 mt-0.5 flex-shrink-0" />
+                                                            <div>
+                                                                <p className="font-medium">Individual Knowledge Base</p>
+                                                                <p className="text-sm text-muted-foreground">Included</p>
+                                                            </div>
+                                                        </div>
+                                                    )}
+
+                                                    {planDetails.features.liveTrafficChat && (
+                                                        <div className="flex items-start gap-3">
+                                                            <Check className="h-5 w-5 text-green-600 dark:text-green-400 mt-0.5 flex-shrink-0" />
+                                                            <div>
+                                                                <p className="font-medium">Live Traffic Chat</p>
+                                                                <p className="text-sm text-muted-foreground">Included</p>
+                                                            </div>
+                                                        </div>
+                                                    )}
+
+                                                    {planDetails.features.directCalling && (
+                                                        <div className="flex items-start gap-3">
+                                                            <Check className="h-5 w-5 text-green-600 dark:text-green-400 mt-0.5 flex-shrink-0" />
+                                                            <div>
+                                                                <p className="font-medium">Direct Calling</p>
+                                                                <p className="text-sm text-muted-foreground">Included</p>
+                                                            </div>
+                                                        </div>
+                                                    )}
+
+                                                    <div className="flex items-start gap-3">
+                                                        <Check className="h-5 w-5 text-green-600 dark:text-green-400 mt-0.5 flex-shrink-0" />
+                                                        <div>
+                                                            <p className="font-medium">CRM</p>
+                                                            <p className="text-sm text-muted-foreground">{planDetails.features.crm}</p>
+                                                        </div>
+                                                    </div>
+
+                                                    <Separator />
+
+                                                    <div className="flex items-start gap-3">
+                                                        <div className="h-5 w-5 flex items-center justify-center mt-0.5 flex-shrink-0">
+                                                            <div className="h-2 w-2 rounded-full bg-muted-foreground" />
+                                                        </div>
+                                                        <div>
+                                                            <p className="font-medium">Workflow Automation</p>
+                                                            <p className="text-sm text-muted-foreground">{planDetails.features.workflowAutomation}</p>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                    </CardContent>
-                                </Card>
-                            )}
-                        </div>
-
-                        {/* Order Summary Column (Right) */}
-                        <div className="space-y-6 order-1 lg:order-2">
-                            {/* Plan Info (Moved above Order Summary) */}
-                            <div className="flex items-center justify-between bg-muted/50 p-4 rounded-lg border">
-                                <div className="flex items-center gap-3">
-                                    <PlanIcon className="h-5 w-5 text-primary" />
-                                    <div>
-                                        <p className="font-medium">{planName} Plan</p>
-                                        <p className="text-sm text-muted-foreground">
-                                            {isYearly ? "Billed Yearly" : "Billed Monthly"}
-                                        </p>
-                                    </div>
-                                </div>
-                                <Button variant="ghost" size="sm" onClick={() => router.back()}>
-                                    Change
-                                </Button>
+                                        </CardContent>
+                                    </Card>
+                                )}
                             </div>
 
-                            <Card>
-                                <CardHeader>
-                                    <CardTitle>Order Summary</CardTitle>
-                                </CardHeader>
-                                <CardContent className="space-y-4">
-                                    <div className="space-y-2">
-                                        <div className="flex items-center justify-between">
-                                            <span className="text-sm">
-                                                {isYearly
-                                                    ? `Base Price (₹${(basePrice / 1000).toFixed(0)}k × 12 months)`
-                                                    : "Base Price (Monthly)"}
-                                            </span>
-                                            <span className="font-medium">₹{basePriceTotal.toLocaleString("en-IN")}</span>
+                            {/* Order Summary Column (Right) */}
+                            <div className="space-y-6 order-1 lg:order-2">
+                                {/* Plan Info (Moved above Order Summary) */}
+                                <div className="flex items-center justify-between bg-muted/50 p-4 rounded-lg border">
+                                    <div className="flex items-center gap-3">
+                                        <PlanIcon className="h-5 w-5 text-primary" />
+                                        <div>
+                                            <p className="font-medium">{planName} Plan</p>
+                                            <p className="text-sm text-muted-foreground">
+                                                {isYearly ? "Billed Yearly" : "Billed Monthly"}
+                                            </p>
                                         </div>
+                                    </div>
+                                    <Button variant="ghost" size="sm" onClick={() => router.back()}>
+                                        Change
+                                    </Button>
+                                </div>
 
-                                        {/* Voice Bot Add-on Section */}
-                                        <div className="pt-2 pb-2">
-                                            <div className="flex items-center justify-between mb-2">
-                                                <div className="flex items-center gap-2">
-                                                    <span className="text-sm font-medium">Voice Bot Add-on</span>
-                                                    <span className="text-[10px] bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded-full dark:bg-blue-900/30 dark:text-blue-300">
-                                                        Optional
-                                                    </span>
-                                                </div>
-                                                {voiceBotPrice > 0 && (
-                                                    <div className="text-right">
-                                                        <span className="font-medium block">₹{voiceBotPrice.toLocaleString("en-IN")}</span>
-                                                        {isYearly && (
-                                                            <span className="text-xs text-muted-foreground block">
-                                                                (₹{voiceBotPriceMonthly.toLocaleString("en-IN")} × 12)
-                                                            </span>
-                                                        )}
+                                <Card>
+                                    <CardHeader>
+                                        <CardTitle>Order Summary</CardTitle>
+                                    </CardHeader>
+                                    <CardContent className="space-y-4">
+                                        <div className="space-y-2">
+                                            <div className="flex items-center justify-between">
+                                                <span className="text-sm">
+                                                    {isYearly
+                                                        ? `Base Price (₹${(basePrice / 1000).toFixed(0)}k × 12 months)`
+                                                        : "Base Price (Monthly)"}
+                                                </span>
+                                                <span className="font-medium">₹{basePriceTotal.toLocaleString("en-IN")}</span>
+                                            </div>
+
+                                            {/* Voice Bot Add-on Section */}
+                                            <div className="pt-2 pb-2">
+                                                <div className="flex items-center justify-between mb-2">
+                                                    <div className="flex items-center gap-2">
+                                                        <span className="text-sm font-medium">Voice Bot Add-on</span>
+                                                        <span className="text-[10px] bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded-full dark:bg-blue-900/30 dark:text-blue-300">
+                                                            Optional
+                                                        </span>
                                                     </div>
+                                                    {voiceBotPrice > 0 && (
+                                                        <div className="text-right">
+                                                            <span className="font-medium block">₹{voiceBotPrice.toLocaleString("en-IN")}</span>
+                                                            {isYearly && (
+                                                                <span className="text-xs text-muted-foreground block">
+                                                                    (₹{voiceBotPriceMonthly.toLocaleString("en-IN")} × 12)
+                                                                </span>
+                                                            )}
+                                                        </div>
+                                                    )}
+                                                </div>
+                                                <Select
+                                                    value={voiceBotMinutes.toString()}
+                                                    onValueChange={(value) => setVoiceBotMinutes(Number(value))}
+                                                >
+                                                    <SelectTrigger className="w-full">
+                                                        <SelectValue placeholder="Select minutes" />
+                                                    </SelectTrigger>
+                                                    <SelectContent>
+                                                        <SelectItem value="0">None</SelectItem>
+                                                        {VOICE_BOT_TIERS.map((tier) => (
+                                                            <SelectItem key={tier.minutes} value={tier.minutes.toString()}>
+                                                                <div className="flex items-center justify-between w-full gap-4">
+                                                                    <span>{tier.label}</span>
+                                                                    <span className="text-muted-foreground">
+                                                                        (₹{Math.round(tier.totalPrice).toLocaleString("en-IN")})
+                                                                    </span>
+                                                                </div>
+                                                            </SelectItem>
+                                                        ))}
+                                                    </SelectContent>
+                                                </Select>
+                                                {voiceBotMinutes > 0 && (
+                                                    <p className="text-xs text-muted-foreground mt-1.5">
+                                                        Includes {voiceBotMinutes.toLocaleString()} minutes of voice bot usage per month.
+                                                    </p>
                                                 )}
                                             </div>
-                                            <Select
-                                                value={voiceBotMinutes.toString()}
-                                                onValueChange={(value) => setVoiceBotMinutes(Number(value))}
-                                            >
-                                                <SelectTrigger className="w-full">
-                                                    <SelectValue placeholder="Select minutes" />
-                                                </SelectTrigger>
-                                                <SelectContent>
-                                                    <SelectItem value="0">None</SelectItem>
-                                                    {VOICE_BOT_TIERS.map((tier) => (
-                                                        <SelectItem key={tier.minutes} value={tier.minutes.toString()}>
-                                                            <div className="flex items-center justify-between w-full gap-4">
-                                                                <span>{tier.label}</span>
-                                                                <span className="text-muted-foreground">
-                                                                    (₹{Math.round(tier.totalPrice).toLocaleString("en-IN")})
-                                                                </span>
+
+                                            <Separator />
+
+                                            <div className="flex items-center justify-between pt-2">
+                                                <span className="text-sm font-medium">Subtotal</span>
+                                                <span className="font-medium">₹{subtotal.toLocaleString("en-IN")}</span>
+                                            </div>
+
+                                            {/* Promo Code Section */}
+                                            {!appliedCoupon ? (
+                                                <div className="space-y-2 pt-2">
+                                                    <div className="flex items-center gap-2">
+                                                        <Tag className="h-4 w-4 text-muted-foreground" />
+                                                        <span className="text-sm font-medium">Have a promo code?</span>
+                                                    </div>
+                                                    <div className="flex gap-2">
+                                                        <Input
+                                                            placeholder="Enter promo code"
+                                                            value={promoCode}
+                                                            onChange={(e) => setPromoCode(e.target.value.toUpperCase())}
+                                                            onKeyDown={(e) => {
+                                                                if (e.key === "Enter") {
+                                                                    handleApplyPromoCode();
+                                                                }
+                                                            }}
+                                                            className="flex-1"
+                                                        />
+                                                        <Button
+                                                            onClick={handleApplyPromoCode}
+                                                            variant="outline"
+                                                            disabled={!promoCode.trim()}
+                                                        >
+                                                            Apply
+                                                        </Button>
+                                                    </div>
+                                                </div>
+                                            ) : (
+                                                <div className="space-y-2 pt-2">
+                                                    <div className="flex items-center justify-between p-3 bg-green-50 dark:bg-green-950/20 rounded-lg border border-green-200 dark:border-green-800">
+                                                        <div className="flex items-center gap-2">
+                                                            <Tag className="h-4 w-4 text-green-600 dark:text-green-400" />
+                                                            <div>
+                                                                <p className="text-sm font-medium text-green-900 dark:text-green-100">
+                                                                    {appliedCoupon.code}
+                                                                </p>
+                                                                <p className="text-xs text-green-700 dark:text-green-300">
+                                                                    {appliedCoupon.description}
+                                                                </p>
                                                             </div>
-                                                        </SelectItem>
-                                                    ))}
-                                                </SelectContent>
-                                            </Select>
-                                            {voiceBotMinutes > 0 && (
-                                                <p className="text-xs text-muted-foreground mt-1.5">
-                                                    Includes {voiceBotMinutes.toLocaleString()} minutes of voice bot usage per month.
-                                                </p>
+                                                        </div>
+                                                        <Button
+                                                            onClick={handleRemovePromoCode}
+                                                            variant="ghost"
+                                                            size="icon"
+                                                            className="h-8 w-8 text-green-600 hover:text-green-700 dark:text-green-400 dark:hover:text-green-300"
+                                                        >
+                                                            <X className="h-4 w-4" />
+                                                        </Button>
+                                                    </div>
+                                                </div>
                                             )}
+
+                                            {/* Discount Display */}
+                                            {discount > 0 && (
+                                                <div className="flex items-center justify-between text-green-600 dark:text-green-400">
+                                                    <span className="text-sm">
+                                                        Discount ({appliedCoupon?.discount}% off)
+                                                    </span>
+                                                    <span className="font-medium">-₹{discount.toLocaleString("en-IN")}</span>
+                                                </div>
+                                            )}
+
+                                            <div className="flex items-center justify-between">
+                                                <span className="text-sm">GST (18%)</span>
+                                                <span className="font-medium">₹{gst.toLocaleString("en-IN")}</span>
+                                            </div>
                                         </div>
 
                                         <Separator />
 
-                                        <div className="flex items-center justify-between pt-2">
-                                            <span className="text-sm font-medium">Subtotal</span>
-                                            <span className="font-medium">₹{subtotal.toLocaleString("en-IN")}</span>
+                                        <div className="flex items-center justify-between text-lg font-bold">
+                                            <span>Total Amount</span>
+                                            <span>₹{total.toLocaleString("en-IN")}</span>
                                         </div>
 
-                                        {/* Promo Code Section */}
-                                        {!appliedCoupon ? (
-                                            <div className="space-y-2 pt-2">
-                                                <div className="flex items-center gap-2">
-                                                    <Tag className="h-4 w-4 text-muted-foreground" />
-                                                    <span className="text-sm font-medium">Have a promo code?</span>
-                                                </div>
-                                                <div className="flex gap-2">
-                                                    <Input
-                                                        placeholder="Enter promo code"
-                                                        value={promoCode}
-                                                        onChange={(e) => setPromoCode(e.target.value.toUpperCase())}
-                                                        onKeyDown={(e) => {
-                                                            if (e.key === "Enter") {
-                                                                handleApplyPromoCode();
-                                                            }
-                                                        }}
-                                                        className="flex-1"
-                                                    />
-                                                    <Button
-                                                        onClick={handleApplyPromoCode}
-                                                        variant="outline"
-                                                        disabled={!promoCode.trim()}
-                                                    >
-                                                        Apply
-                                                    </Button>
-                                                </div>
-                                            </div>
-                                        ) : (
-                                            <div className="space-y-2 pt-2">
-                                                <div className="flex items-center justify-between p-3 bg-green-50 dark:bg-green-950/20 rounded-lg border border-green-200 dark:border-green-800">
-                                                    <div className="flex items-center gap-2">
-                                                        <Tag className="h-4 w-4 text-green-600 dark:text-green-400" />
-                                                        <div>
-                                                            <p className="text-sm font-medium text-green-900 dark:text-green-100">
-                                                                {appliedCoupon.code}
-                                                            </p>
-                                                            <p className="text-xs text-green-700 dark:text-green-300">
-                                                                {appliedCoupon.description}
-                                                            </p>
-                                                        </div>
-                                                    </div>
-                                                    <Button
-                                                        onClick={handleRemovePromoCode}
-                                                        variant="ghost"
-                                                        size="icon"
-                                                        className="h-8 w-8 text-green-600 hover:text-green-700 dark:text-green-400 dark:hover:text-green-300"
-                                                    >
-                                                        <X className="h-4 w-4" />
-                                                    </Button>
-                                                </div>
-                                            </div>
-                                        )}
-
-                                        {/* Discount Display */}
-                                        {discount > 0 && (
-                                            <div className="flex items-center justify-between text-green-600 dark:text-green-400">
-                                                <span className="text-sm">
-                                                    Discount ({appliedCoupon?.discount}% off)
-                                                </span>
-                                                <span className="font-medium">-₹{discount.toLocaleString("en-IN")}</span>
-                                            </div>
-                                        )}
-
-                                        <div className="flex items-center justify-between">
-                                            <span className="text-sm">GST (18%)</span>
-                                            <span className="font-medium">₹{gst.toLocaleString("en-IN")}</span>
+                                        <div className="pt-4">
+                                            <Button
+                                                onClick={handlePayment}
+                                                disabled={loading}
+                                                className="w-full"
+                                                size="lg"
+                                            >
+                                                {loading ? "Processing..." : "Pay Now"}
+                                            </Button>
                                         </div>
-                                    </div>
 
-                                    <Separator />
-
-                                    <div className="flex items-center justify-between text-lg font-bold">
-                                        <span>Total Amount</span>
-                                        <span>₹{total.toLocaleString("en-IN")}</span>
-                                    </div>
-
-                                    <div className="pt-4">
-                                        <Button
-                                            onClick={handlePayment}
-                                            disabled={loading}
-                                            className="w-full"
-                                            size="lg"
-                                        >
-                                            {loading ? "Processing..." : "Pay Now"}
-                                        </Button>
-                                    </div>
-
-                                    <p className="text-xs text-muted-foreground text-center">
-                                        By proceeding, you agree to our terms and conditions
-                                    </p>
-                                </CardContent>
-                            </Card>
+                                        <p className="text-xs text-muted-foreground text-center">
+                                            By proceeding, you agree to our terms and conditions
+                                        </p>
+                                    </CardContent>
+                                </Card>
+                            </div>
                         </div>
                     </div>
-                </div>
                 </ScrollArea>
             </div>
         </div >

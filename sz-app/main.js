@@ -39,7 +39,7 @@ function createWindow() {
     // Load the app
     const startUrl = isDev
         ? `http://localhost:${port}`
-        : 'https://app.rhinontech.com';
+        : 'https://app.saleszium.com';
 
     console.log(`Loading URL: ${startUrl}`);
     mainWindow.loadURL(startUrl);

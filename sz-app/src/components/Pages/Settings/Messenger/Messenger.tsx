@@ -146,20 +146,20 @@ export default function Messenger() {
     switch (selectedMethod) {
       case "code-snippet":
         return {
-          title: "Install Rhinon in your Code Snippet",
+          title: "Install Saleszium in your Code Snippet",
           tabs: ["npm", "basic-js"],
           content: {
             npm: {
               command: "npm install @saleszium/botsdk",
               description:
-                "To initialize Rhinon, copy and paste this code snippet on every page or in a common component where you want the messenger to appear.",
+                "To initialize Saleszium, copy and paste this code snippet on every page or in a common component where you want the messenger to appear.",
               note: "This must be done in your client-side code.",
               code: `import { useEffect } from 'react';
 import Rhinontech from '@saleszium/botsdk';
 
 export default function Chatbot() {
   useEffect(() => {
-    Rhinontech({
+    Saleszium({
       app_id: '${chatbotId}'
     });
   }, []);
@@ -170,14 +170,14 @@ export default function Chatbot() {
             "basic-js": {
               command: "npm install @saleszium/botsdk",
               description:
-                "To initialize Rhinon, copy and paste this code snippet on every page where you want the messenger to appear.",
+                "To initialize Saleszium, copy and paste this code snippet on every page where you want the messenger to appear.",
               note: "Add this script after the DOM is fully loaded.",
-              code: `<script src="https://rhinon-botsdk.web.app/rhinonbot.js"></script>
+              code: `<script src="https://saleszium-botsdk.web.app/salesziumbot.js"></script>
 <script>
-  const Rhinontech =
-    window.RhinonBot.default || window.RhinonBot.initRhinontech;
+  const Saleszium =
+    window.SalesziumBot.default || window.SalesziumBot.initSaleszium;
 
-  Rhinontech({
+  Saleszium({
     app_id: "${chatbotId}"
   });
 </script>`,
@@ -186,21 +186,21 @@ export default function Chatbot() {
         };
       case "react":
         return {
-          title: "Install Rhinon in your React application",
+          title: "Install Saleszium in your React application",
           tabs: ["npm"],
           content: {
             npm: {
               command: "npm install @saleszium/botsdk",
               description:
                 "Add Rhinon Tech to your project using the following snippet:",
-              note: "To initialize Rhinon Tech, copy and paste this code snippet on every page or in a common component where you want the messenger to appear.",
+              note: "To initialize Saleszium Tech, copy and paste this code snippet on every page or in a common component where you want the messenger to appear.",
               additionalNote: "This must be done in your client-side code.",
               code: `import { useEffect } from 'react';
 import Rhinontech from '@saleszium/botsdk';
 
 export default function Chatbot() {
   useEffect(() => {
-    Rhinontech({
+    Saleszium({
       app_id: '${chatbotId}'
     });
   }, []);
@@ -212,14 +212,14 @@ export default function Chatbot() {
         };
       case "nextjs":
         return {
-          title: "Install Rhinon in your Next.js application",
+          title: "Install Saleszium in your Next.js application",
           tabs: ["npm"],
           hasStep3: true,
           content: {
             npm: {
               command: "npm install @saleszium/botsdk",
               description:
-                "Install the Rhinon SDK and create a client component wrapper for the chatbot.",
+                "Install the Saleszium SDK and create a client component wrapper for the chatbot.",
               note: "Step 1: Create a client component wrapper",
               filename: "components/Chatbot/ChatbotWrapper.tsx",
               code: `'use client';
@@ -239,7 +239,7 @@ import Rhinontech from '@saleszium/botsdk';
 
 export default function Chatbot() {
   useEffect(() => {
-    Rhinontech({
+    Saleszium({
       app_id: '${chatbotId}'
     });
   }, []);
@@ -251,20 +251,20 @@ export default function Chatbot() {
         };
       case "nuxtjs":
         return {
-          title: "Install Rhinon in your Nuxt.js application",
+          title: "Install Saleszium in your Nuxt.js application",
           tabs: ["npm"],
           content: {
             npm: {
               command: "npm install @saleszium/botsdk",
               description:
-                "Install the Rhinon SDK and create a plugin for client-side initialization.",
+                "Install the Saleszium SDK and create a plugin for client-side initialization.",
               note: "Step 1: Create a Nuxt plugin",
               filename: "plugins/rhinon.client.ts",
               code: `import Rhinontech from '@saleszium/botsdk';
 
 export default defineNuxtPlugin(() => {
   if (process.client) {
-    Rhinontech({
+    Saleszium({
       app_id: '${chatbotId}'
     });
   }
@@ -280,13 +280,13 @@ export default defineNuxtPlugin(() => {
         };
       case "angular":
         return {
-          title: "Install Rhinon in your Angular application",
+          title: "Install Saleszium in your Angular application",
           tabs: ["npm"],
           content: {
             npm: {
               command: "npm install @saleszium/botsdk",
               description:
-                "Install the Rhinon SDK and initialize it in your Angular component.",
+                "Install the Saleszium SDK and initialize it in your Angular component.",
               note: "To initialize the chatbot, copy and paste this Angular code snippet into your root component or where you want the chatbot to appear.",
               filename: "app.component.ts",
               code: `import { Component, PLATFORM_ID, Inject } from '@angular/core';
@@ -319,13 +319,13 @@ export class AppComponent {
         };
       case "vue":
         return {
-          title: "Install Rhinon in your Vue application",
+          title: "Install Saleszium in your Vue application",
           tabs: ["npm"],
           content: {
             npm: {
               command: "npm install @saleszium/botsdk",
               description:
-                "Install the Rhinon SDK and initialize it in your Vue component.",
+                "Install the Saleszium SDK and initialize it in your Vue component.",
               note: "To initialize the chatbot, copy and paste this Vue code snippet into your root component or where you want the chatbot to appear.",
               filename: "App.vue",
               code: `<template>
@@ -339,7 +339,7 @@ import { onMounted } from 'vue';
 import Rhinontech from '@saleszium/botsdk';
 
 onMounted(() => {
-  Rhinontech({
+  Saleszium({
     app_id: '${chatbotId}'
   });
 });
@@ -349,27 +349,27 @@ onMounted(() => {
         };
       case "ember":
         return {
-          title: "Install Rhinon in your Ember application",
+          title: "Install Saleszium in your Ember application",
           tabs: ["npm"],
           content: {
             npm: {
               command: "npm install @saleszium/botsdk",
               description:
-                "Install the Rhinon SDK and initialize it in your Ember application.",
+                "Install the Saleszium SDK and initialize it in your Ember application.",
               note: "Step 1: Create an initializer for the chatbot",
               filename: "app/initializers/rhinon-chatbot.js",
               code: `import Rhinontech from '@saleszium/botsdk';
 
 export function initialize() {
   if (typeof FastBoot === 'undefined') {
-    Rhinontech({
+    Saleszium({
       app_id: '${chatbotId}'
     });
   }
 }
 
 export default {
-  name: 'rhinon-chatbot',
+  name: 'saleszium-chatbot',
   initialize
 };`,
               step2Filename: "app/app.js",
@@ -390,13 +390,13 @@ loadInitializers(App, config.modulePrefix);`,
         };
       case "nestjs":
         return {
-          title: "Install Rhinon in your NestJS application",
+          title: "Install Saleszium in your NestJS application",
           tabs: ["npm"],
           content: {
             npm: {
               command: "npm install @saleszium/botsdk",
               description:
-                "Install the Rhinon SDK and add it to your HTML template for client-side rendering.",
+                "Install the Saleszium SDK and add it to your HTML template for client-side rendering.",
               note: "Add this script to your HTML template (e.g., in your main.hbs or index.html file served by NestJS).",
               additionalNote:
                 "Note: NestJS is a backend framework. The chatbot must be initialized on the client side.",
@@ -412,11 +412,11 @@ loadInitializers(App, config.modulePrefix);`,
   <div id="root"></div>
   
   <!-- Rhinon Chatbot -->
-  <script src="https://rhinon-botsdk.web.app/rhinonbot.js"></script>
+  <script src="https://saleszium-botsdk.web.app/salesziumbot.js"></script>
   <script>
-    const Rhinontech = window.RhinonBot.default || window.RhinonBot.initRhinontech;
+    const Saleszium = window.SalesziumBot.default || window.SalesziumBot.initSaleszium;
     
-    Rhinontech({
+    Saleszium({
       app_id: '${chatbotId}'
     });
   </script>
@@ -442,7 +442,7 @@ bootstrap();`,
         };
       default:
         return {
-          title: "Install Rhinon in your Code Snippet",
+          title: "Install Saleszium in your Code Snippet",
           tabs: ["npm"],
           content: {
             npm: {
@@ -488,16 +488,14 @@ bootstrap();`,
           <div className="flex items-center gap-2">
             <Button
               variant="outline"
-              className={`flex items-center gap-2 border-[2px] px-4 py-1 text-xs font-mono ${
-                chatbotInstalled
-                  ? "text-green-600 border-green-400 hover:text-green-600"
-                  : "text-red-600 border-red-400 hover:text-red-600"
-              }`}>
+              className={`flex items-center gap-2 border-[2px] px-4 py-1 text-xs font-mono ${chatbotInstalled
+                ? "text-green-600 border-green-400 hover:text-green-600"
+                : "text-red-600 border-red-400 hover:text-red-600"
+                }`}>
               {/* status dot */}
               <span
-                className={`h-2 w-2 rounded-full ${
-                  chatbotInstalled ? "bg-green-500" : "bg-red-500"
-                }`}></span>
+                className={`h-2 w-2 rounded-full ${chatbotInstalled ? "bg-green-500" : "bg-red-500"
+                  }`}></span>
 
               {chatbotInstalled ? "Activated" : "Chatbot Not Installed"}
             </Button>
@@ -583,11 +581,10 @@ bootstrap();`,
                         setSelectedMethod(method.id);
                         setSelectedTab("npm");
                       }}
-                      className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border transition-colors text-sm ${
-                        isSelected
-                          ? "border-primary bg-primary/10 text-primary"
-                          : "border-border hover:border-muted"
-                      }`}>
+                      className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border transition-colors text-sm ${isSelected
+                        ? "border-primary bg-primary/10 text-primary"
+                        : "border-border hover:border-muted"
+                        }`}>
                       {method.iconType === "image" ? (
                         <img
                           src={
@@ -630,11 +627,10 @@ bootstrap();`,
                       <button
                         key={tab}
                         onClick={() => setSelectedTab(tab)}
-                        className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
-                          selectedTab === tab
-                            ? "bg-muted text-foreground"
-                            : "text-muted-foreground hover:text-foreground"
-                        }`}>
+                        className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${selectedTab === tab
+                          ? "bg-muted text-foreground"
+                          : "text-muted-foreground hover:text-foreground"
+                          }`}>
                         {tab === "npm" ? "NPM Package" : "Basic Javascript"}
                       </button>
                     ))}
@@ -682,27 +678,26 @@ bootstrap();`,
                         ? "typescript"
                         : selectedTab === "basic-js" ||
                           selectedMethod === "ember"
-                        ? "javascript"
-                        : selectedMethod === "nextjs" ||
-                          selectedMethod === "nuxtjs" ||
-                          selectedMethod === "nestjs"
-                        ? "typescript"
-                        : selectedMethod === "vue"
-                        ? "html"
-                        : "jsx"
+                          ? "javascript"
+                          : selectedMethod === "nextjs" ||
+                            selectedMethod === "nuxtjs" ||
+                            selectedMethod === "nestjs"
+                            ? "typescript"
+                            : selectedMethod === "vue"
+                              ? "html"
+                              : "jsx"
                     }
                     filename={
                       getCurrentContent().filename ||
-                      `${
-                        selectedMethod === "angular"
-                          ? "app.component.ts"
-                          : selectedTab === "basic-js"
+                      `${selectedMethod === "angular"
+                        ? "app.component.ts"
+                        : selectedTab === "basic-js"
                           ? "index.html"
                           : selectedMethod === "vue"
-                          ? "App.vue"
-                          : selectedMethod === "ember"
-                          ? "app/initializers/rhinon-chatbot.js"
-                          : "Chatbot.tsx"
+                            ? "App.vue"
+                            : selectedMethod === "ember"
+                              ? "app/initializers/rhinon-chatbot.js"
+                              : "Chatbot.tsx"
                       }`
                     }
                     code={getCurrentContent().code}
@@ -716,19 +711,19 @@ bootstrap();`,
                       {selectedMethod === "nextjs"
                         ? "Step 2: Create the main Chatbot component"
                         : selectedMethod === "ember"
-                        ? "Step 2: Ensure initializers are loaded in your app"
-                        : selectedMethod === "nuxtjs"
-                        ? "Step 2: Register the plugin in nuxt.config.ts"
-                        : selectedMethod === "nestjs"
-                        ? "Step 2: Configure static assets in main.ts"
-                        : "Step 2: Additional configuration"}
+                          ? "Step 2: Ensure initializers are loaded in your app"
+                          : selectedMethod === "nuxtjs"
+                            ? "Step 2: Register the plugin in nuxt.config.ts"
+                            : selectedMethod === "nestjs"
+                              ? "Step 2: Configure static assets in main.ts"
+                              : "Step 2: Additional configuration"}
                     </p>
                     <div className="space-y-2">
                       <CodeBlock
                         language={
                           selectedMethod === "nextjs" ||
-                          selectedMethod === "nuxtjs" ||
-                          selectedMethod === "nestjs"
+                            selectedMethod === "nuxtjs" ||
+                            selectedMethod === "nestjs"
                             ? "typescript"
                             : "javascript"
                         }

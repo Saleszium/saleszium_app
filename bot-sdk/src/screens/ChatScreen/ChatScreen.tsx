@@ -292,7 +292,7 @@ const ChatScreen: React.FC<ChatScreenProps> = (props) => {
   //           'turn:3.109.172.202:3478?transport=udp',
   //           'turn:3.109.172.202:3478?transport=tcp',
   //         ],
-  //         username: 'rhinon',
+  //         username: 'saleszium',
   //         credential: 'rtWebRtc@123',
   //       },
   //     ],

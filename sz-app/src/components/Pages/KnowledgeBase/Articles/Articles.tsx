@@ -111,10 +111,10 @@ export default function Articles() {
       const uuid = response.uuid;
 
       // Backend stores only subdomain, reconstruct full URL
-      if (theme?.help_center_url && theme.help_center_url.trim() !== "") {
-        setKbUrl(`https://${theme.help_center_url}.rhinon.help`);
-      } else if (uuid) {
-        setKbUrl(`https://${uuid}.rhinon.help`);
+      if (theme?.help_center_url) {
+        setKbUrl(`https://${theme.help_center_url}.saleszium.help`);
+      } else {
+        setKbUrl(`https://${uuid}.saleszium.help`);
       }
 
       if (response.folders && response.folders.length > 0) {
@@ -301,14 +301,14 @@ export default function Articles() {
           />
 
           <div className="flex items-center gap-5">
-            <p
+            {/* <p
               onClick={() => window.open(kbUrl || `/kb`, "_blank")}
               className="text-sm font-medium hover:text-blue-800 underline cursor-pointer"
             >
               {kbUrl
                 ? kbUrl.replace("https://", "").replace("http://", "")
                 : "Your Knowledge Base"}
-            </p>
+            </p> */}
             <Button onClick={() => setIsCreateTopicOpen(true)}>
               <Plus className="h-4 w-4 mr-2" />
               Add Topic

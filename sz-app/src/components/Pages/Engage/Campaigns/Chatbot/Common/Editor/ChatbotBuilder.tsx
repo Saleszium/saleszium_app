@@ -27,6 +27,7 @@ import { useCampaignStore, ButtonElement } from "../store/useCampaignStore";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { uploadFileAndGetFullUrl } from "@/services/fileUploadService";
 import { chatbotCampaignsService } from "@/services/engage/campaigns/chatbot/chatbotCampaignsService";
+import { SecureImage } from "@/components/Common/SecureImage";
 
 interface ChatbotBuilderProps {
   campaignType: "recurring" | "one-time";
@@ -282,12 +283,12 @@ export default function ChatbotBuilder({
                     setSelectedElement("image");
                   }}
                   className={`flex flex-col p-4 pb-0 w-[300px] relative rounded-t-xl cursor-pointer transition-all editable-element group ${selectedElement === "image"
-                      ? "bg-blue-900/30 border border-blue-900"
-                      : "border border-dashed border-transparent hover:border-gray-500 hover:opacity-70"
+                    ? "bg-blue-900/30 border border-blue-900"
+                    : "border border-dashed border-transparent hover:border-gray-500 hover:opacity-70"
                     }`}>
                   {media ? (
                     <>
-                      <img
+                      <SecureImage
                         src={media.src}
                         alt={imageAlt}
                         className="object-cover w-full h-48 rounded-t-lg mb-[-1px]"
@@ -326,8 +327,8 @@ export default function ChatbotBuilder({
                   {/* Heading */}
                   <div
                     className={`px-2 border border-transparent h-full editable-element ${selectedElement === "heading"
-                        ? "border-blue-500 py-1"
-                        : "border-dashed hover:border-gray-500 hover:opacity-70"
+                      ? "border-blue-500 py-1"
+                      : "border-dashed hover:border-gray-500 hover:opacity-70"
                       }`}
                     onClick={(e) => {
                       e.stopPropagation();
@@ -362,8 +363,8 @@ export default function ChatbotBuilder({
                   {(templateLayout?.includes("subheading") || subheading) && (
                     <div
                       className={`px-2 py-1 border border-transparent h-full editable-element ${selectedElement === "sub-heading"
-                          ? "border-blue-500 py-1"
-                          : "border-dashed hover:border-gray-500 hover:opacity-70"
+                        ? "border-blue-500 py-1"
+                        : "border-dashed hover:border-gray-500 hover:opacity-70"
                         }`}
                       onClick={(e) => {
                         e.stopPropagation();
@@ -464,16 +465,16 @@ export default function ChatbotBuilder({
                           <div className="flex w-full bg-gray-100 p-1 rounded-lg">
                             <button
                               className={`flex-1 py-1 text-sm font-medium rounded-md transition-all ${activeImageTab === "custom"
-                                  ? "bg-white shadow-sm text-black"
-                                  : "text-gray-500 hover:text-gray-700"
+                                ? "bg-white shadow-sm text-black"
+                                : "text-gray-500 hover:text-gray-700"
                                 }`}
                               onClick={() => setActiveImageTab("custom")}>
                               Custom
                             </button>
                             <button
                               className={`flex-1 py-1 text-sm font-medium rounded-md transition-all ${activeImageTab === "library"
-                                  ? "bg-white shadow-sm text-black"
-                                  : "text-gray-500 hover:text-gray-700"
+                                ? "bg-white shadow-sm text-black"
+                                : "text-gray-500 hover:text-gray-700"
                                 }`}
                               onClick={() => setActiveImageTab("library")}>
                               Library
@@ -496,7 +497,7 @@ export default function ChatbotBuilder({
                                         await uploadFileAndGetFullUrl(file);
                                       updateField("media", {
                                         type: "image",
-                                        src: response.url,
+                                        src: response.key, // Save the secure S3 key instead of the forbidden public URL
                                         alt: imageAlt,
                                       });
                                     } catch (error) {
@@ -516,8 +517,8 @@ export default function ChatbotBuilder({
                               <label
                                 htmlFor="image-upload"
                                 className={`border-2 border-dashed border-gray-200 rounded-lg p-8 flex flex-col items-center justify-center bg-gray-50 hover:bg-gray-100 transition-colors ${isUploadingImage
-                                    ? "opacity-50 cursor-wait"
-                                    : "cursor-pointer"
+                                  ? "opacity-50 cursor-wait"
+                                  : "cursor-pointer"
                                   }`}>
                                 <div className="bg-blue-600 rounded-full p-2 mb-2">
                                   {isUploadingImage ? (
@@ -695,9 +696,9 @@ export default function ChatbotBuilder({
                                     });
                                   }}
                                   className={`flex flex-col items-center justify-center p-2 rounded-lg border transition-all gap-1 h-20 ${(selectedButton.actionType || "open-url") ===
-                                      action.value
-                                      ? "border-blue-500 bg-blue-50 text-blue-700"
-                                      : "border-gray-200 hover:border-gray-300 text-gray-600"
+                                    action.value
+                                    ? "border-blue-500 bg-blue-50 text-blue-700"
+                                    : "border-gray-200 hover:border-gray-300 text-gray-600"
                                     }`}>
                                   <action.icon className="w-5 h-5" />
                                   <span className="text-[10px] text-center leading-tight">

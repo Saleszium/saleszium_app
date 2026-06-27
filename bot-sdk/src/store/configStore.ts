@@ -18,7 +18,7 @@ export interface ConfigState {
   adminTestingMode: boolean;
   config: ChatbotConfig;
   chatbot_config: ChatbotConfig; // Alias for backward compatibility
-  
+
   // Actions
   setAppId: (id: string) => void;
   setAdmin: (isAdmin: boolean, testingMode?: boolean) => void;
@@ -41,15 +41,15 @@ export const useConfigStore = create<ConfigState>()(
       chatbot_config: DEFAULT_CONFIG, // Alias
 
       setAppId: (id) => set({ appId: id }),
-      
-      setAdmin: (isAdmin, testingMode = false) => 
+
+      setAdmin: (isAdmin, testingMode = false) =>
         set({ isAdmin, adminTestingMode: testingMode }),
-      
+
       setConfig: (newConfig) =>
         set((state) => {
           // Handle RhinonConfig with nested chatbot_config
           if (newConfig.app_id !== undefined || newConfig.chatbot_config !== undefined) {
-            const updatedConfig = newConfig.chatbot_config 
+            const updatedConfig = newConfig.chatbot_config
               ? { ...state.config, ...newConfig.chatbot_config }
               : state.config;
             return {
@@ -67,7 +67,7 @@ export const useConfigStore = create<ConfigState>()(
             chatbot_config: updatedConfig,
           };
         }),
-      
+
       updateForms: (preChatForm, postChatForm, ticketForm) =>
         set((state) => {
           const updatedConfig = {
@@ -81,13 +81,13 @@ export const useConfigStore = create<ConfigState>()(
             chatbot_config: updatedConfig,
           };
         }),
-      
-      resetConfig: () => set({ 
+
+      resetConfig: () => set({
         config: DEFAULT_CONFIG,
         chatbot_config: DEFAULT_CONFIG,
       }),
     }),
-    { name: 'rhinon-config' }
+    { name: 'saleszium-config' }
   )
 );
 

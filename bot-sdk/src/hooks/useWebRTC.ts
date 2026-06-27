@@ -22,7 +22,7 @@ interface UseWebRTCReturn {
   callDuration: string;
   isMuted: boolean;
   isSpeakerOn: boolean;
-  
+
   // Actions
   handleAcceptCall: () => Promise<void>;
   handleRejectCall: () => void;
@@ -38,7 +38,7 @@ const ICE_SERVERS = [
       'turn:3.109.172.202:3478?transport=udp',
       'turn:3.109.172.202:3478?transport=tcp',
     ],
-    username: 'rhinon',
+    username: 'saleszium',
     credential: 'rtWebRtc@123',
   },
 ];
@@ -113,7 +113,7 @@ export const useWebRTC = ({ userId, enabled = true }: UseWebRTCProps): UseWebRTC
   // Call timer
   useEffect(() => {
     let interval: NodeJS.Timeout;
-    
+
     if (isInCall && callStartTime) {
       interval = setInterval(() => {
         const elapsed = Math.floor((Date.now() - callStartTime) / 1000);
@@ -206,7 +206,7 @@ export const useWebRTC = ({ userId, enabled = true }: UseWebRTCProps): UseWebRTC
 
   const handleRejectCall = useCallback(() => {
     if (!incomingCall || !socketRef.current) return;
-    
+
     socketRef.current.emit('call_rejected_manual', { to: incomingCall.from });
     setIncomingCall(null);
 

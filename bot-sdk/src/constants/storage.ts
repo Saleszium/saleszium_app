@@ -7,11 +7,11 @@ export const STORAGE_KEYS = {
   USER_EMAIL: 'userEmail',
 
   // Visitor tracking
-  VISITOR_RETURNING: 'rhinon_visitor_returning',
+  VISITOR_RETURNING: 'saleszium_visitor_returning',
   PREV_URL: 'prevUrl',
 
   // Campaign
-  CAMPAIGN_VIEWS: 'rhinon_campaign_views',
+  CAMPAIGN_VIEWS: 'saleszium_campaign_views',
 
   // Config
   CHATBOT_CONFIG: 'chatbot-config',
