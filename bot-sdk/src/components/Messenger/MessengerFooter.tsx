@@ -9,8 +9,8 @@ interface MessengerFooterProps {
 
 export const MessengerFooter: React.FC<MessengerFooterProps> = ({ theme }) => {
   const logoSrc = theme === 'dark'
-            ? 'https://www.saleszium.com/assets/Saleszium_Light_Logo_small.png'
-            : 'https://www.saleszium.com/assets/Saleszium_Dark_Logo_small.png';
+            ? 'https://www.saleszium.com/assets/Saleszium_Light_Logo.png'
+            : 'https://www.saleszium.com/assets/Saleszium_Dark_Logo.png';
 
   return (
     <div className='footer'>

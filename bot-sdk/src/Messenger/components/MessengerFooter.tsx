@@ -12,8 +12,8 @@ export const MessengerFooter: React.FC<MessengerFooterProps> = memo(({ effective
       <img
         src={
           effectiveTheme === 'dark'
-            ? 'https://www.saleszium.com/assets/Saleszium_Light_Logo_small.png'
-            : 'https://www.saleszium.com/assets/Saleszium_Dark_Logo_small.png'
+            ? 'https://www.saleszium.com/assets/Saleszium_Light_Logo.png'
+            : 'https://www.saleszium.com/assets/Saleszium_Dark_Logo.png'
         }
         alt='Saleszium Logo'
         style={{ width: 50 }}
