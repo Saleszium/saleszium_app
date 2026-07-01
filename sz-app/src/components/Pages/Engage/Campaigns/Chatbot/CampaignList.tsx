@@ -11,7 +11,7 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { MoreHorizontal, Play, Pause, Edit, Trash2, BarChart2 } from "lucide-react";
+import { MoreHorizontal, Play, Pause, Edit, Trash2 } from "lucide-react";
 import {
     AlertDialog,
     AlertDialogAction,
@@ -215,9 +215,7 @@ export const CampaignList = ({ campaignType, search, filter }: CampaignListProps
                                                     <Edit className="mr-2 h-4 w-4" /> Edit
                                                 </Link>
                                             </DropdownMenuItem>
-                                            <DropdownMenuItem>
-                                                <BarChart2 className="mr-2 h-4 w-4" /> View Reports
-                                            </DropdownMenuItem>
+
                                             <DropdownMenuSeparator />
                                             {campaign.status === "active" ? (
                                                 <DropdownMenuItem onClick={() => handleStatusToggle(campaign.id!, campaign.status)}>

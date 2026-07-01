@@ -172,8 +172,23 @@ export default function ForgotPassword() {
       return;
     }
 
-    if (password.length < 8) {
-      setError("Password must be at least 8 characters long");
+    if (password.length < 12) {
+      setError("Password must be at least 12 characters");
+      return;
+    }
+
+    if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
+      setError("Must include at least 1 special character");
+      return;
+    }
+
+    if (!/\d/.test(password)) {
+      setError("Must include at least 1 number");
+      return;
+    }
+
+    if (!/[A-Z]/.test(password)) {
+      setError("Must include at least 1 uppercase letter");
       return;
     }
 

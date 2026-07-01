@@ -153,8 +153,23 @@ const Profile = () => {
   const handlePasswordUpdate = async () => {
     setPasswordError("");
 
-    if (newPassword.length < 8) {
-      setPasswordError("Password must be at least 8 characters long.");
+    if (newPassword.length < 12) {
+      setPasswordError("Password must be at least 12 characters");
+      return;
+    }
+
+    if (!/[!@#$%^&*(),.?":{}|<>]/.test(newPassword)) {
+      setPasswordError("Must include at least 1 special character");
+      return;
+    }
+
+    if (!/\d/.test(newPassword)) {
+      setPasswordError("Must include at least 1 number");
+      return;
+    }
+
+    if (!/[A-Z]/.test(newPassword)) {
+      setPasswordError("Must include at least 1 uppercase letter");
       return;
     }
     if (newPassword !== confirmPassword) {

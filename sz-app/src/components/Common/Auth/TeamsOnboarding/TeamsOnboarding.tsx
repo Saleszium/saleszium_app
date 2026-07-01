@@ -28,10 +28,10 @@ import {
 import Cookies from "js-cookie";
 
 interface PasswordCriteria {
-  hasLetter: boolean;
-  hasNumber: boolean;
-  hasSymbol: boolean;
-  isValidLength: boolean;
+  length: boolean;
+  special: boolean;
+  number: boolean;
+  uppercase: boolean;
 }
 
 export function TeamsOnboarding({
@@ -52,28 +52,28 @@ export function TeamsOnboarding({
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [passwordCriteria, setPasswordCriteria] = useState<PasswordCriteria>({
-    hasLetter: false,
-    hasNumber: false,
-    hasSymbol: false,
-    isValidLength: false,
+    length: false,
+    special: false,
+    number: false,
+    uppercase: false,
   });
 
   const validatePassword = (pwd: string) => {
     setPasswordCriteria({
-      hasLetter: /[a-zA-Z]/.test(pwd),
-      hasNumber: /\d/.test(pwd),
-      hasSymbol: /[@$!%*?&]/.test(pwd),
-      isValidLength: pwd.length >= 8,
+      length: pwd.length >= 12,
+      special: /[!@#$%^&*(),.?":{}|<>]/.test(pwd),
+      number: /\d/.test(pwd),
+      uppercase: /[A-Z]/.test(pwd),
     });
   };
 
   const getPasswordStrength = () => {
-    const { hasLetter, hasNumber, hasSymbol, isValidLength } = passwordCriteria;
+    const { length, special, number, uppercase } = passwordCriteria;
     const criteriaCount = [
-      hasLetter,
-      hasNumber,
-      hasSymbol,
-      isValidLength,
+      length,
+      special,
+      number,
+      uppercase,
     ].filter(Boolean).length;
     return (criteriaCount / 4) * 100;
   };
@@ -96,8 +96,8 @@ export function TeamsOnboarding({
   };
 
   const isPasswordValid = () => {
-    const { hasLetter, hasNumber, hasSymbol, isValidLength } = passwordCriteria;
-    return hasLetter && hasNumber && hasSymbol && isValidLength;
+    const { length, special, number, uppercase } = passwordCriteria;
+    return length && special && number && uppercase;
   };
 
   const passwordsMatch =
@@ -325,17 +325,17 @@ export function TeamsOnboarding({
                 <div className="grid gap-2">
                   <Label className="text-sm font-medium">Requirements</Label>
                   <div className="grid gap-1">
-                    <CriteriaItem met={passwordCriteria.isValidLength}>
-                      At least 8 characters
+                    <CriteriaItem met={passwordCriteria.length}>
+                      Min. 12 characters
                     </CriteriaItem>
-                    <CriteriaItem met={passwordCriteria.hasLetter}>
-                      Contains a letter
+                    <CriteriaItem met={passwordCriteria.special}>
+                      Min. 1 special character
                     </CriteriaItem>
-                    <CriteriaItem met={passwordCriteria.hasNumber}>
-                      Contains a number
+                    <CriteriaItem met={passwordCriteria.number}>
+                      Min. 1 number
                     </CriteriaItem>
-                    <CriteriaItem met={passwordCriteria.hasSymbol}>
-                      Contains a symbol (@$!%*?&)
+                    <CriteriaItem met={passwordCriteria.uppercase}>
+                      Min. 1 uppercase letter
                     </CriteriaItem>
                   </div>
                 </div>

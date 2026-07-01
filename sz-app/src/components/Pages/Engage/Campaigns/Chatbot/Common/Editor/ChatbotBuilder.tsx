@@ -303,14 +303,14 @@ export default function ChatbotBuilder({
                       </button>
                     </>
                   ) : (
-                    <div className="border-2 border-dashed border-gray-300 rounded-t-lg p-12 flex flex-col items-center justify-center bg-gray-50 hover:bg-gray-100 transition-colors h-48">
+                    <div className="border-2 border-dashed border-gray-300 dark:border-zinc-700 rounded-t-lg p-12 flex flex-col items-center justify-center bg-gray-50 dark:bg-zinc-800/50 hover:bg-gray-100 dark:hover:bg-zinc-800 transition-colors h-48">
                       <div className="bg-blue-600 rounded-full p-3 mb-3">
                         <Upload className="w-6 h-6 text-white" />
                       </div>
-                      <p className="text-sm font-medium text-gray-700 mb-1">
+                      <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                         Upload Image
                       </p>
-                      <p className="text-xs text-gray-500 text-center">
+                      <p className="text-xs text-gray-500 dark:text-gray-400 text-center">
                         Click to add an image
                         <br />
                         or choose from library
@@ -321,7 +321,7 @@ export default function ChatbotBuilder({
               )}
 
               <div
-                className={`flex flex-col bg-white gap-2 mx-4 shadow-md ${hasImage ? "rounded-b-lg pt-1" : "rounded-lg pt-3"
+                className={`flex flex-col bg-white dark:bg-zinc-900 text-gray-900 dark:text-gray-100 gap-2 mx-4 shadow-md ${hasImage ? "rounded-b-lg pt-1" : "rounded-lg pt-3"
                   }`}>
                 <div className="flex flex-col">
                   {/* Heading */}
@@ -342,7 +342,7 @@ export default function ChatbotBuilder({
                             updateField("heading", e.target.value)
                           }
                           maxLength={80}
-                          className="min-h-[80px] bg-transparent focus-visible:ring-2 focus-visible:ring-blue-500 resize-none p-1 break-words whitespace-pre-wrap"
+                          className="min-h-[80px] bg-transparent focus-visible:ring-2 focus-visible:ring-blue-500 resize-none p-1 break-words whitespace-pre-wrap text-gray-900 dark:text-gray-100"
                           autoFocus
                           onClick={(e) => e.stopPropagation()}
                         />
@@ -353,7 +353,7 @@ export default function ChatbotBuilder({
                         </div>
                       </div>
                     ) : (
-                      <p className="cursor-pointer break-words whitespace-pre-wrap font-semibold">
+                      <p className="cursor-pointer break-words whitespace-pre-wrap font-semibold text-gray-900 dark:text-gray-100">
                         {heading}
                       </p>
                     )}
@@ -378,7 +378,7 @@ export default function ChatbotBuilder({
                               updateField("subheading", e.target.value)
                             }
                             maxLength={220}
-                            className="min-h-[80px] bg-transparent focus-visible:ring-2 focus-visible:ring-blue-500 resize-none p-1 break-words whitespace-pre-wrap text-sm text-gray-600"
+                            className="min-h-[80px] bg-transparent focus-visible:ring-2 focus-visible:ring-blue-500 resize-none p-1 break-words whitespace-pre-wrap text-sm text-gray-600 dark:text-gray-400"
                             autoFocus
                             onClick={(e) => e.stopPropagation()}
                             placeholder="Add subheading..."
@@ -390,7 +390,7 @@ export default function ChatbotBuilder({
                           </div>
                         </div>
                       ) : (
-                        <p className="cursor-pointer break-words whitespace-pre-wrap text-sm text-gray-600">
+                        <p className="cursor-pointer break-words whitespace-pre-wrap text-sm text-gray-600 dark:text-gray-400">
                           {subheading || "Add subheading..."}
                         </p>
                       )}
@@ -411,7 +411,12 @@ export default function ChatbotBuilder({
                               ? "destructive"
                               : "secondary"
                         }
-                        className="w-full mb-2"
+                        className={`w-full mb-2 ${btn.style === "primary"
+                          ? "bg-gray-900 hover:bg-gray-800 text-white dark:bg-gray-100 dark:text-gray-900"
+                          : btn.style === "danger"
+                            ? "bg-red-600 hover:bg-red-700 text-white"
+                            : "bg-gray-100 hover:bg-gray-200 text-gray-900 dark:bg-gray-800 dark:text-gray-100"
+                          }`}
                         onClick={(e) => {
                           e.stopPropagation();
                           handleElementClick("button", btn.id);
@@ -443,10 +448,10 @@ export default function ChatbotBuilder({
 
               {(selectedElement === "image" ||
                 selectedElement === "button") && (
-                  <div className={`flex flex-col w-[300px] absolute left-[285px] ${selectedElement === "button" ? '-top-12 h-[500px]' : "-top-8 h-[460px]"} bg-white shadow-xl rounded-2xl  border animate-in fade-in slide-in-from-left-5 z-10 editable-element  overflow-hidden`}>
+                  <div className={`flex flex-col w-[300px] absolute left-[285px] ${selectedElement === "button" ? '-top-12 h-[500px]' : "-top-8 h-[460px]"} bg-white dark:bg-zinc-900 shadow-xl rounded-2xl border dark:border-zinc-800 animate-in fade-in slide-in-from-left-5 z-10 editable-element overflow-hidden`}>
                     <ScrollArea className="flex-1 h-0 px-3 pb-5">
-                      <div className="flex items-center pt-5 pb-3 justify-between mb-4 sticky top-0 bg-white z-20">
-                        <h3 className="font-semibold text-black">
+                      <div className="flex items-center pt-5 pb-3 justify-between mb-4 sticky top-0 bg-white dark:bg-zinc-900 z-20">
+                        <h3 className="font-semibold text-black dark:text-white">
                           {selectedElement === "image"
                             ? "Edit Image"
                             : "Edit Button"}
@@ -456,25 +461,25 @@ export default function ChatbotBuilder({
                           size="icon"
                           className="h-6 w-6"
                           onClick={() => setSelectedElement(null)}>
-                          <X className="h-4 w-4 text-black" />
+                          <X className="h-4 w-4 text-black dark:text-white" />
                         </Button>
                       </div>
 
                       {selectedElement === "image" && (
                         <div className="space-y-4 px-2">
-                          <div className="flex w-full bg-gray-100 p-1 rounded-lg">
+                          <div className="flex w-full bg-gray-100 dark:bg-zinc-800 p-1 rounded-lg">
                             <button
                               className={`flex-1 py-1 text-sm font-medium rounded-md transition-all ${activeImageTab === "custom"
-                                ? "bg-white shadow-sm text-black"
-                                : "text-gray-500 hover:text-gray-700"
+                                ? "bg-white dark:bg-zinc-700 shadow-sm text-black dark:text-white"
+                                : "text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
                                 }`}
                               onClick={() => setActiveImageTab("custom")}>
                               Custom
                             </button>
                             <button
                               className={`flex-1 py-1 text-sm font-medium rounded-md transition-all ${activeImageTab === "library"
-                                ? "bg-white shadow-sm text-black"
-                                : "text-gray-500 hover:text-gray-700"
+                                ? "bg-white dark:bg-zinc-700 shadow-sm text-black dark:text-white"
+                                : "text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
                                 }`}
                               onClick={() => setActiveImageTab("library")}>
                               Library
@@ -516,7 +521,7 @@ export default function ChatbotBuilder({
                               />
                               <label
                                 htmlFor="image-upload"
-                                className={`border-2 border-dashed border-gray-200 rounded-lg p-8 flex flex-col items-center justify-center bg-gray-50 hover:bg-gray-100 transition-colors ${isUploadingImage
+                                className={`border-2 border-dashed border-gray-200 dark:border-zinc-700 rounded-lg p-8 flex flex-col items-center justify-center bg-gray-50 dark:bg-zinc-800/50 hover:bg-gray-100 dark:hover:bg-zinc-800 transition-colors ${isUploadingImage
                                   ? "opacity-50 cursor-wait"
                                   : "cursor-pointer"
                                   }`}>
@@ -527,13 +532,13 @@ export default function ChatbotBuilder({
                                     <Plus className="w-6 h-6 text-white" />
                                   )}
                                 </div>
-                                <p className="text-sm font-medium text-gray-700">
+                                <p className="text-sm font-medium text-gray-700 dark:text-gray-300">
                                   {isUploadingImage
                                     ? "Uploading..."
                                     : "Upload Image"}
                                 </p>
                               </label>
-                              <p className="text-xs text-gray-500 text-center">
+                              <p className="text-xs text-gray-500 dark:text-gray-400 text-center">
                                 Max. 2300×1500 px | png, jpg, gif, jpeg
                               </p>
                             </div>
@@ -568,7 +573,7 @@ export default function ChatbotBuilder({
                               ].map((item, i) => (
                                 <button
                                   key={i}
-                                  className="aspect-square flex items-center justify-center bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors overflow-hidden"
+                                  className="aspect-square flex items-center justify-center bg-gray-100 dark:bg-zinc-800 rounded-lg hover:bg-gray-200 dark:hover:bg-zinc-700 transition-colors overflow-hidden"
                                   onClick={() => {
                                     // <CHANGE> Load GIF directly instead of creating canvas with emoji
                                     updateField("media", {
@@ -591,7 +596,7 @@ export default function ChatbotBuilder({
 
                           <div className="space-y-2">
                             <div className="flex items-center gap-1">
-                              <label className="text-sm font-medium text-black">
+                              <label className="text-sm font-medium text-black dark:text-white">
                                 Alternative text
                               </label>
                               <span className="text-gray-400">ⓘ</span>
@@ -601,7 +606,7 @@ export default function ChatbotBuilder({
                               value={imageAlt}
                               onChange={(e) => setImageAlt(e.target.value)}
                               placeholder="Describe"
-                              className="w-full text-black px-3 py-2 border dark:border-gray-600 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                              className="w-full text-black dark:text-white bg-white dark:bg-zinc-800 px-3 py-2 border dark:border-zinc-700 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                             />
                           </div>
 
@@ -619,7 +624,7 @@ export default function ChatbotBuilder({
                         <div className="space-y-6 px-2">
                           <div className="space-y-2">
                             <div className="flex items-center gap-1">
-                              <label className="text-sm text-black font-medium">
+                              <label className="text-sm text-black dark:text-white font-medium">
                                 Button style
                               </label>
                               <span className="text-gray-400">ⓘ</span>
@@ -632,7 +637,7 @@ export default function ChatbotBuilder({
                                     style: e.target.value as any,
                                   })
                                 }
-                                className="w-full text-black appearance-none px-3 py-2 pl-10 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white">
+                                className="w-full text-black dark:text-white appearance-none px-3 py-2 pl-10 border dark:border-zinc-700 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-zinc-800">
                                 <option value="primary">Primary</option>
                                 <option value="secondary">Default</option>
                                 <option value="danger">Danger</option>
@@ -653,7 +658,7 @@ export default function ChatbotBuilder({
                           </div>
 
                           <div className="space-y-2">
-                            <label className="text-sm text-black font-medium">Actions</label>
+                            <label className="text-sm text-black dark:text-white font-medium">Actions</label>
                             <div className="grid grid-cols-3 gap-2">
                               {[
                                 {
@@ -697,8 +702,8 @@ export default function ChatbotBuilder({
                                   }}
                                   className={`flex flex-col items-center justify-center p-2 rounded-lg border transition-all gap-1 h-20 ${(selectedButton.actionType || "open-url") ===
                                     action.value
-                                    ? "border-blue-500 bg-blue-50 text-blue-700"
-                                    : "border-gray-200 hover:border-gray-300 text-gray-600"
+                                    ? "border-blue-500 bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400"
+                                    : "border-gray-200 dark:border-zinc-700 hover:border-gray-300 dark:hover:border-zinc-600 text-gray-600 dark:text-gray-400"
                                     }`}>
                                   <action.icon className="w-5 h-5" />
                                   <span className="text-[10px] text-center leading-tight">
@@ -710,7 +715,7 @@ export default function ChatbotBuilder({
                           </div>
 
                           <div className="space-y-2">
-                            <label className="text-sm text-black font-medium">
+                            <label className="text-sm text-black dark:text-white font-medium">
                               Button text
                             </label>
                             <input
@@ -721,7 +726,7 @@ export default function ChatbotBuilder({
                                   text: e.target.value,
                                 })
                               }
-                              className="w-full text-black dark:border-gray-500 px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                              className="w-full text-black dark:text-white bg-white dark:bg-zinc-800 dark:border-zinc-700 px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                             />
                           </div>
 
@@ -733,7 +738,7 @@ export default function ChatbotBuilder({
                             if (actionType === "open-url") {
                               return (
                                 <div className="space-y-2">
-                                  <label className="text-sm text-black font-medium">
+                                  <label className="text-sm text-black dark:text-white font-medium">
                                     Button URL
                                   </label>
                                   <input
@@ -745,9 +750,9 @@ export default function ChatbotBuilder({
                                       })
                                     }
                                     placeholder="https://example.com"
-                                    className="w-full text-black dark:border-gray-500 px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    className="w-full text-black dark:text-white bg-white dark:bg-zinc-800 dark:border-zinc-700 px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                                   />
-                                  <p className="text-xs text-gray-500">
+                                  <p className="text-xs text-gray-500 dark:text-gray-400">
                                     Enter the URL to open when the button is
                                     clicked. If you enter a full URL with
                                     “https://”, it will open in a new tab. If you
@@ -759,7 +764,7 @@ export default function ChatbotBuilder({
                             } else if (actionType === "phone-call") {
                               return (
                                 <div className="space-y-2">
-                                  <label className="text-sm font-medium">
+                                  <label className="text-sm font-medium text-black dark:text-white">
                                     Phone Number
                                   </label>
                                   <input
@@ -771,9 +776,9 @@ export default function ChatbotBuilder({
                                       })
                                     }
                                     placeholder="+1 (555) 123-4567"
-                                    className="w-full px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    className="w-full text-black dark:text-white bg-white dark:bg-zinc-800 dark:border-zinc-700 px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                                   />
-                                  <p className="text-xs text-gray-500">
+                                  <p className="text-xs text-gray-500 dark:text-gray-400">
                                     Enter the phone number to call
                                   </p>
                                 </div>
@@ -781,7 +786,7 @@ export default function ChatbotBuilder({
                             } else if (actionType === "send-message") {
                               return (
                                 <div className="space-y-2">
-                                  <label className="text-sm font-medium">
+                                  <label className="text-sm font-medium text-black dark:text-white">
                                     Message Text
                                   </label>
                                   <textarea
@@ -793,9 +798,9 @@ export default function ChatbotBuilder({
                                     }
                                     placeholder="Enter the message to send..."
                                     rows={3}
-                                    className="w-full px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    className="w-full text-black dark:text-white bg-white dark:bg-zinc-800 dark:border-zinc-700 px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                                   />
-                                  <p className="text-xs text-gray-500">
+                                  <p className="text-xs text-gray-500 dark:text-gray-400">
                                     Enter the message to send to the chatbot
                                   </p>
                                 </div>
@@ -803,7 +808,7 @@ export default function ChatbotBuilder({
                             } else if (actionType === "copy-coupon") {
                               return (
                                 <div className="space-y-2">
-                                  <label className="text-sm font-medium">
+                                  <label className="text-sm font-medium text-black dark:text-white">
                                     Coupon Code
                                   </label>
                                   <input
@@ -815,9 +820,9 @@ export default function ChatbotBuilder({
                                       })
                                     }
                                     placeholder="SAVE20"
-                                    className="w-full px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    className="w-full text-black dark:text-white bg-white dark:bg-zinc-800 dark:border-zinc-700 px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                                   />
-                                  <p className="text-xs text-gray-500">
+                                  <p className="text-xs text-gray-500 dark:text-gray-400">
                                     Enter the coupon code to copy to clipboard
                                   </p>
                                 </div>
@@ -825,7 +830,7 @@ export default function ChatbotBuilder({
                             } else if (actionType === "open-moment") {
                               return (
                                 <div className="space-y-2">
-                                  <label className="text-sm font-medium">
+                                  <label className="text-sm font-medium text-black dark:text-white">
                                     Moment ID
                                   </label>
                                   <input
@@ -837,9 +842,9 @@ export default function ChatbotBuilder({
                                       })
                                     }
                                     placeholder="moment-123"
-                                    className="w-full px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    className="w-full text-black dark:text-white bg-white dark:bg-zinc-800 dark:border-zinc-700 px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
                                   />
-                                  <p className="text-xs text-gray-500">
+                                  <p className="text-xs text-gray-500 dark:text-gray-400">
                                     Enter the moment ID to open
                                   </p>
                                 </div>

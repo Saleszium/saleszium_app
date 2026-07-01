@@ -35,9 +35,13 @@ const SignUpSchema = z.object({
   email: z.string().email("Enter a valid email address."),
   password: z
     .string()
-    .min(8, "Password must be at least 8 characters.")
-    .regex(/[A-Za-z]/, "Password must contain letters.")
-    .regex(/[0-9]/, "Password must contain numbers."),
+    .min(12, "Password must be at least 12 characters")
+    .refine(
+      (v) => /[!@#$%^&*(),.?":{}|<>]/.test(v),
+      "Must include at least 1 special character"
+    )
+    .refine((v) => /\d/.test(v), "Must include at least 1 number")
+    .refine((v) => /[A-Z]/.test(v), "Must include at least 1 uppercase letter"),
   company_size: z.string().min(1, "Company size is required."),
 });
 
