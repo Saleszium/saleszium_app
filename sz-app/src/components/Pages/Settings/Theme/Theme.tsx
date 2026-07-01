@@ -53,9 +53,9 @@ export default function Theme() {
     popupMessage: "Hey, I am Saleszium AI Assistant, How can I help you?",
     greetings: ["Hi there👋", "How can we help?"],
     primaryLogo:
-      "https://saleszium-live-assets.s3.ap-south-1.amazonaws.com/platform-uploads/Rhinon_Tech_Light_Logo.png",
+      "https://www.saleszium.com/assets/Saleszium_Light_Logo_small.png",
     secondaryLogo:
-      "https://saleszium-live-assets.s3.ap-south-1.amazonaws.com/platform-uploads/Rhinon_Tech_Dark_Logo.png",
+      "https://www.saleszium.com/assets/Saleszium_Dark_Logo_small.png",
     selectedPage: "Home",
     theme: "system",
     isChatHistory: false,
@@ -88,10 +88,10 @@ export default function Theme() {
         greetings: config.greetings ?? ["Hi there👋", "How can we help?"],
         primaryLogo:
           config.primaryLogo ??
-          "https://saleszium-live-assets.s3.ap-south-1.amazonaws.com/platform-uploads/Rhinon_Tech_Light_Logo.png",
+          "https://www.saleszium.com/assets/Saleszium_Light_Logo_small.png",
         secondaryLogo:
           config.secondaryLogo ??
-          "https://saleszium-live-assets.s3.ap-south-1.amazonaws.com/platform-uploads/Rhinon_Tech_Dark_Logo.png",
+          "https://www.saleszium.com/assets/Saleszium_Dark_Logo_small.png",
         selectedPage: "Home",
         theme: config.theme ?? "system",
         isChatHistory: config.isChatHistory ?? true,

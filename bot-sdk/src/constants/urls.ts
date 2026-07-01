@@ -1,9 +1,9 @@
 // Static URLs and CDN paths
 
 export const LOGOS = {
-  primaryLight: 'https://saleszium-live-assets.s3.ap-south-1.amazonaws.com/platform-uploads/Logo_Rhinon_Tech_light.png',
-  primaryDark: 'https://saleszium-live-assets.s3.ap-south-1.amazonaws.com/platform-uploads/Logo_Rhinon_Tech.png',
-  rhinonWhite: 'https://saleszium-live-assets.s3.ap-south-1.amazonaws.com/platform-uploads/Rhinon_Tech_Light_Logo.png',
+  primaryLight: 'https://www.saleszium.com/assets/Saleszium_Light_Logo_small.png',
+  primaryDark: 'https://www.saleszium.com/assets/Saleszium_Dark_Logo_small.png',
+  rhinonWhite: 'https://www.saleszium.com/assets/Saleszium_Light_Logo_small.png',
 } as const;
 
 export const AVATARS = {

@@ -355,7 +355,7 @@ export const TargetingPage = ({ campaignType, mode }: TargetingPageProps) => {
                                             <div className="absolute bottom-4 right-4">
                                                 <div className="w-[50px] h-[50px] bg-blue-900 shadow-xl flex items-center justify-center" style={{ borderRadius: "10% 35% 25% 35%" }}>
                                                     <img
-                                                        src="https://saleszium-live-assets.s3.ap-south-1.amazonaws.com/platform-uploads/Rhinon_Tech_Light_Logo.png"
+                                                        src="https://www.saleszium.com/assets/Saleszium_Light_Logo_small.png"
                                                         alt="Chatbot"
                                                         className="p-2 object-contain"
                                                     />
@@ -382,7 +382,7 @@ export const TargetingPage = ({ campaignType, mode }: TargetingPageProps) => {
                                             <div className="absolute bottom-4 right-4">
                                                 <div className="w-[50px] h-[50px] bg-blue-900 shadow-xl flex items-center justify-center" style={{ borderRadius: "10% 35% 25% 35%" }}>
                                                     <img
-                                                        src="https://saleszium-live-assets.s3.ap-south-1.amazonaws.com/platform-uploads/Rhinon_Tech_Light_Logo.png"
+                                                        src="https://www.saleszium.com/assets/Saleszium_Light_Logo_small.png"
                                                         alt="Chatbot"
                                                         className="p-2 object-contain"
                                                     />
