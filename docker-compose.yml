@@ -8,6 +8,8 @@ services:
       - "5001:3000"
     env_file:
       - .env
+    environment:
+      - PORT=3000
     extra_hosts:
       - "host.docker.internal:host-gateway"
     depends_on:
@@ -67,6 +69,21 @@ services:
       interval: 5s
       timeout: 5s
       retries: 10
+    networks:
+      - saleszium-network
+
+  bot-sdk:
+    build:
+      context: ./bot-sdk
+      dockerfile: Dockerfile
+    container_name: bot-sdk
+    ports:
+      - "8081:8081"
+    env_file:
+      - ./bot-sdk/.env
+    volumes:
+      - ./bot-sdk:/app
+      - /app/node_modules
     networks:
       - saleszium-network
 

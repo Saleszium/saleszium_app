@@ -68,10 +68,16 @@ module.exports = {
       { directory: path.join(__dirname, '../../dist') },
       { directory: path.join(__dirname, '../../public') },
     ],
-    open: true,
+    host: '0.0.0.0',
+    open: false,
     hot: true,
     compress: true,
     port: 8081,
+    allowedHosts: 'all',
+  },
+  watchOptions: {
+    poll: 1000,
+    ignored: /node_modules/,
   },
   optimization: {
     minimize: false,

@@ -14,7 +14,8 @@
     "build:webpack": "cross-env NODE_ENV=production webpack --config tools/webpack/webpack.config.prod.js",
     "build:types": "tsc --project tsconfig.declarations.json",
     "serve": "cross-env NODE_ENV=production webpack --config tools/webpack/webpack.config.prod.js && cross-env serve dist/",
-    "lint": "eslint --ext .js,.jsx,.ts,.tsx src/"
+    "lint": "eslint --ext .js,.jsx,.ts,.tsx src/",
+    "watch": "cross-env NODE_ENV=development webpack --watch --config tools/webpack/webpack.config.prod.js"
   },
   "files": [
     "dist/"

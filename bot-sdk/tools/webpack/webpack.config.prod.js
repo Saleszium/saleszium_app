@@ -6,7 +6,7 @@ const webpack = require('webpack');
 require('dotenv').config();
 
 module.exports = {
-  mode: 'production',
+  mode: process.env.NODE_ENV === 'production' ? 'production' : 'development',
   entry: ['./src/main.tsx'],
   module: {
     rules: require('./webpack.rules'),
@@ -26,7 +26,7 @@ module.exports = {
     ...require('./webpack.plugins'),
     // Define environment variables at build time
     new webpack.DefinePlugin({
-      'process.env.NODE_ENV': JSON.stringify('production'),
+      'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'production'),
       'process.env.REACT_APP_NEW_SERVER_API_URL': JSON.stringify(
         process.env.REACT_APP_NEW_SERVER_API_URL ||
         'https://api.saleszium.com',
@@ -67,10 +67,14 @@ module.exports = {
     },
   },
   stats: 'errors-warnings',
+  watchOptions: {
+    poll: 1000,
+    ignored: /node_modules/,
+  },
   optimization: {
-    minimize: true,
+    minimize: process.env.NODE_ENV === 'production',
     sideEffects: true,
-    concatenateModules: true,
+    concatenateModules: process.env.NODE_ENV === 'production',
     runtimeChunk: false,
     splitChunks: false,
   },
