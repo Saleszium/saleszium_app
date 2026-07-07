@@ -5,6 +5,16 @@ const isLocalDB = (host) => {
   return host === 'localhost' || host === '127.0.0.1' || host === 'host.docker.internal' || host === 'postgres';
 };
 
+const getDialectOptions = (host) => {
+  const sslEnabled = process.env.DB_SSL === 'true' || (process.env.DB_SSL !== 'false' && !isLocalDB(host));
+  return sslEnabled ? {
+    ssl: {
+      require: true,
+      rejectUnauthorized: false,
+    },
+  } : {};
+};
+
 module.exports = {
   development: {
     username: process.env.DB_USERNAME,
@@ -13,12 +23,7 @@ module.exports = {
     host: process.env.DB_HOST,
     port: process.env.DB_PORT,
     dialect: "postgres",
-    dialectOptions: isLocalDB(process.env.DB_HOST) ? {} : {
-      ssl: {
-        require: true,
-        rejectUnauthorized: false,
-      },
-    },
+    dialectOptions: getDialectOptions(process.env.DB_HOST),
     define: {
       schema: process.env.DB_SCHEMA || 'public',
     },
@@ -30,12 +35,7 @@ module.exports = {
     host: process.env.DB_HOST,
     port: process.env.DB_PORT,
     dialect: "postgres",
-    dialectOptions: {
-      ssl: {
-        require: true,
-        rejectUnauthorized: false,
-      },
-    },
+    dialectOptions: getDialectOptions(process.env.DB_HOST),
     define: {
       schema: process.env.DB_SCHEMA,
     },
@@ -47,12 +47,7 @@ module.exports = {
     host: process.env.DB_HOST,
     port: process.env.DB_PORT,
     dialect: "postgres",
-    dialectOptions: {
-      ssl: {
-        require: true,
-        rejectUnauthorized: false,
-      },
-    },
+    dialectOptions: getDialectOptions(process.env.DB_HOST),
     define: {
       schema: process.env.DB_SCHEMA,
     },
@@ -65,12 +60,7 @@ module.exports = {
     host: process.env.DB_HOST,
     port: process.env.DB_PORT,
     dialect: "postgres",
-    dialectOptions: isLocalDB(process.env.DB_HOST) ? {} : {
-      ssl: {
-        require: true,
-        rejectUnauthorized: false,
-      },
-    },
+    dialectOptions: getDialectOptions(process.env.DB_HOST),
     define: {
       schema: process.env.CRM_DB_SCHEMA || process.env.DB_SCHEMA,
     },
