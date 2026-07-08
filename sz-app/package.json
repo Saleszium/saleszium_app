@@ -51,7 +51,7 @@
     "@radix-ui/react-switch": "^1.2.5",
     "@radix-ui/react-tabs": "^1.1.12",
     "@radix-ui/react-tooltip": "^1.2.7",
-    "rhinontech": "file:../bot-sdk",
+    "@saleszium/rhinon-sdk": "^2.3.3",
     "@tabler/icons-react": "^3.34.0",
     "@tailwindcss/postcss": "^4.1.7",
     "@tiptap/core": "^2.25.1",
