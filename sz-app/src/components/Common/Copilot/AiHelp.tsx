@@ -9,6 +9,9 @@ import {
 import { Sparkles, X, Send, MoreHorizontal, RefreshCw } from "lucide-react";
 import Cookies from "js-cookie";
 import { useCopilot } from "@/context/CopilotContext";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+import { markdownComponents } from "./markdownComponents";
 
 const AiHelp = () => {
   const { isOpen, setIsOpen, initialPrompt, setInitialPrompt, autoSend, setAutoSend } = useCopilot();
@@ -326,7 +329,18 @@ const AiHelp = () => {
                       ? "bg-gradient-to-br from-blue-500 to-blue-600 text-white ml-12"
                       : "bg-muted/50 border mr-12"
                       }`}>
-                    <p className="text-sm leading-relaxed">{m.content}</p>
+                    {m.type === "assistant" ? (
+                      <div className="text-sm leading-relaxed [&>*:first-child]:mt-0 [&>*:last-child]:mb-0">
+                        <ReactMarkdown
+                          remarkPlugins={[remarkGfm]}
+                          components={markdownComponents}
+                        >
+                          {m.content}
+                        </ReactMarkdown>
+                      </div>
+                    ) : (
+                      <p className="text-sm leading-relaxed whitespace-pre-wrap">{m.content}</p>
+                    )}
                     <span
                       className={`text-xs mt-2 block ${m.type === "user"
                         ? "text-blue-100"

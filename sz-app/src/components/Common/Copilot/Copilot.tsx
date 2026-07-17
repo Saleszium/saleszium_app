@@ -5,6 +5,9 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
 import { ArrowUp, Loader2, Sparkles, User, Bot } from "lucide-react";
 import Cookies from "js-cookie";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+import { markdownComponents } from "./markdownComponents";
 
 interface Message {
   role: "ai" | "user";
@@ -368,8 +371,17 @@ const Copilot = ({ ticketDetails }: { ticketDetails: any }) => {
                         : "bg-gradient-to-r from-blue-500 to-purple-600 text-white shadow-lg shadow-blue-500/25"
                     )}
                   >
-                    <div className="text-[15px] leading-relaxed whitespace-pre-wrap break-words">
-                      {msg.text}
+                    <div className="text-[15px] leading-relaxed wrap-break-word">
+                      {msg.role === "ai" ? (
+                        <ReactMarkdown
+                          remarkPlugins={[remarkGfm]}
+                          components={markdownComponents}
+                        >
+                          {msg.text}
+                        </ReactMarkdown>
+                      ) : (
+                        <span className="whitespace-pre-wrap">{msg.text}</span>
+                      )}
                     </div>
 
                     {/* Streaming Indicator */}
