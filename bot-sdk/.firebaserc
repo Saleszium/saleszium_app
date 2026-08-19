@@ -1,7 +1,7 @@
 {
   "projects": {
     "default": "rhinon-botsdk",
-    "rhinontech": "rhinonweb"
+    "saleszium": "rhinonweb"
   },
   "targets": {},
   "etags": {}

@@ -23,7 +23,7 @@ import { AnimatePresence, motion } from 'motion/react';
 import { Loader } from '@/components/common';
 
 // Types
-import type { RhinontechConfig } from '@/types';
+import type { SalesziumConfig } from '@/types';
 
 // Hooks - centralized state and logic
 import {
@@ -43,7 +43,7 @@ import { getSocketConversationsByUserId } from '@/services/chat/socketService';
 import { ChatHistoryScreen } from '@src/screens';
 
 interface MessengerProps {
-  config?: RhinontechConfig | null;
+  config?: SalesziumConfig | null;
 }
 
 const Messenger: React.FC<MessengerProps> = ({ config }) => {

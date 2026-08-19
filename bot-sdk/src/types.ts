@@ -1,5 +1,5 @@
 // src/types.ts - Clean types-only file for declarations
-export interface RhinontechConfig {
+export interface SalesziumConfig {
   app_id: string;
   admin?: boolean;
   adminTestingMode?: boolean;
@@ -28,13 +28,13 @@ export interface ChatbotConfig {
 }
 
 // Export function type
-export declare function initRhinontech(config: RhinontechConfig): void;
+export declare function initSaleszium(config: SalesziumConfig): void;
 
 // Export class type  
 export declare class ChatBotElement extends HTMLElement {
-  setConfig(config: RhinontechConfig): void;
+  setConfig(config: SalesziumConfig): void;
 }
 
 // Default export
-declare const _default: typeof initRhinontech;
+declare const _default: typeof initSaleszium;
 export default _default;

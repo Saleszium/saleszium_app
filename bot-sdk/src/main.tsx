@@ -3,7 +3,7 @@ import React from 'react';
 import { createRoot } from 'react-dom/client';
 import Messenger from './Messenger/Messenger';
 
-export interface RhinontechConfig {
+export interface SalesziumConfig {
   app_id: string;
   admin?: boolean;
   container?: HTMLElement; // Add container option
@@ -11,7 +11,7 @@ export interface RhinontechConfig {
 
 // Create custom element
 export class ChatBotElement extends HTMLElement {
-  private config: RhinontechConfig | null = null;
+  private config: SalesziumConfig | null = null;
   private root: any = null;
 
   connectedCallback() {
@@ -36,7 +36,7 @@ export class ChatBotElement extends HTMLElement {
     this.root.render(<Messenger config={this.config} />);
   }
 
-  setConfig(config: RhinontechConfig) {
+  setConfig(config: SalesziumConfig) {
     console.log('[Messenger] Setting config:', config);
     this.config = config;
     if (this.root) {
@@ -54,7 +54,7 @@ if (!customElements.get('chat-bot')) {
 let manuallyInitialized = false;
 
 // Updated initialization function with container support
-function initRhinontech(config: RhinontechConfig): ChatBotElement {
+function initSaleszium(config: SalesziumConfig): ChatBotElement {
   manuallyInitialized = true;
 
   const chatBotElement = document.createElement('chat-bot') as ChatBotElement;
@@ -149,7 +149,7 @@ function autoInit() {
         //   ],
         // },
       };
-      initRhinontech(defaultConfig);
+      initSaleszium(defaultConfig);
     }
   }
 }
@@ -164,12 +164,12 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 // Export for package consumers
-export { initRhinontech };
-export default initRhinontech;
+export { initSaleszium };
+export default initSaleszium;
 
 if (typeof window !== 'undefined') {
-  (window as any).RhinonBot = initRhinontech;
-  (window as any).Rhinontech = initRhinontech;
-  (window as any).Saleszium = initRhinontech;
-  (window as any).SalesziumBot = initRhinontech;
+  (window as any).RhinonBot = initSaleszium;
+  (window as any).Rhinontech = initSaleszium;
+  (window as any).Saleszium = initSaleszium;
+  (window as any).SalesziumBot = initSaleszium;
 }

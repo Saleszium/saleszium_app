@@ -4,7 +4,7 @@ import Cookies from 'js-cookie';
 import type {
   Campaign,
   Folder,
-  RhinontechConfig,
+  SalesziumConfig,
   ChatbotConfig,
   SelectedNewsProps,
   SelectedHelpArticleProps,
@@ -78,7 +78,7 @@ export interface UseMessengerStateReturn {
 }
 
 export function useMessengerState(
-  config: RhinontechConfig | null | undefined,
+  config: SalesziumConfig | null | undefined,
 ): UseMessengerStateReturn {
   const { chatbot_config, setConfig } = useConfigStore();
 

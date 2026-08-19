@@ -1,6 +1,6 @@
 {
-  "name": "rhinontech",
-  "version": "0.0.2",
+  "name": "@saleszium/botsdk",
+  "version": "0.0.3",
   "description": "",
   "license": "MIT",
   "publishConfig": {
