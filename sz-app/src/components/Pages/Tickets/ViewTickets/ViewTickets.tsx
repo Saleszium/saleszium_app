@@ -66,7 +66,7 @@ export default function ViewTickets() {
   const [loading, setLoading] = useState(false);
   const [tickets, setTickets] = useState<Ticket[]>([]);
   const [activeTab, setActiveTab] = useState("details");
-  const chatbot_id = useUserStore((state) => state.userData.chatbotId);
+  const chatbot_id = useUserStore((state) => state.activeChatbotId);
   const [searchQuery, setSearchQuery] = useState("");
 
   const [attachment, setAttachment] = useState("");

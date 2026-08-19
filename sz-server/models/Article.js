@@ -37,6 +37,16 @@ module.exports = (sequelize, DataTypes) => {
         onUpdate: "CASCADE",
         onDelete: "CASCADE",
       },
+      chatbot_id: {
+        type: DataTypes.STRING(6),
+        allowNull: true,
+        references: {
+          model: "chatbots",
+          key: "chatbot_id",
+        },
+        onUpdate: "CASCADE",
+        onDelete: "CASCADE",
+      },
       status: {
         type: DataTypes.ENUM("draft", "published"),
         defaultValue: "draft",

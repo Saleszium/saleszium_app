@@ -21,6 +21,15 @@ module.exports = (sequelize, DataTypes) => {
       },
       onDelete: "CASCADE",
     },
+    chatbot_id: {
+      type: DataTypes.STRING(6),
+      allowNull: true,
+      references: {
+        model: "chatbots",
+        key: "chatbot_id",
+      },
+      onDelete: "CASCADE",
+    },
     uuid: {
       type: DataTypes.STRING(30),
       allowNull: false,

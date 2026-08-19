@@ -48,10 +48,9 @@ class StandardRAGController:
             def fetch_data_sync(cid):
                 with get_db_connection() as conn:
                     data_query = """
-                        SELECT a.training_url, a.training_pdf, a.training_article
-                        FROM automations a
-                        JOIN chatbots c ON a.organization_id = c.organization_id
-                        WHERE c.chatbot_id = %s;
+                        SELECT training_url, training_pdf, training_article
+                        FROM automations
+                        WHERE chatbot_id = %s;
                     """
                     return run_query(conn, data_query, (cid,))
 
@@ -263,24 +262,23 @@ class StandardRAGController:
         Directly updates the database to mark ONLY the items that were actually processed in this run.
         """
         try:
-            # Get organization_id and current training data from chatbot_id
+            # Get current training data directly by chatbot_id
             def get_and_update_training_status(cid, items_to_mark):
                 with get_db_connection() as conn:
                     # First, fetch current data
                     query = """
-                        SELECT c.organization_id, a.training_url, a.training_pdf, a.training_article
-                        FROM chatbots c
-                        JOIN automations a ON c.organization_id = a.organization_id
-                        WHERE c.chatbot_id = %s
+                        SELECT training_url, training_pdf, training_article
+                        FROM automations
+                        WHERE chatbot_id = %s
                     """
                     with conn.cursor() as cur:
                         cur.execute(query, (cid,))
                         result = cur.fetchone()
-                        
+
                         if not result:
                             return None
-                        
-                        organization_id, training_url, training_pdf, training_article = result
+
+                        training_url, training_pdf, training_article = result
                         
                         # Mark ONLY processed items as trained
                         marked_urls = 0
@@ -312,21 +310,21 @@ class StandardRAGController:
                         update_query = """
                             UPDATE automations
                             SET training_url = %s, training_pdf = %s, training_article = %s, updated_at = NOW()
-                            WHERE organization_id = %s
+                            WHERE chatbot_id = %s
                         """
-                        
+
                         import json
                         # Convert to JSON, but use [] for empty/None arrays to avoid null constraint violation
                         cur.execute(update_query, (
                             json.dumps(training_url if training_url else []),
                             json.dumps(training_pdf if training_pdf else []),
                             json.dumps(training_article if training_article else []),
-                            organization_id
+                            cid
                         ))
                         conn.commit()
-                        
+
                         return {
-                            'organization_id': organization_id,
+                            'chatbot_id': cid,
                             'urls_count': marked_urls,
                             'pdfs_count': marked_pdfs,
                             'articles_count': marked_articles

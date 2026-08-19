@@ -16,8 +16,10 @@ import { CustomizationSidebar } from "./CustomizationSidebar";
 import { KnowledgeBaseContent } from "./KnowledgeBaseContent";
 import { PreviewControls } from "./PreviewControls";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { useUserStore } from "@/utils/store";
 
 const HelpCenter = () => {
+  const chatbotId = useUserStore((state) => state.activeChatbotId);
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [responsiveMode, setResponsiveMode] =
     useState<ResponsiveMode>("desktop");
@@ -44,12 +46,12 @@ const HelpCenter = () => {
 
 
   useEffect(() => {
-    getKnowledgeBaseFn();
-  }, []);
+    if (chatbotId) getKnowledgeBaseFn();
+  }, [chatbotId]);
 
   const getKnowledgeBaseFn = async () => {
     try {
-      const response = await getKnowledgeBase();
+      const response = await getKnowledgeBase(chatbotId);
       setKbData(response);
       setTheme(response.theme);
       setIsLoading(false)
@@ -103,7 +105,7 @@ const HelpCenter = () => {
       if (!kbData || !kbData.uuid) {
         return;
       }
-      const response = await updateKnowledgeBaseTheme(updates);
+      const response = await updateKnowledgeBaseTheme({ ...updates, chatbot_id: chatbotId });
       console.log(response);
       setIsDirty(false);
       setTheme((prev) => ({ ...prev, ...updates }));

@@ -1,6 +1,7 @@
 const {
   knowledge_bases,
   organizations,
+  chatbots,
   articles,
   folders,
   Sequelize,
@@ -25,17 +26,17 @@ exports.getKBByIdentifier = async (req, res) => {
       return res.status(404).json({ message: "Knowledge Base not found" });
     }
 
-    const organization_id = kb.organization_id;
+    const chatbot_id = kb.chatbot_id;
 
     // 3. Pull folders
     const foldersDetails = await folders.findAll({
-      where: { organization_id },
+      where: { chatbot_id },
       raw: true,
     });
 
     // 4. Pull articles
     const articlesDetails = await articles.findAll({
-      where: { organization_id },
+      where: { chatbot_id },
       raw: true,
     });
 
@@ -73,7 +74,8 @@ exports.getKBByIdentifier = async (req, res) => {
     // 7. Send response including theme/settings
     res.json({
       uuid: kb.uuid,
-      orgId: organization_id,
+      chatbotId: chatbot_id,
+      orgId: kb.organization_id,
       theme: kb.theme || {},
       folders: formattedFolders,
     });
@@ -86,22 +88,32 @@ exports.getKBByIdentifier = async (req, res) => {
 exports.getKBByOrgId = async (req, res) => {
   try {
     const { organization_id } = req.user;
+    const { chatbot_id } = req.query;
 
-    // 1. Find or create KB by organization_id
-    const [kb, created] = await knowledge_bases.findOrCreate({
-      where: { organization_id },
-      defaults: { organization_id }
+    if (!chatbot_id) {
+      return res.status(400).json({ message: "chatbot_id is required" });
+    }
+
+    const chatbot = await chatbots.findOne({ where: { chatbot_id, organization_id } });
+    if (!chatbot) {
+      return res.status(404).json({ message: "Chatbot not found" });
+    }
+
+    // 1. Find or create KB by chatbot_id
+    const [kb] = await knowledge_bases.findOrCreate({
+      where: { chatbot_id },
+      defaults: { organization_id, chatbot_id },
     });
 
     // 2. Fetch folders
     const foldersDetails = await folders.findAll({
-      where: { organization_id },
+      where: { chatbot_id },
       raw: true,
     });
 
     // 3. Fetch articles
     const articlesDetails = await articles.findAll({
-      where: { organization_id },
+      where: { chatbot_id },
       raw: true,
     });
 
@@ -140,6 +152,7 @@ exports.getKBByOrgId = async (req, res) => {
     // 6. Response matches the exact structure as uuid version
     res.json({
       uuid: kb.uuid,
+      chatbotId: chatbot_id,
       orgId: organization_id,
       theme: kb.theme || {},
       folders: formattedFolders,
@@ -154,9 +167,13 @@ exports.getKBByOrgId = async (req, res) => {
 exports.updateKBTheme = async (req, res) => {
   try {
     const { organization_id } = req.user;
-    const updates = req.body;
+    const { chatbot_id, ...updates } = req.body;
 
-    const kb = await knowledge_bases.findOne({ where: { organization_id } });
+    if (!chatbot_id) {
+      return res.status(400).json({ message: "chatbot_id is required" });
+    }
+
+    const kb = await knowledge_bases.findOne({ where: { chatbot_id, organization_id } });
     if (!kb) {
       return res.status(404).json({ message: "Knowledge Base not found" });
     }
@@ -186,9 +203,13 @@ exports.updateKBTheme = async (req, res) => {
 exports.createKBForOrg = async (req, res) => {
   try {
     const { organization_id } = req.user;
+    const { chatbot_id } = req.query;
 
     if (!organization_id) {
       return res.status(400).json({ message: "organization_id is required" });
+    }
+    if (!chatbot_id) {
+      return res.status(400).json({ message: "chatbot_id is required" });
     }
 
     // Check if organization exists
@@ -197,8 +218,13 @@ exports.createKBForOrg = async (req, res) => {
       return res.status(404).json({ message: "Organization not found" });
     }
 
+    const chatbot = await chatbots.findOne({ where: { chatbot_id, organization_id } });
+    if (!chatbot) {
+      return res.status(404).json({ message: "Chatbot not found" });
+    }
+
     // create new Knowledge Base entry
-    const kb = await knowledge_bases.create({ organization_id });
+    const kb = await knowledge_bases.create({ organization_id, chatbot_id });
 
     res.status(201).json({
       message: "Knowledge Base created successfully",
@@ -210,4 +236,3 @@ exports.createKBForOrg = async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 };
-

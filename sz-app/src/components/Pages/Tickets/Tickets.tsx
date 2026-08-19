@@ -172,7 +172,7 @@ export default function Tickets() {
   const [availableUsers, setAvailableUsers] = useState<any>([]);
 
   const orgId = useUserStore((state) => state.userData.orgId);
-  const chatbotId = useUserStore((state) => state.userData.chatbotId);
+  const chatbotId = useUserStore((state) => state.activeChatbotId);
 
   useEffect(() => {
     if (!pathname) return;

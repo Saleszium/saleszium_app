@@ -37,7 +37,7 @@ interface Notification {
 export function NotificationBell() {
     const [notifications, setNotifications] = useState<Notification[]>([]);
     const [isOpen, setIsOpen] = useState(false);
-    const chatbotId = useUserStore((state) => state.userData.chatbotId);
+    const chatbotId = useUserStore((state) => state.activeChatbotId);
     const { startCall } = useCallContext();
     const lastCountRef = useRef(0);
 

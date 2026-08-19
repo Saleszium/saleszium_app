@@ -86,7 +86,7 @@ export default function Articles() {
   const [trainingStatus, setTrainingStatus] = useState<string>("idle");
   const [trainingProgress, setTrainingProgress] = useState<number>(0);
   const orgPlan = useUserStore((state) => state.userData.orgPlan);
-  const chatbotId = useUserStore((state) => state.userData.chatbotId);
+  const chatbotId = useUserStore((state) => state.activeChatbotId);
 
   const storedData = localStorage.getItem("user-data");
 
@@ -131,21 +131,18 @@ export default function Articles() {
 
   // Listen for training updates via WebSocket
   useEffect(() => {
-    const organizationId = useUserStore.getState().userData?.orgId;
-    if (!organizationId) return;
+    if (!chatbotId) return;
 
     const socket = getSocket();
 
-    const handleTrainingProgress = async (data: any) => {
-      if (data.organization_id !== organizationId) return;
-      const response = await getAutomation();
+    const handleTrainingProgress = async () => {
+      const response = await getAutomation(chatbotId);
       setTrainingStatus(response.training_status || "idle");
       setTrainingProgress(response.training_progress || 0);
     };
 
-    const handleTrainingCompleted = async (data: any) => {
-      if (data.organization_id !== organizationId) return;
-      const response = await getAutomation();
+    const handleTrainingCompleted = async () => {
+      const response = await getAutomation(chatbotId);
       setTrainingStatus(response.training_status || "idle");
       setTrainingProgress(response.training_progress || 0);
       setTrainLoading(false);
@@ -154,28 +151,28 @@ export default function Articles() {
     };
 
     const handleTrainingError = async (data: any) => {
-      if (data.organization_id !== organizationId) return;
       await getArticle(); // Refresh data to see if anything partially succeeded or to reset UI
       setTrainingStatus("failed"); // Or "idle"
       setTrainLoading(false);
       toast.error(`Training failed: ${data.message || "Unknown error"}`);
     };
 
-    socket.on(`training:progress:${organizationId}`, handleTrainingProgress);
-    socket.on(`training:completed:${organizationId}`, handleTrainingCompleted);
-    socket.on(`training:error:${organizationId}`, handleTrainingError);
+    socket.on(`training:progress:${chatbotId}`, handleTrainingProgress);
+    socket.on(`training:completed:${chatbotId}`, handleTrainingCompleted);
+    socket.on(`training:error:${chatbotId}`, handleTrainingError);
 
     return () => {
-      socket.off(`training:progress:${organizationId}`, handleTrainingProgress);
-      socket.off(`training:completed:${organizationId}`, handleTrainingCompleted);
-      socket.off(`training:error:${organizationId}`, handleTrainingError);
+      socket.off(`training:progress:${chatbotId}`, handleTrainingProgress);
+      socket.off(`training:completed:${chatbotId}`, handleTrainingCompleted);
+      socket.off(`training:error:${chatbotId}`, handleTrainingError);
     };
-  }, []);
+  }, [chatbotId]);
 
   const getArticle = async () => {
     setFetching(true);
     try {
-      const response = await getAutomation();
+      if (!chatbotId) return;
+      const response = await getAutomation(chatbotId);
       const fetchedArticles = response.training_article || [];
       setIsTrained(true); // Reset to true before checking
 
@@ -226,7 +223,7 @@ export default function Articles() {
       setTrainLoading(true);
       setTrainingStatus("training");
 
-      const chatbot_id = useUserStore.getState().userData?.chatbotId;
+      const chatbot_id = useUserStore.getState().activeChatbotId;
 
       if (!chatbot_id) {
         throw new Error("Chatbot ID not found");
@@ -243,7 +240,8 @@ export default function Articles() {
 
   const getAvailableArtiles = async () => {
     try {
-      const response = await getArticleForAutomation();
+      if (!chatbotId) return;
+      const response = await getArticleForAutomation(chatbotId);
       // Show all articles, not just published
       setAvailableArticles(response || []);
     } catch (error) {
@@ -272,6 +270,7 @@ export default function Articles() {
 
     try {
       await createOrUpdateAutomation({
+        chatbot_id: chatbotId,
         training_article: updatedArticles,
         isChatbotTrained: false,
       });
@@ -315,13 +314,14 @@ export default function Articles() {
     const updatedArticles = articles.filter((a) => a.id !== articleId);
 
     try {
-      await deleteTrainingSource(articleId, 'article');
+      await deleteTrainingSource(chatbotId, articleId, 'article');
     } catch (e) {
       console.error("Failed to delete source vectors", e);
     }
 
     try {
       await createOrUpdateAutomation({
+        chatbot_id: chatbotId,
         training_article: updatedArticles,
         isChatbotTrained: false,
       });

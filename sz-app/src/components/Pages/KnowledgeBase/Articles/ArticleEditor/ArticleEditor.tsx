@@ -36,6 +36,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Label } from "@/components/ui/label";
 import Cookies from "js-cookie";
+import { useUserStore } from "@/utils/store";
 import {
   createArticle,
   getArticle,
@@ -126,6 +127,7 @@ const extensions = [
 ];
 
 export function ArticleEditor({ articleId, topicId }: ArticleEditorProps) {
+  const chatbotId = useUserStore((state) => state.activeChatbotId);
   const [rightSidebarOpen, setRightSidebarOpen] = useState(true);
   const [isFocused, setIsFocused] = useState(false);
   const [isLoading, setIsLoading] = useState(true); // Add loading state
@@ -236,6 +238,7 @@ export function ArticleEditor({ articleId, topicId }: ArticleEditorProps) {
         await createArticle({
           ...payload,
           folder_id: topicId,
+          chatbot_id: chatbotId,
         });
       }
       router.push(`/${role}/knowledge-base`);
@@ -270,6 +273,7 @@ export function ArticleEditor({ articleId, topicId }: ArticleEditorProps) {
         await createArticle({
           ...payload,
           folder_id: topicId,
+          chatbot_id: chatbotId,
         });
       }
       router.push(`/${role}/knowledge-base`);

@@ -74,6 +74,7 @@ export default function Articles() {
   const [kbUrl, setKbUrl] = useState<string | null>(null);
 
   const orgPlan = useUserStore((state) => state.userData.orgPlan);
+  const chatbotId = useUserStore((state) => state.activeChatbotId);
 
   // Drag and drop sensors
   const sensors = useSensors(
@@ -104,7 +105,7 @@ export default function Articles() {
   const fetchAllFoldersWithArticle = async () => {
     try {
       setLoading(true);
-      const response = await fetchFoldersWithArticles();
+      const response = await fetchFoldersWithArticles(chatbotId);
       setKnowledgeData(response.folders || []);
 
       const theme = response.theme;
@@ -131,8 +132,8 @@ export default function Articles() {
   };
 
   useEffect(() => {
-    fetchAllFoldersWithArticle();
-  }, []);
+    if (chatbotId) fetchAllFoldersWithArticle();
+  }, [chatbotId]);
 
   const statusFilterFromParams = useMemo(() => {
     const type = (params.type as string)?.toLowerCase();
@@ -176,6 +177,7 @@ export default function Articles() {
         name,
         description,
         topicId,
+        chatbot_id: chatbotId,
       };
       const response = await createFolder(value);
       await fetchAllFoldersWithArticle();

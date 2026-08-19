@@ -27,7 +27,7 @@ export default function RootLayout({
 }) {
   const router = useRouter();
   const organizationId = useUserStore((state) => state.userData.orgId);
-  const chatbotId = useUserStore((state) => state.userData.chatbotId);
+  const chatbotId = useUserStore((state) => state.activeChatbotId);
   const isVisible = useBannerStore((state) => state.isVisible);
 
   const [isClient, setIsClient] = useState(false);
@@ -311,42 +311,31 @@ export default function RootLayout({
       toast.error(data.message || "SEO Compliance check failed.");
     });
 
-    // TRAINING events
-    socket.off(`training:started:${organizationId}`);
-    socket.off(`training:progress:${organizationId}`);
-    socket.off(`training:completed:${organizationId}`);
-    socket.off(`training:error:${organizationId}`);
+    // TRAINING events (scoped per chatbot, not per org)
+    socket.off(`training:progress:${chatbotId}`);
+    socket.off(`training:completed:${chatbotId}`);
+    socket.off(`training:error:${chatbotId}`);
 
-    socket.on(`training:started:${organizationId}`, (data: any) => {
-      if (data.organization_id !== organizationId) return;
-      toast.info("AI Training started", {
-        description: "Preparing your knowledge base...",
-      });
-    });
-
-    socket.on(`training:progress:${organizationId}`, (data: any) => {
-      if (data.organization_id !== organizationId) return;
+    socket.on(`training:progress:${chatbotId}`, (data: any) => {
       toast.info(`Training Progress: ${data.progress}%`, {
         description: data.message,
       });
       // Fetch latest automation data to update all components
-      getAutomation().catch(err => console.error('Failed to fetch automation:', err));
+      if (chatbotId) getAutomation(chatbotId).catch(err => console.error('Failed to fetch automation:', err));
       window.dispatchEvent(new CustomEvent('training-updated'));
     });
 
-    socket.on(`training:completed:${organizationId}`, (data: any) => {
-      if (data.organization_id !== organizationId) return;
+    socket.on(`training:completed:${chatbotId}`, (data: any) => {
       toast.success("AI Training completed!", {
         description: "Your knowledge base is ready.",
       });
       playSound();
       // Fetch latest automation data to update all components
-      getAutomation().catch(err => console.error('Failed to fetch automation:', err));
+      if (chatbotId) getAutomation(chatbotId).catch(err => console.error('Failed to fetch automation:', err));
       window.dispatchEvent(new CustomEvent('training-updated'));
     });
 
-    socket.on(`training:error:${organizationId}`, (data: any) => {
-      if (data.organization_id !== organizationId) return;
+    socket.on(`training:error:${chatbotId}`, (data: any) => {
       toast.error("Training failed", {
         description: data.message || data.error,
       });

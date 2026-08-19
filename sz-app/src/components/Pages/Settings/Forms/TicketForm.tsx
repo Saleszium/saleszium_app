@@ -50,7 +50,7 @@ export default function TicketForm() {
   const [showAddMenu, setShowAddMenu] = useState(false);
   const [loading, setLoading] = useState(true);
   const [saveLoading, setSaveLoading] = useState(false);
-  const chatbot_id = useUserStore((state) => state.userData.chatbotId);
+  const chatbot_id = useUserStore((state) => state.activeChatbotId);
   // 🔹 Load existing config
   useEffect(() => {
     const fetchData = async () => {

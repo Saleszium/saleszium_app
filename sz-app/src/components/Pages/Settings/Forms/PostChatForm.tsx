@@ -84,7 +84,7 @@ export default function PostChatForm() {
   const [loading, setLoading] = useState<boolean>(true);
   const [saveLoading, setSaveLoading] = useState<boolean>(false);
   const [showAddMenu, setShowAddMenu] = useState<boolean>(false);
-  const chatbot_id = useUserStore((state) => state.userData.chatbotId);
+  const chatbot_id = useUserStore((state) => state.activeChatbotId);
   // 🔹 Fetch saved config on mount
   useEffect(() => {
     const fetchData = async () => {

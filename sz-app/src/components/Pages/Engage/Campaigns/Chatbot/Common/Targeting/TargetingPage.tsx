@@ -12,6 +12,7 @@ import { useState, useEffect } from "react";
 import { ChatbotPreviewCard } from "../Editor/ChatbotPreviewCard";
 import { useCampaignStore } from "../store/useCampaignStore";
 import { chatbotCampaignsService } from "@/services/engage/campaigns/chatbot/chatbotCampaignsService";
+import { useUserStore } from "@/utils/store";
 import { useSearchParams } from "next/navigation";
 
 interface TargetingPageProps {
@@ -103,6 +104,7 @@ export const TargetingPage = ({ campaignType, mode }: TargetingPageProps) => {
             setIsSaving(true);
 
             const campaignData = {
+                chatbot_id: useUserStore.getState().activeChatbotId,
                 type: campaignType,
                 status: "draft" as const,
                 content: {

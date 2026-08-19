@@ -9,6 +9,7 @@ import {
 import { SearchForm } from "@/components/Common/SearchForm";
 import { UserNav } from "./UserNav";
 import { TeamSwitcher } from "./TeamSwitcher";
+import { ChatbotSwitcher } from "./ChatbotSwitcher";
 import { useUserStore } from "@/utils/store";
 import { ThemeModeToggle } from "@/components/Common/providers/ThemeModeToggle";
 import WorkTracker from "./WorkTracker";
@@ -68,6 +69,7 @@ export function SiteHeader() {
           {isPlanValid && (
             <>
               {/* <WorkTracker /> */}
+              <ChatbotSwitcher />
               <NotificationBell />
               <SeedDataButton />
               {/* <TeamChatDrawer /> */}

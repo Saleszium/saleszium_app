@@ -46,10 +46,15 @@ const getUserDetails = async (req, res) => {
     const subscriptionData = organizationData.subscriptions?.[0] || {};
     const userRoleData = profileData.users_role || {};
 
-    // Fetch chatbot for this organization
-    const chatbot = await chatbots.findOne({ where: { organization_id } });
+    // Fetch all chatbots for this organization (multi-chatbot support)
+    const orgChatbots = await chatbots.findAll({
+      where: { organization_id },
+      attributes: { exclude: ["api_key"] },
+      order: [["created_at", "ASC"]],
+    });
+    const chatbot = orgChatbots[0]; // default/first chatbot, kept for backward compatibility
 
-    // Count new chats for this chatbot
+    // Count new chats for the default chatbot
     const AllCount = await support_conversations.findAll({
       where: { chatbot_id: chatbot?.chatbot_id },
       attributes: ["is_new"],
@@ -106,6 +111,7 @@ const getUserDetails = async (req, res) => {
       email: profileData.email,
       is_email_confirmed: profileData.is_email_confirmed,
       chatbot_id: chatbot?.chatbot_id || "",
+      chatbots: orgChatbots,
 
       // User profile
       user_profile_id: userData.id,

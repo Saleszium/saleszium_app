@@ -33,12 +33,19 @@ export type UserData = {
   orgPlan: string;
   seoComplianceTriggerCount: number;
   seoPerformanceTriggerCount: number;
-  chatbotId: string;
   trafficCount: number;
   newChatCount: number;
   newTicketCount: number;
 
   onboarding: OnboardingData;
+};
+
+export type ChatbotSummary = {
+  id: number;
+  chatbot_id: string;
+  chatbot_base_url: string | null;
+  chatbot_config: Record<string, any>;
+  created_at?: string;
 };
 
 export type AdminActions = {
@@ -80,7 +87,6 @@ const initialUserData: UserData = {
   orgPlan: "Trial",
   seoComplianceTriggerCount: 0,
   seoPerformanceTriggerCount: 0,
-  chatbotId: "",
   onboarding: {
     tours_completed: {},
     banners_seen: {},
@@ -96,14 +102,33 @@ const initialUserData: UserData = {
 export const useUserStore = create<{
   userData: UserData;
   setUserData: (data: Partial<UserData>) => void;
+  chatbots: ChatbotSummary[];
+  activeChatbotId: string;
+  setChatbots: (chatbots: ChatbotSummary[]) => void;
+  setActiveChatbotId: (chatbotId: string) => void;
 }>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       userData: initialUserData,
       setUserData: (data) =>
         set((state) => ({
           userData: { ...state.userData, ...data },
         })),
+      chatbots: [],
+      activeChatbotId: "",
+      setChatbots: (chatbots) =>
+        set((state) => {
+          const activeStillValid = chatbots.some(
+            (c) => c.chatbot_id === state.activeChatbotId
+          );
+          return {
+            chatbots,
+            activeChatbotId: activeStillValid
+              ? state.activeChatbotId
+              : chatbots[0]?.chatbot_id || "",
+          };
+        }),
+      setActiveChatbotId: (chatbotId) => set({ activeChatbotId: chatbotId }),
     }),
     {
       name: "user-data",

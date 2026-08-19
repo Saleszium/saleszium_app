@@ -73,7 +73,7 @@ export default function Websites() {
   const [trainingStatus, setTrainingStatus] = useState<string>("idle");
   const [trainingProgress, setTrainingProgress] = useState<number>(0);
   const orgPlan = useUserStore((state) => state.userData.orgPlan);
-  const chatbotId = useUserStore((state) => state.userData.chatbotId);
+  const chatbotId = useUserStore((state) => state.activeChatbotId);
   const [untrainedWebsitesCount, setUntrainedWebsitesCount] = useState(0);
   const [untrainedFilesCount, setUntrainedFilesCount] = useState(0);
   const [untrainedArticlesCount, setUntrainedArticlesCount] = useState(0);
@@ -110,7 +110,8 @@ export default function Websites() {
   const getUrls = async () => {
     setFetching(true);
     try {
-      const response = await getAutomation();
+      if (!chatbotId) return;
+      const response = await getAutomation(chatbotId);
       const fetchedUrls = response.training_url || [];
       setUrls(fetchedUrls);
       setIsTrained(true); // Reset to true before checking
@@ -182,21 +183,18 @@ export default function Websites() {
 
   // Listen for training updates via WebSocket
   useEffect(() => {
-    const organizationId = useUserStore.getState().userData?.orgId;
-    if (!organizationId) return;
+    if (!chatbotId) return;
 
     const socket = getSocket();
 
-    const handleTrainingProgress = async (data: any) => {
-      if (data.organization_id !== organizationId) return;
-      const response = await getAutomation();
+    const handleTrainingProgress = async () => {
+      const response = await getAutomation(chatbotId);
       setTrainingStatus(response.training_status || "idle");
       setTrainingProgress(response.training_progress || 0);
     };
 
-    const handleTrainingCompleted = async (data: any) => {
-      if (data.organization_id !== organizationId) return;
-      const response = await getAutomation();
+    const handleTrainingCompleted = async () => {
+      const response = await getAutomation(chatbotId);
       setTrainingStatus(response.training_status || "idle");
       setTrainingProgress(response.training_progress || 0);
       setTrainLoading(false);
@@ -205,23 +203,22 @@ export default function Websites() {
     };
 
     const handleTrainingError = async (data: any) => {
-      if (data.organization_id !== organizationId) return;
       await getUrls(); // Refresh data to see if anything partially succeeded or to reset UI
       setTrainingStatus("failed"); // Or "idle"
       setTrainLoading(false);
       toast.error(`Training failed: ${data.message || "Unknown error"}`);
     };
 
-    socket.on(`training:progress:${organizationId}`, handleTrainingProgress);
-    socket.on(`training:completed:${organizationId}`, handleTrainingCompleted);
-    socket.on(`training:error:${organizationId}`, handleTrainingError);
+    socket.on(`training:progress:${chatbotId}`, handleTrainingProgress);
+    socket.on(`training:completed:${chatbotId}`, handleTrainingCompleted);
+    socket.on(`training:error:${chatbotId}`, handleTrainingError);
 
     return () => {
-      socket.off(`training:progress:${organizationId}`, handleTrainingProgress);
-      socket.off(`training:completed:${organizationId}`, handleTrainingCompleted);
-      socket.off(`training:error:${organizationId}`, handleTrainingError);
+      socket.off(`training:progress:${chatbotId}`, handleTrainingProgress);
+      socket.off(`training:completed:${chatbotId}`, handleTrainingCompleted);
+      socket.off(`training:error:${chatbotId}`, handleTrainingError);
     };
-  }, []);
+  }, [chatbotId]);
 
   const analyzeWebsite = useCallback(
     async (url: string) => {
@@ -296,6 +293,7 @@ export default function Websites() {
 
     try {
       await createOrUpdateAutomation({
+        chatbot_id: chatbotId,
         training_url: updatedUrls,
         isChatbotTrained: false,
       });
@@ -324,7 +322,7 @@ export default function Websites() {
 
     if (deletedUrl?.url) {
       try {
-        await deleteTrainingSource(deletedUrl.url, 'url');
+        await deleteTrainingSource(chatbotId, deletedUrl.url, 'url');
       } catch (e) {
         console.error("Failed to delete source vectors", e);
       }
@@ -332,6 +330,7 @@ export default function Websites() {
 
     try {
       await createOrUpdateAutomation({
+        chatbot_id: chatbotId,
         training_url: updatedUrls,
         isChatbotTrained: false,
       });
@@ -363,7 +362,7 @@ export default function Websites() {
     try {
       setTrainLoading(true);
       setTrainingStatus("training");
-      const chatbot_id = useUserStore.getState().userData?.chatbotId;
+      const chatbot_id = useUserStore.getState().activeChatbotId;
 
       if (!chatbot_id) {
         throw new Error("Chatbot ID not found");

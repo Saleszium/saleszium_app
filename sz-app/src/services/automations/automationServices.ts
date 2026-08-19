@@ -25,6 +25,7 @@ export interface Article {
 }
 
 export const createOrUpdateAutomation = async (data: {
+  chatbot_id: string;
   training_url?: TrainingUrl[];
   training_pdf?: TrainingPdf[];
   training_article?: Article[];
@@ -42,9 +43,11 @@ export const createOrUpdateAutomation = async (data: {
   }
 };
 
-export const getAutomation = async () => {
+export const getAutomation = async (chatbot_id: string) => {
   try {
-    const response = await PrivateAxios.get("/automations");
+    const response = await PrivateAxios.get("/automations", {
+      params: { chatbot_id },
+    });
 
     return response.data;
   } catch (error) {
@@ -53,9 +56,11 @@ export const getAutomation = async () => {
   }
 };
 
-export const getArticleForAutomation = async () => {
+export const getArticleForAutomation = async (chatbot_id: string) => {
   try {
-    const response = await PrivateAxios.get("/automations/get-article");
+    const response = await PrivateAxios.get("/automations/get-article", {
+      params: { chatbot_id },
+    });
 
     return response.data;
   } catch (error) {
@@ -98,7 +103,9 @@ export const trainAndSetAssistant = async (chatbot_id: string) => {
 export const triggerTraining = async (chatbot_id: string) => {
   try {
     // Call rtserver which proxies to backendai
-    const response = await PrivateAxios.post("/automations/trigger-training");
+    const response = await PrivateAxios.post("/automations/trigger-training", {
+      chatbot_id,
+    });
     return response.data;
   } catch (error) {
     console.error("Failed to trigger training", error);
@@ -106,9 +113,14 @@ export const triggerTraining = async (chatbot_id: string) => {
   }
 };
 
-export const deleteTrainingSource = async (source: string, type: 'url' | 'file' | 'article') => {
+export const deleteTrainingSource = async (
+  chatbot_id: string,
+  source: string,
+  type: 'url' | 'file' | 'article'
+) => {
   try {
     const response = await PrivateAxios.post("/automations/delete-source", {
+      chatbot_id,
       source,
       type
     });

@@ -51,14 +51,16 @@ export default function KnowledgeHubLayout({
     });
     const [fetching, setFetching] = useState(true);
     const userEmail = useUserStore((state) => state.userData.userEmail);
+    const chatbotId = useUserStore((state) => state.activeChatbotId);
     Cookies.set("userEmail", userEmail);
 
 
 
     const getChatbotConfig = async () => {
         try {
+            if (!chatbotId) return;
             setFetching(true);
-            const response = await fetchChatbotConfig();
+            const response = await fetchChatbotConfig(chatbotId);
             const config = response.chatbot_config;
 
             setThemeSettings({
@@ -92,7 +94,7 @@ export default function KnowledgeHubLayout({
 
     useEffect(() => {
         getChatbotConfig();
-    }, []);
+    }, [chatbotId]);
 
     if (fetching) {
         return (

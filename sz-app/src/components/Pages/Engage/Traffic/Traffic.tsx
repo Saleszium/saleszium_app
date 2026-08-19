@@ -81,7 +81,7 @@ export default function Traffic() {
   const [readyRooms, setReadyRooms] = useState<string[]>([]);
   const router = useRouter();
   const role = Cookies.get("currentRole");
-  const chatbotId = useUserStore((state) => state.userData.chatbotId);
+  const chatbotId = useUserStore((state) => state.activeChatbotId);
 
   const [activeTab, setActiveTab] = useState<CustomerStatus>("all");
   const [customerTabs, setCustomerTabs] = useState<CustomerTab[]>([

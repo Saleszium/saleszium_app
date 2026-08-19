@@ -82,7 +82,7 @@ export default function Chats() {
   const profilePic = useUserStore((state) => state.userData.profilePic);
   const firstName = useUserStore((state) => state.userData.userFirstName);
   const lastName = useUserStore((state) => state.userData.userLastName);
-  const chatbot_id = useUserStore((state) => state.userData.chatbotId);
+  const chatbot_id = useUserStore((state) => state.activeChatbotId);
 
   const [hasWhatsAppAccounts, setHasWhatsAppAccounts] = useState(false);
 

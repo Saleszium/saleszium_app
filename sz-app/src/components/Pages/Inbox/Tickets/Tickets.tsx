@@ -62,7 +62,7 @@ const AllTickets = () => {
   const { isSupportOpen, setIsSupportOpen } = useSidebar();
 
   const orgId = useUserStore((s) => s.userData.orgId);
-  const chatbotId = useUserStore((s) => s.userData.chatbotId);
+  const chatbotId = useUserStore((s) => s.activeChatbotId);
   const { userData, setUserData } = useUserStore.getState();
 
   const [tickets, setTickets] = useState<Ticket[]>([]);

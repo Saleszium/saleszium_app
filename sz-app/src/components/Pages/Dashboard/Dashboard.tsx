@@ -4,33 +4,40 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   Zap,
   Settings,
   Users,
   MessageCircle,
-  Shield,
   ExternalLink,
-  Sparkles,
   Clock,
   Star,
-  Server,
-  Accessibility,
   Code2,
-  Layers,
-  Moon,
   CheckCircle2,
   ChevronDown,
   ArrowRight,
   Play,
+  Bot,
+  Globe,
+  Plus,
+  Search,
+  AlertCircle,
+  Trash2,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useUserStore } from "@/utils/store";
-import { useEffect, useState, useRef } from "react";
+import { useUserStore, type ChatbotSummary } from "@/utils/store";
+import { useEffect, useState, useRef, useMemo } from "react";
 import {
   getActivities,
   getStatics,
 } from "@/services/dashborad/dashboardService";
+import {
+  createChatbot,
+  deleteChatbot,
+  fetchAllChatbots,
+} from "@/services/chatbot/chatbotService";
 import {
   Dialog,
   DialogContent,
@@ -39,10 +46,19 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Feature197 } from "./accordion-feature-section";
-import Link from "next/link";
 import Cookies from "js-cookie";
+import { toast } from "sonner";
 import { Tour } from "antd";
 import type { TourProps } from "antd";
 
@@ -99,11 +115,81 @@ export default function ModernDashboard() {
   const firstName = useUserStore((state) => state.userData.userFirstName);
   const lastName = useUserStore((state) => state.userData.userLastName);
   const userId = useUserStore((state) => state.userData.userId);
-  const chatbotId = useUserStore((state) => state.userData.chatbotId);
+  const chatbotId = useUserStore((state) => state.activeChatbotId);
   const onboarding = useUserStore((state) => state.userData.onboarding);
 
   const isPlanValid = useUserStore((state) => state.userData.isPlanValid);
   const role = Cookies.get("currentRole");
+
+  // Chatbots grid state
+  const chatbots = useUserStore((state) => state.chatbots);
+  const setChatbots = useUserStore((state) => state.setChatbots);
+  const setActiveChatbotId = useUserStore((state) => state.setActiveChatbotId);
+  const [chatbotSearch, setChatbotSearch] = useState("");
+  const [creatingChatbot, setCreatingChatbot] = useState(false);
+  const [deletingChatbot, setDeletingChatbot] = useState(false);
+  const [selectedChatbot, setSelectedChatbot] = useState<ChatbotSummary | null>(null);
+  const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
+
+  const filteredChatbots = useMemo(() => {
+    if (!chatbotSearch.trim()) return chatbots;
+    const q = chatbotSearch.trim().toLowerCase();
+    return chatbots.filter(
+      (c) =>
+        c.chatbot_id.toLowerCase().includes(q) ||
+        c.chatbot_base_url?.toLowerCase().includes(q)
+    );
+  }, [chatbots, chatbotSearch]);
+
+  const handleCreateChatbot = async () => {
+    if (creatingChatbot) return;
+    setCreatingChatbot(true);
+    try {
+      await createChatbot();
+      const updated = await fetchAllChatbots();
+      setChatbots(updated);
+      const newest = updated[updated.length - 1];
+      if (newest) {
+        setActiveChatbotId(newest.chatbot_id);
+        toast.success("Chatbot created successfully");
+      }
+    } catch (error: any) {
+      const message =
+        error?.response?.data?.message || "Failed to create chatbot";
+      toast.error(message);
+    } finally {
+      setCreatingChatbot(false);
+    }
+  };
+
+  const handleManageChatbot = () => {
+    if (!selectedChatbot) return;
+    setActiveChatbotId(selectedChatbot.chatbot_id);
+    setSelectedChatbot(null);
+    router.push(`/${role}/chats`);
+  };
+
+  const handleDeleteChatbot = async () => {
+    if (!selectedChatbot || deletingChatbot) return;
+    setDeletingChatbot(true);
+    try {
+      await deleteChatbot(selectedChatbot.chatbot_id);
+      const updated = await fetchAllChatbots();
+      setChatbots(updated);
+      if (chatbotId === selectedChatbot.chatbot_id && updated[0]) {
+        setActiveChatbotId(updated[0].chatbot_id);
+      }
+      toast.success("Chatbot deleted");
+      setConfirmDeleteOpen(false);
+      setSelectedChatbot(null);
+    } catch (error: any) {
+      const message =
+        error?.response?.data?.message || "Failed to delete chatbot";
+      toast.error(message);
+    } finally {
+      setDeletingChatbot(false);
+    }
+  };
 
   // Tour refs
   const statsRef = useRef(null);
@@ -299,7 +385,6 @@ export default function ModernDashboard() {
   const getAllActivities = async () => {
     try {
       const response = await getActivities(); // your API call
-      // console.log(response.data);
       setActivities(response.data || []); // set fetched activities
     } catch (error) {
       console.error("Failed to fetch activities", error);
@@ -323,44 +408,6 @@ export default function ModernDashboard() {
     const years = Math.floor(months / 12);
     return `${years} year${years !== 1 ? "s" : ""} ago`;
   };
-
-  const iconFeatures = [
-    {
-      id: 1,
-      title: "Blazing-Fast Setup",
-      description:
-        "Kickstart your UI in minutes with ready-to-use building blocks that follow shadcn/ui and Tailwind best practices.",
-      icon: Zap,
-    },
-    {
-      id: 2,
-      title: "Type-Safe by Default",
-      description:
-        "Enjoy end-to-end type safety with strict TypeScript types and predictable component APIs.",
-      icon: Code2,
-    },
-    {
-      id: 3,
-      title: "Dark Mode Ready",
-      description:
-        "All components adapt to dark mode using semantic tokens for consistent contrast and accessibility.",
-      icon: Moon,
-    },
-    {
-      id: 4,
-      title: "Accessible UI",
-      description:
-        "Built with ARIA attributes, keyboard support, and semantic HTML to meet WCAG guidelines.",
-      icon: Accessibility,
-    },
-    {
-      id: 5,
-      title: "Composable Architecture",
-      description:
-        "Compose primitives into advanced patterns and ship complex sections with minimal code.",
-      icon: Layers,
-    },
-  ] as const;
 
   useEffect(() => {
     getAllActivities();
@@ -387,6 +434,8 @@ export default function ModernDashboard() {
     );
   }
 
+  const chatbotsLoading = chatbots.length === 0;
+
   return (
     <div className="flex w-full h-[calc(100vh-var(--header-height)-1rem)] overflow-hidden rounded-lg border bg-background dark:bg-background-dark">
       <div className="flex flex-1 flex-col w-full">
@@ -395,7 +444,6 @@ export default function ModernDashboard() {
             <div className="mb-8">
               <div className="flex items-center gap-6 mb-6">
                 <div className="w-16 h-16 bg-primary rounded-2xl flex items-center justify-center shadow-lg p-2">
-                  {/* <Sparkles className="w-8 h-8 text-primary-foreground" /> */}
                   <img src="https://www.saleszium.com/assets/Saleszium_Light_Logo_small.png" alt="" />
                 </div>
                 <div className="flex-1">
@@ -445,6 +493,85 @@ export default function ModernDashboard() {
                   </Card>
                 ))}
               </div>
+            </div>
+
+            {/* Chatbots grid */}
+            <div className="mb-10">
+              <div className="flex items-center justify-between gap-4 mb-6">
+                <h2 className="text-2xl font-bold text-foreground">Chatbots</h2>
+                <div className="relative w-full max-w-xs">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
+                  <Input
+                    value={chatbotSearch}
+                    onChange={(e) => setChatbotSearch(e.target.value)}
+                    placeholder="Search your chatbot"
+                    className="pl-9"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                <button
+                  onClick={handleCreateChatbot}
+                  disabled={creatingChatbot}
+                  className="flex flex-col items-center justify-center gap-3 rounded-xl bg-primary text-primary-foreground p-6 min-h-40 hover:bg-primary/90 transition-colors disabled:opacity-60">
+                  <div className="flex size-10 items-center justify-center rounded-full bg-primary-foreground/15">
+                    <Plus className="size-5" />
+                  </div>
+                  <span className="font-semibold">
+                    {creatingChatbot ? "Creating..." : "Add chatbot"}
+                  </span>
+                </button>
+
+                {chatbotsLoading
+                  ? Array.from({ length: 3 }).map((_, i) => (
+                      <Card key={i} className="p-4 min-h-40 gap-3">
+                        <Skeleton className="h-4 w-2/3" />
+                        <Skeleton className="h-3 w-1/2" />
+                        <Skeleton className="h-16 w-full mt-auto" />
+                      </Card>
+                    ))
+                  : filteredChatbots.map((chatbot) => {
+                      const installed = Boolean(chatbot.chatbot_base_url);
+                      return (
+                        <Card
+                          key={chatbot.chatbot_id}
+                          onClick={() => setSelectedChatbot(chatbot)}
+                          className="p-4 min-h-40 justify-between cursor-pointer hover:shadow-md hover:border-primary/40 transition-all">
+                          <div className="flex items-start justify-between">
+                            <div className="flex size-10 items-center justify-center rounded-lg bg-primary/10">
+                              <Bot className="size-5 text-primary" />
+                            </div>
+                            <Badge
+                              variant={installed ? "secondary" : "outline"}
+                              className="gap-1 text-xs">
+                              {installed ? (
+                                <CheckCircle2 className="size-3" />
+                              ) : (
+                                <AlertCircle className="size-3" />
+                              )}
+                              {installed ? "Installed" : "Setup needed"}
+                            </Badge>
+                          </div>
+                          <div>
+                            <p className="font-semibold text-foreground truncate">
+                              {chatbot.chatbot_id}
+                            </p>
+                            <p className="flex items-center gap-1 text-xs text-muted-foreground truncate mt-1">
+                              <Globe className="size-3 shrink-0" />
+                              {chatbot.chatbot_base_url || "No host configured"}
+                            </p>
+                          </div>
+                        </Card>
+                      );
+                    })}
+              </div>
+
+              {!chatbotsLoading && filteredChatbots.length === 0 && (
+                <div className="text-center text-muted-foreground py-10">
+                  No chatbots match your search.
+                </div>
+              )}
             </div>
 
             {/* Main Content Grid */}
@@ -521,7 +648,7 @@ export default function ModernDashboard() {
                               visible: { opacity: 1, y: 0 },
                             }}
                             transition={{ duration: 0.4 }}
-                            className={`rounded-xl border border-border bg-card transition-all duration-200 overflow-hidden 
+                            className={`rounded-xl border border-border bg-card transition-all duration-200 overflow-hidden
           ${isOpen ? "shadow-md ring-1 ring-primary/20" : "shadow-sm"}`}>
                             {/* Header */}
                             <motion.div
@@ -751,6 +878,101 @@ export default function ModernDashboard() {
         onClose={() => setTourOpen(false)}
         steps={tourSteps}
       />
+
+      {/* Chatbot overview modal */}
+      <Dialog
+        open={!!selectedChatbot}
+        onOpenChange={(open) => !open && setSelectedChatbot(null)}>
+        <DialogContent className="sm:max-w-md">
+          {selectedChatbot && (
+            <>
+              <DialogHeader>
+                <DialogTitle className="flex items-center gap-2">
+                  <div className="flex size-8 items-center justify-center rounded-lg bg-primary/10">
+                    <Bot className="size-4 text-primary" />
+                  </div>
+                  {selectedChatbot.chatbot_id}
+                </DialogTitle>
+              </DialogHeader>
+
+              <div className="space-y-3 py-2">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-muted-foreground">Status</span>
+                  <Badge
+                    variant={selectedChatbot.chatbot_base_url ? "secondary" : "outline"}
+                    className="gap-1">
+                    {selectedChatbot.chatbot_base_url ? (
+                      <CheckCircle2 className="size-3" />
+                    ) : (
+                      <AlertCircle className="size-3" />
+                    )}
+                    {selectedChatbot.chatbot_base_url ? "Installed" : "Setup needed"}
+                  </Badge>
+                </div>
+                <div className="flex items-center justify-between text-sm">
+                  <span className="text-muted-foreground">Host</span>
+                  <span className="font-medium truncate max-w-55">
+                    {selectedChatbot.chatbot_base_url || "No host configured"}
+                  </span>
+                </div>
+                {selectedChatbot.created_at && (
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-muted-foreground">Created</span>
+                    <span className="font-medium">
+                      {new Date(selectedChatbot.created_at).toLocaleDateString()}
+                    </span>
+                  </div>
+                )}
+              </div>
+
+              <DialogFooter className="gap-2 sm:justify-between">
+                <Button
+                  variant="destructive"
+                  size="sm"
+                  className="gap-2"
+                  disabled={chatbots.length <= 1}
+                  title={
+                    chatbots.length <= 1
+                      ? "An organization must have at least one chatbot"
+                      : undefined
+                  }
+                  onClick={() => setConfirmDeleteOpen(true)}>
+                  <Trash2 className="size-4" />
+                  Delete
+                </Button>
+                <Button onClick={handleManageChatbot}>Manage chatbot</Button>
+              </DialogFooter>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete confirmation */}
+      <AlertDialog open={confirmDeleteOpen} onOpenChange={setConfirmDeleteOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete chatbot?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This permanently deletes{" "}
+              <span className="font-medium">{selectedChatbot?.chatbot_id}</span>{" "}
+              and all of its training data, conversations, campaigns, and help
+              center content. This cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={deletingChatbot}>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              disabled={deletingChatbot}
+              onClick={(e) => {
+                e.preventDefault();
+                handleDeleteChatbot();
+              }}>
+              {deletingChatbot ? "Deleting..." : "Delete"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

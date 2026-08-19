@@ -10,6 +10,7 @@ const {
   getWhatsAppConfig,
   getCustomerPhone,
   saveCustomerPhone,
+  deleteChatbot,
 } = require("../controllers/chatbotController");
 const router = express.Router();
 
@@ -25,6 +26,7 @@ router.post("/set-installed", setChatbotInstalled);
 router.patch("/chatbot-config", verifyToken, createAndUpdateChatbotConfig);
 
 router.get("/chatbots", verifyToken, getChatbotConfigForWebApp);
+router.delete("/chatbots/:chatbot_id", verifyToken, deleteChatbot);
 
 //api-key
 router.get("/get-api-key", verifyToken, getApiKeyForFreeTrail);

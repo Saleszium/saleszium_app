@@ -54,11 +54,13 @@ export default function AllSources() {
 
 
   const isChatbotInstalled = useUserStore.getState().userData?.onboarding?.chatbot_installed;
+  const chatbotId = useUserStore((state) => state.activeChatbotId);
 
 
   const fetchData = async () => {
     try {
-      const response = await getAutomation();
+      if (!chatbotId) return;
+      const response = await getAutomation(chatbotId);
       setWebsites(response.training_url || []);
       setFiles(response.training_pdf || []);
       setArticles(response.training_article || []);
@@ -113,50 +115,46 @@ export default function AllSources() {
   useEffect(() => {
     fetchData();
 
-    const organizationId = useUserStore.getState().userData?.orgId;
-    if (!organizationId) return;
+    if (!chatbotId) return;
 
     const socket = getSocket();
 
     const handleTrainingProgress = async (data: any) => {
-      if (data.organization_id !== organizationId) return;
       // We could just update status/progress here without full fetch if partial
       // But full fetch ensures consistency
-      const response = await getAutomation();
+      const response = await getAutomation(chatbotId);
       setTrainingStatus(response.training_status || "idle");
       setTrainingProgress(response.training_progress || 0);
     };
 
-    const handleTrainingCompleted = async (data: any) => {
-      if (data.organization_id !== organizationId) return;
+    const handleTrainingCompleted = async () => {
       await fetchData(); // Refresh all data and counts
       toast.success("Training completed successfully!");
     };
 
     const handleTrainingError = async (data: any) => {
-      if (data.organization_id !== organizationId) return;
       await fetchData(); // Refresh data to see if anything partially succeeded or to reset UI
       setTrainingStatus("failed"); // Or "idle" if you want to allow retry immediately without "failed" state blocking
       toast.error(`Training failed: ${data.message || "Unknown error"}`);
     };
 
-    socket.on(`training:progress:${organizationId}`, handleTrainingProgress);
-    socket.on(`training:completed:${organizationId}`, handleTrainingCompleted);
-    socket.on(`training:error:${organizationId}`, handleTrainingError);
+    socket.on(`training:progress:${chatbotId}`, handleTrainingProgress);
+    socket.on(`training:completed:${chatbotId}`, handleTrainingCompleted);
+    socket.on(`training:error:${chatbotId}`, handleTrainingError);
 
     return () => {
-      socket.off(`training:progress:${organizationId}`, handleTrainingProgress);
-      socket.off(`training:completed:${organizationId}`, handleTrainingCompleted);
-      socket.off(`training:error:${organizationId}`, handleTrainingError);
+      socket.off(`training:progress:${chatbotId}`, handleTrainingProgress);
+      socket.off(`training:completed:${chatbotId}`, handleTrainingCompleted);
+      socket.off(`training:error:${chatbotId}`, handleTrainingError);
     };
-  }, []);
+  }, [chatbotId]);
 
 
   const handleTrain = async () => {
     try {
       setTrainingStatus("training");
 
-      const chatbot_id = useUserStore.getState().userData?.chatbotId;
+      const chatbot_id = useUserStore.getState().activeChatbotId;
 
       if (!chatbot_id) {
         throw new Error("Chatbot ID not found");

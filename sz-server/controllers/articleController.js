@@ -1,5 +1,5 @@
 const e = require("express");
-const { articles } = require("../models");
+const { articles, chatbots } = require("../models");
 const { logActivity } = require("../utils/activityLogger");
 
 exports.createArticle = async (req, res) => {
@@ -7,6 +7,17 @@ exports.createArticle = async (req, res) => {
     console.log("Creating article with body:", req.body);
     const { organization_id, user_id } = req.user;
     console.log("User:", { organization_id, user_id });
+
+    if (!req.body.chatbot_id) {
+      return res.status(400).json({ error: "chatbot_id is required" });
+    }
+
+    const chatbot = await chatbots.findOne({
+      where: { chatbot_id: req.body.chatbot_id, organization_id },
+    });
+    if (!chatbot) {
+      return res.status(404).json({ error: "Chatbot not found" });
+    }
 
     const articleData = {
       ...req.body,

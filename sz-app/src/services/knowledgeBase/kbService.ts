@@ -4,9 +4,11 @@ import { uploadFileAndGetFullUrl } from "../fileUploadService";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
-export const getKnowledgeBase = async () => {
+export const getKnowledgeBase = async (chatbot_id: string) => {
     try {
-        const response = await PrivateAxios.get(`/kb/org`);
+        const response = await PrivateAxios.get(`/kb/org`, {
+            params: { chatbot_id },
+        });
         return response.data;
     } catch (error) {
         console.error("Failed to fetch analytics data", error);

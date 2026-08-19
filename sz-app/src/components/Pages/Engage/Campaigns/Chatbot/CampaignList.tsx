@@ -27,6 +27,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useState, useEffect } from "react";
 import { chatbotCampaignsService, ChatbotCampaign } from "@/services/engage/campaigns/chatbot/chatbotCampaignsService";
+import { useUserStore } from "@/utils/store";
 
 interface CampaignListProps {
     campaignType: "recurring" | "one-time";
@@ -42,15 +43,17 @@ export const CampaignList = ({ campaignType, search, filter }: CampaignListProps
     const [error, setError] = useState<string | null>(null);
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
     const [campaignToDelete, setCampaignToDelete] = useState<{ id: string; name: string } | null>(null);
+    const chatbotId = useUserStore((state) => state.activeChatbotId);
 
     useEffect(() => {
+        if (!chatbotId) return;
         const fetchCampaigns = async () => {
             try {
                 setIsLoading(true);
                 setError(null);
                 const data = campaignType === "recurring"
-                    ? await chatbotCampaignsService.getRecurringCampaigns()
-                    : await chatbotCampaignsService.getOneTimeCampaigns();
+                    ? await chatbotCampaignsService.getRecurringCampaigns(chatbotId)
+                    : await chatbotCampaignsService.getOneTimeCampaigns(chatbotId);
                 setCampaigns(data);
             } catch (err) {
                 console.error("Error fetching campaigns:", err);
@@ -61,7 +64,7 @@ export const CampaignList = ({ campaignType, search, filter }: CampaignListProps
         };
 
         fetchCampaigns();
-    }, [campaignType]);
+    }, [campaignType, chatbotId]);
 
     const openDeleteDialog = (campaignId: string, campaignName: string) => {
         setCampaignToDelete({ id: campaignId, name: campaignName });

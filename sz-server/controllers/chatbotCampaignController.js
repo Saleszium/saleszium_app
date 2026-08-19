@@ -6,14 +6,18 @@ const { generateSignedDownloadUrl } = require("./awsController");
  */
 const getAllCampaigns = async (req, res) => {
     const { organization_id } = req.user;
+    const { chatbot_id } = req.query;
 
     if (!organization_id) {
         return res.status(400).json({ error: "Organization ID is required" });
     }
+    if (!chatbot_id) {
+        return res.status(400).json({ error: "chatbot_id is required" });
+    }
 
     try {
         const campaigns = await chatbot_campaigns.findAll({
-            where: { organization_id },
+            where: { organization_id, chatbot_id },
             order: [["created_at", "DESC"]],
         });
 
@@ -45,7 +49,7 @@ const getAllCampaignsForChatbot = async (req, res) => {
 
     try {
         const campaigns = await chatbot_campaigns.findAll({
-            where: { organization_id: chatbot.organization_id }, // Removed status: "active" for development/testing
+            where: { chatbot_id }, // Removed status: "active" for development/testing
             order: [["created_at", "DESC"]],
         });
 
@@ -74,9 +78,13 @@ const getAllCampaignsForChatbot = async (req, res) => {
 const getCampaignsByType = async (req, res) => {
     const { organization_id } = req.user;
     const { type } = req.params;
+    const { chatbot_id } = req.query;
 
     if (!organization_id) {
         return res.status(400).json({ error: "Organization ID is required" });
+    }
+    if (!chatbot_id) {
+        return res.status(400).json({ error: "chatbot_id is required" });
     }
 
     // Validate type parameter
@@ -88,7 +96,7 @@ const getCampaignsByType = async (req, res) => {
 
     try {
         const campaigns = await chatbot_campaigns.findAll({
-            where: { organization_id, type },
+            where: { organization_id, chatbot_id, type },
             order: [["created_at", "DESC"]],
         });
 
@@ -131,10 +139,13 @@ const getCampaignById = async (req, res) => {
  */
 const createCampaign = async (req, res) => {
     const { organization_id } = req.user;
-    const { type, status, content, targeting } = req.body;
+    const { chatbot_id, type, status, content, targeting } = req.body;
 
     if (!organization_id) {
         return res.status(400).json({ error: "Organization ID is required" });
+    }
+    if (!chatbot_id) {
+        return res.status(400).json({ error: "chatbot_id is required" });
     }
 
     // Validate required fields
@@ -142,6 +153,11 @@ const createCampaign = async (req, res) => {
         return res.status(400).json({
             error: "Missing required fields: type, content, and targeting are required",
         });
+    }
+
+    const chatbot = await chatbots.findOne({ where: { chatbot_id, organization_id } });
+    if (!chatbot) {
+        return res.status(404).json({ error: "Chatbot not found" });
     }
 
     // Validate type
@@ -161,6 +177,7 @@ const createCampaign = async (req, res) => {
     try {
         const campaign = await chatbot_campaigns.create({
             organization_id,
+            chatbot_id,
             type,
             status: status || "draft",
             content,

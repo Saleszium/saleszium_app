@@ -7,8 +7,7 @@ let socket: Socket | null = null;
 export const getSocket = () => {
   if (!socket) {
     // Get chatbot_id from user store for dashboard room joining
-    const { userData } = useUserStore.getState();
-    const chatbotId = userData?.chatbotId;
+    const { activeChatbotId: chatbotId } = useUserStore.getState();
 
     socket = io(process.env.NEXT_PUBLIC_SOCKET_URL!, {
       transports: ["websocket"],

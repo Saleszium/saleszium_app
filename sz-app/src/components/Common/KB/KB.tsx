@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { useEffect, useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { fetchFoldersWithArticles } from "@/services/knowledgeBase/folderService";
+import { useUserStore } from "@/utils/store";
 
 interface Article {
   id: string;
@@ -30,16 +31,17 @@ interface ApiResponse {
 }
 
 const KB = () => {
+  const chatbotId = useUserStore((state) => state.activeChatbotId);
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<ApiResponse | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const router = useRouter();
   const [showAll, setShowAll] = useState(false);
-  
+
   const fetchAllFoldersWithArticleFn = async () => {
     try {
       setLoading(true);
-      const response = await fetchFoldersWithArticles();
+      const response = await fetchFoldersWithArticles(chatbotId);
       setData(response);
     } catch (error) {
       console.error("Error fetching articles:", error);
@@ -49,8 +51,8 @@ const KB = () => {
   };
 
   useEffect(() => {
-    fetchAllFoldersWithArticleFn();
-  }, []);
+    if (chatbotId) fetchAllFoldersWithArticleFn();
+  }, [chatbotId]);
 
   const handleArticleClick = (id: string) => {
     router.push(`/kb/${id}`);

@@ -52,7 +52,7 @@ export default function Files() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [loading, isLoading] = useState(false);
   const orgPlan = useUserStore((state) => state.userData.orgPlan);
-  const chatbotId = useUserStore((state) => state.userData.chatbotId);
+  const chatbotId = useUserStore((state) => state.activeChatbotId);
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [previewFile, setPreviewFile] = useState<any>(null);
   const [previewUrl, setPreviewUrl] = useState<string>(""); // New state for secure URL
@@ -72,7 +72,8 @@ export default function Files() {
   const getFiles = async () => {
     setFetching(true);
     try {
-      const response = await getAutomation();
+      if (!chatbotId) return;
+      const response = await getAutomation(chatbotId);
       const fetchedFiles = response.training_pdf || [];
       setFiles(fetchedFiles);
       setIsTrained(true); // Reset to true before checking
@@ -147,21 +148,18 @@ export default function Files() {
 
   // Listen for training updates via WebSocket
   useEffect(() => {
-    const organizationId = useUserStore.getState().userData?.orgId;
-    if (!organizationId) return;
+    if (!chatbotId) return;
 
     const socket = getSocket();
 
-    const handleTrainingProgress = async (data: any) => {
-      if (data.organization_id !== organizationId) return;
-      const response = await getAutomation();
+    const handleTrainingProgress = async () => {
+      const response = await getAutomation(chatbotId);
       setTrainingStatus(response.training_status || "idle");
       setTrainingProgress(response.training_progress || 0);
     };
 
-    const handleTrainingCompleted = async (data: any) => {
-      if (data.organization_id !== organizationId) return;
-      const response = await getAutomation();
+    const handleTrainingCompleted = async () => {
+      const response = await getAutomation(chatbotId);
       setTrainingStatus(response.training_status || "idle");
       setTrainingProgress(response.training_progress || 0);
       setTrainLoading(false);
@@ -170,23 +168,22 @@ export default function Files() {
     };
 
     const handleTrainingError = async (data: any) => {
-      if (data.organization_id !== organizationId) return;
       await getFiles(); // Refresh data to see if anything partially succeeded or to reset UI
       setTrainingStatus("failed"); // Or "idle"
       setTrainLoading(false);
       toast.error(`Training failed: ${data.message || "Unknown error"}`);
     };
 
-    socket.on(`training:progress:${organizationId}`, handleTrainingProgress);
-    socket.on(`training:completed:${organizationId}`, handleTrainingCompleted);
-    socket.on(`training:error:${organizationId}`, handleTrainingError);
+    socket.on(`training:progress:${chatbotId}`, handleTrainingProgress);
+    socket.on(`training:completed:${chatbotId}`, handleTrainingCompleted);
+    socket.on(`training:error:${chatbotId}`, handleTrainingError);
 
     return () => {
-      socket.off(`training:progress:${organizationId}`, handleTrainingProgress);
-      socket.off(`training:completed:${organizationId}`, handleTrainingCompleted);
-      socket.off(`training:error:${organizationId}`, handleTrainingError);
+      socket.off(`training:progress:${chatbotId}`, handleTrainingProgress);
+      socket.off(`training:completed:${chatbotId}`, handleTrainingCompleted);
+      socket.off(`training:error:${chatbotId}`, handleTrainingError);
     };
-  }, []);
+  }, [chatbotId]);
 
   const handleConfirmUpload = async () => {
     isLoading(true);
@@ -220,6 +217,7 @@ export default function Files() {
       const updatedFiles = [...files, newFile];
 
       await createOrUpdateAutomation({
+        chatbot_id: chatbotId,
         training_pdf: updatedFiles,
         isChatbotTrained: false,
       });
@@ -256,7 +254,7 @@ export default function Files() {
     const updatedFiles = files.filter((file) => file.s3Name !== fileId);
 
     try {
-      await deleteTrainingSource(fileId, 'file');
+      await deleteTrainingSource(chatbotId, fileId, 'file');
     } catch (e) {
       console.error("Failed to delete source vectors", e);
     }
@@ -264,6 +262,7 @@ export default function Files() {
 
     try {
       await createOrUpdateAutomation({
+        chatbot_id: chatbotId,
         training_pdf: updatedFiles,
         isChatbotTrained: false,
       });
@@ -376,7 +375,7 @@ export default function Files() {
     try {
       setTrainLoading(true);
       setTrainingStatus("training"); // Immediate feedback
-      const chatbot_id = useUserStore.getState().userData?.chatbotId;
+      const chatbot_id = useUserStore.getState().activeChatbotId;
 
       if (!chatbot_id) {
         throw new Error("Chatbot ID not found");

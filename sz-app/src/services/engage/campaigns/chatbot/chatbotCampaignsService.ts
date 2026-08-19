@@ -47,6 +47,7 @@ export interface CampaignTargeting {
 export interface ChatbotCampaign {
     id?: string;
     name?: string;
+    chatbot_id?: string;
     type: "recurring" | "one-time";
     status: "active" | "draft" | "paused";
     content: CampaignContent;
@@ -58,14 +59,18 @@ export interface ChatbotCampaign {
 // API Service Functions
 export const chatbotCampaignsService = {
     // Get all recurring campaigns
-    getRecurringCampaigns: async (): Promise<ChatbotCampaign[]> => {
-        const response = await PrivateAxios.get("/campaigns/chatbot/type/recurring");
+    getRecurringCampaigns: async (chatbot_id: string): Promise<ChatbotCampaign[]> => {
+        const response = await PrivateAxios.get("/campaigns/chatbot/type/recurring", {
+            params: { chatbot_id },
+        });
         return response.data;
     },
 
     // Get all one-time campaigns
-    getOneTimeCampaigns: async (): Promise<ChatbotCampaign[]> => {
-        const response = await PrivateAxios.get("/campaigns/chatbot/type/one-time");
+    getOneTimeCampaigns: async (chatbot_id: string): Promise<ChatbotCampaign[]> => {
+        const response = await PrivateAxios.get("/campaigns/chatbot/type/one-time", {
+            params: { chatbot_id },
+        });
         return response.data;
     },
 

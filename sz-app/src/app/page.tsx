@@ -14,6 +14,7 @@ import { useTokenManager } from "@/hooks/userTokenManager";
 export default function Home() {
   const router = useRouter();
   const setUserData = useUserStore((state) => state.setUserData);
+  const setChatbots = useUserStore((state) => state.setChatbots);
 
   // const [googleAccessToken, setGoogleAccessToken] = useState<string | null>(
   //   null
@@ -78,7 +79,6 @@ export default function Home() {
         orgPlan: response.subscription_tier,
         seoComplianceTriggerCount: response.seo_compliance_trigger_count,
         seoPerformanceTriggerCount: response.seo_performance_trigger_count,
-        chatbotId: response.chatbot_id,
         newChatCount: response.chat_count,
         newTicketCount: response.ticket_count,
         trafficCount: response.totalVisitorsNow,
@@ -89,6 +89,8 @@ export default function Home() {
           chatbot_installed: false,
         },
       });
+
+      setChatbots(response.chatbots || []);
 
       Cookies.set("roleAccess", JSON.stringify(response.access));
       redirectAccToUserRole(response.current_role);

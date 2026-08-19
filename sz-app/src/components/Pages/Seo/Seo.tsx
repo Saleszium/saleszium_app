@@ -44,7 +44,7 @@ const Seo = () => {
   const onboarding = useUserStore((state) => state.userData.onboarding);
   const chatbotInstalled = onboarding?.chatbot_installed || false;
 
-  const chatbot_id = useUserStore((state) => state.userData.chatbotId);
+  const chatbot_id = useUserStore((state) => state.activeChatbotId);
   // useEffect(() => {
   //   const fetchAvailableChatbot = async () => {
   //     try {

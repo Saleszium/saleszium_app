@@ -116,7 +116,7 @@ export default function TicketDetail() {
   const { ticketType } = useTicketStore();
   const { setIsSupportOpen } = useSidebar();
   const userId = useUserStore((s) => s.userData.userId);
-  const chatbotId = useUserStore((s) => s.userData.chatbotId);
+  const chatbotId = useUserStore((s) => s.activeChatbotId);
 
   const ticketId = params.id as string;
 

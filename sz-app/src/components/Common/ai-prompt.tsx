@@ -40,7 +40,7 @@ export default function AI_Prompt({
   const [showWhatsAppConfirm, setShowWhatsAppConfirm] = useState(false);
   const [isWhatsAppActive, setIsWhatsAppActive] = useState(false);
 
-  const chatbot_id = useUserStore((state) => state.userData.chatbotId);
+  const chatbot_id = useUserStore((state) => state.activeChatbotId);
 
   useEffect(() => {
     const checkWhatsAppStatus = async () => {

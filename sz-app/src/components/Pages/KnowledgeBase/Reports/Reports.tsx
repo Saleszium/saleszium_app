@@ -37,15 +37,18 @@ import {
     YAxis,
 } from "recharts";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { useUserStore } from "@/utils/store";
 
 const Reports = () => {
+    const chatbotId = useUserStore((state) => state.activeChatbotId);
     const [data, setData] = useState<KnowledgeBaseData | null>(null);
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
+        if (!chatbotId) return;
         const fetchData = async () => {
             try {
-                const response = await getKnowledgeBase();
+                const response = await getKnowledgeBase(chatbotId);
                 setData(response);
             } catch (error) {
                 console.error("Error fetching knowledge base data:", error);
@@ -55,7 +58,7 @@ const Reports = () => {
         };
 
         fetchData();
-    }, []);
+    }, [chatbotId]);
 
     if (isLoading) {
         return (

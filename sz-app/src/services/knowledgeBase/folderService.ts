@@ -3,11 +3,14 @@ import { PrivateAxios } from "@/helpers/PrivateAxios";
 interface CreateFolder {
   name: string;
   description?: string;
+  chatbot_id: string;
 }
 
-export const fetchFoldersWithArticles = async () => {
+export const fetchFoldersWithArticles = async (chatbot_id: string) => {
   try {
-    const response = await PrivateAxios.get("/kb/org");
+    const response = await PrivateAxios.get("/kb/org", {
+      params: { chatbot_id },
+    });
 
     return response.data;
   } catch (error) {

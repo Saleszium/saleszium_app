@@ -19,56 +19,56 @@ async def start_training_job(chatbot_id: str, webhook_url: str = None):
     
     job_id = str(uuid.uuid4())
     print(f"📝 Generated job_id: {job_id}")
-    
-    # Get organization_id
-    def get_org_id():
+
+    # Get current training status directly by chatbot_id
+    def get_status():
         with get_db_connection() as conn:
             query = """
-                SELECT c.organization_id, a.training_status
+                SELECT a.training_status
                 FROM chatbots c
-                LEFT JOIN automations a ON c.organization_id = a.organization_id
+                LEFT JOIN automations a ON a.chatbot_id = c.chatbot_id
                 WHERE c.chatbot_id = %s
             """
             result = run_query(conn, query, (chatbot_id,))
             return result[0] if result and len(result) > 0 else None
-    
-    result = await asyncio.to_thread(get_org_id)
+
+    result = await asyncio.to_thread(get_status)
     print(f"🔍 Got DB result: {result}")
-    
-    if not result:
+
+    if result is None:
         print(f"❌ ERROR: Chatbot not found!")
         raise Exception("Chatbot not found")
-    
-    organization_id, current_status = result
-    print(f"📊 Org: {organization_id}, Status: '{current_status}'")
-    
+
+    current_status = result[0]
+    print(f"📊 Status: '{current_status}'")
+
     if current_status == 'training':
         print(f"⚠️  ALREADY TRAINING - returning early")
         return {'status': 'already_training', 'message': 'Training already in progress'}
-    
+
     print(f"✅ Status check passed, continuing...")
     # Import here to avoid circular import
     from controller.standard_rag_controller import StandardRAGController
     print(f"✅ Imported RAGController")
-    
+
    # Log that we're starting the job
-    logging.info(f"Starting training job {job_id} for chatbot {chatbot_id}, org {organization_id}")
-    
+    logging.info(f"Starting training job {job_id} for chatbot {chatbot_id}")
+
     print(f"💾 Updating DB status...")
     def update_db():
         with get_db_connection() as conn:
             cursor = conn.cursor()
             cursor.execute(
-                "UPDATE automations SET training_status='training', training_progress=0, training_job_id=%s, training_started_at=NOW(), training_message='Training started...' WHERE organization_id=%s",
-                (job_id, organization_id)
+                "UPDATE automations SET training_status='training', training_progress=0, training_job_id=%s, training_started_at=NOW(), training_message='Training started...' WHERE chatbot_id=%s",
+                (job_id, chatbot_id)
             )
             conn.commit()
             cursor.close()
     await asyncio.to_thread(update_db)
     print(f"✅ DB updated")
-    await send_webhook(webhook_url, organization_id, 'training', 5, 'Training started', None)
+    await send_webhook(webhook_url, chatbot_id, 'training', 5, 'Training started', None)
     print(f"📡 Webhook sent\n")
-    
+
     # Start background thread with proper sync wrapper
     print(f"🎬 Defining thread wrapper function...")
     def run_async_training():
@@ -77,7 +77,7 @@ async def start_training_job(chatbot_id: str, webhook_url: str = None):
         try:
             print(f"🏃 Calling asyncio.run()...")
             asyncio.run(ingest_to_vector_db_async(
-                job_id, chatbot_id, organization_id, webhook_url, StandardRAGController
+                job_id, chatbot_id, webhook_url, StandardRAGController
             ))
             print(f"✅ asyncio.run() completed")
         except Exception as e:
@@ -97,19 +97,18 @@ async def start_training_job(chatbot_id: str, webhook_url: str = None):
     return {'job_id': job_id, 'status': 'started', 'message': 'Training started'}
 
 async def ingest_to_vector_db_async(
-    job_id: str, 
-    chatbot_id: str, 
-    organization_id: int,
+    job_id: str,
+    chatbot_id: str,
     webhook_url: str,
     RAGController
 ):
     """Background training with WebSocket progress updates."""
     try:
-        logging.info(f"🚀 Starting async training job {job_id} for org {organization_id}")
-        
+        logging.info(f"🚀 Starting async training job {job_id} for chatbot {chatbot_id}")
+
         # Step 1: Fetch
         await send_webhook(
-            webhook_url, organization_id, 'training', 10, "Fetching training data..."
+            webhook_url, chatbot_id, 'training', 10, "Fetching training data..."
         )
         
         logging.info(f"📥 Fetching data for chatbot {chatbot_id}")
@@ -117,7 +116,7 @@ async def ingest_to_vector_db_async(
         if not documents:
             logging.info(f"ℹ️  No untrained data found for chatbot {chatbot_id}")
             await send_webhook(
-                webhook_url, organization_id, 'completed', 100, "No new data to train"
+                webhook_url, chatbot_id, 'completed', 100, "No new data to train"
             )
             return
         
@@ -125,7 +124,7 @@ async def ingest_to_vector_db_async(
         
         # Step 2: Prepare Chunks (Per Document)
         await send_webhook(
-            webhook_url, organization_id, 'training', 30, "Chunking text..."
+            webhook_url, chatbot_id, 'training', 30, "Chunking text..."
         )
         
         logging.info(f"✂️  Chunking text data")
@@ -152,7 +151,7 @@ async def ingest_to_vector_db_async(
 
         # Step 3: Embed
         await send_webhook(
-             webhook_url, organization_id, 'training', 35, f"Embedding {total_chunks} chunks..."
+             webhook_url, chatbot_id, 'training', 35, f"Embedding {total_chunks} chunks..."
         )
 
         logging.info(f"🔢 Starting embedding for {total_chunks} chunks")
@@ -160,7 +159,7 @@ async def ingest_to_vector_db_async(
             if (i + 1) % 10 == 0 or i == total_chunks - 1:
                 progress = 30 + int((i + 1) / total_chunks * 40)  # 30-70%
                 await send_webhook(
-                    webhook_url, organization_id, 'training', progress,
+                    webhook_url, chatbot_id, 'training', progress,
                     f"Embedded {i + 1}/{total_chunks} chunks..."
                 )
                 logging.info(f"📊 Progress: {i + 1}/{total_chunks} chunks embedded ({progress}%)")
@@ -178,7 +177,7 @@ async def ingest_to_vector_db_async(
         
         # Step 4: Save
         await send_webhook(
-            webhook_url, organization_id, 'training', 80, "Saving to database..."
+            webhook_url, chatbot_id, 'training', 80, "Saving to database..."
         )
         
         from DB.postgresDB import delete_specific_chunks 
@@ -194,7 +193,7 @@ async def ingest_to_vector_db_async(
         
         # Step 5: Mark trained
         await send_webhook(
-            webhook_url, organization_id, 'training', 95, "Marking items as trained..."
+            webhook_url, chatbot_id, 'training', 95, "Marking items as trained..."
         )
         
         logging.info(f"✅ Marking items as trained")
@@ -202,7 +201,7 @@ async def ingest_to_vector_db_async(
         
         # Complete
         await send_webhook(
-            webhook_url, organization_id, 'completed', 100, "Training completed!"
+            webhook_url, chatbot_id, 'completed', 100, "Training completed!"
         )
         
         logging.info(f"🎉 Training job {job_id} completed successfully!")
@@ -215,32 +214,32 @@ async def ingest_to_vector_db_async(
         try:
              def mark_failed():
                 with get_db_connection() as conn:
-                    run_query(conn, "UPDATE automations SET training_status='failed', training_message=%s WHERE organization_id=%s", (str(e), organization_id))
+                    run_query(conn, "UPDATE automations SET training_status='failed', training_message=%s WHERE chatbot_id=%s", (str(e), chatbot_id))
              await asyncio.to_thread(mark_failed)
         except Exception as db_err:
              logging.error(f"Failed to update DB status to failed: {db_err}")
 
         await send_webhook(
-            webhook_url, organization_id, 'failed', 0, f"Training error: {str(e)}", str(e)
+            webhook_url, chatbot_id, 'failed', 0, f"Training error: {str(e)}", str(e)
         )
 
 async def send_webhook(
-    webhook_url: str, 
-    organization_id: int, 
-    status: str, 
-    progress: int, 
+    webhook_url: str,
+    chatbot_id: str,
+    status: str,
+    progress: int,
     message: str,
     error: str = None
 ):
     """Send progress update to rtserver webhook."""
     if not webhook_url:
-        logging.info(f"Training {organization_id}: {status} - {progress}% - {message}")
+        logging.info(f"Training {chatbot_id}: {status} - {progress}% - {message}")
         return
-    
+
     def send():
         try:
             requests.post(webhook_url, json={
-                'organization_id': organization_id,
+                'chatbot_id': chatbot_id,
                 'status': status,
                 'progress': progress,
                 'message': message,
@@ -248,6 +247,6 @@ async def send_webhook(
             }, timeout=5)
         except Exception as e:
             logging.error(f"Webhook failed: {e}")
-    
+
     await asyncio.to_thread(send)
-    logging.info(f"Training {organization_id}: {status} - {progress}% - {message}")
+    logging.info(f"Training {chatbot_id}: {status} - {progress}% - {message}")

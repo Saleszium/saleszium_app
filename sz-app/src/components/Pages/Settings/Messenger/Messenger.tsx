@@ -39,7 +39,7 @@ export default function Messenger() {
   const { toggleSettingSidebar } = useSidebar();
   const [selectedMethod, setSelectedMethod] = useState("code-snippet");
   const [selectedTab, setSelectedTab] = useState("npm");
-  const chatbotId = useUserStore((state) => state.userData.chatbotId);
+  const chatbotId = useUserStore((state) => state.activeChatbotId);
   const userPlan = useUserStore((state) => state.userData.orgPlan);
 
   const isFreeMode = userPlan == "Free" ? true : false;

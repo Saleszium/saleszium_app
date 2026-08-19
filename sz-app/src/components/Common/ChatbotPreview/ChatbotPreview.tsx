@@ -36,7 +36,7 @@ export default function ChatbotPreview({
   isChatHistory?: boolean;
   adminTestingMode?: boolean;
 }) {
-  const chatbotId = useUserStore((state) => state.userData.chatbotId);
+  const chatbotId = useUserStore((state) => state.activeChatbotId);
 
   // Build config object for the chatbot
   const chatbotConfig = {

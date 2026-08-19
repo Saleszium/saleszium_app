@@ -3,7 +3,7 @@ const { logActivity } = require("../utils/activityLogger");
 
 exports.createOrUpdateFolder = async (req, res) => {
   const { organization_id, user_id } = req.user;
-  const { topicId, name, description, parent_id } = req.body;
+  const { topicId, name, description, parent_id, chatbot_id } = req.body;
 
   try {
     if (topicId) {
@@ -27,12 +27,22 @@ exports.createOrUpdateFolder = async (req, res) => {
 
       return res.status(200).json(updatedFolder);
     } else {
+      if (!chatbot_id) {
+        return res.status(400).json({ error: "chatbot_id is required" });
+      }
+
+      const chatbot = await chatbots.findOne({ where: { chatbot_id, organization_id } });
+      if (!chatbot) {
+        return res.status(404).json({ error: "Chatbot not found" });
+      }
+
       // Create folder
       const folder = await folders.create({
         name,
         description,
         parent_id: parent_id || null,
         organization_id,
+        chatbot_id,
       });
 
       logActivity(
@@ -53,14 +63,24 @@ exports.createOrUpdateFolder = async (req, res) => {
 exports.getFolderStructureWithArticles = async (req, res) => {
   try {
     const { organization_id } = req.user;
+    const { chatbot_id } = req.query;
+
+    if (!chatbot_id) {
+      return res.status(400).json({ error: "chatbot_id is required" });
+    }
+
+    const chatbot = await chatbots.findOne({ where: { chatbot_id, organization_id } });
+    if (!chatbot) {
+      return res.status(404).json({ error: "Chatbot not found" });
+    }
 
     const allFolders = await folders.findAll({
-      where: { organization_id },
+      where: { chatbot_id },
       order: [["created_at", "ASC"]],
     });
 
     const allArticles = await articles.findAll({
-      where: { organization_id },
+      where: { chatbot_id },
       order: [["created_at", "ASC"]],
     });
 
@@ -81,7 +101,7 @@ exports.getFolderStructureWithArticles = async (req, res) => {
       articles: articleMap[folder.id] || [],
     }));
 
-    res.json({ orgId: organization_id, folders: formattedFolders });
+    res.json({ orgId: organization_id, chatbotId: chatbot_id, folders: formattedFolders });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -115,11 +135,11 @@ exports.getFolderStructureWithArticlesForChatbot = async (req, res) => {
     }
 
     const allFolders = await folders.findAll({
-      where: { organization_id: chatbot.organization_id },
+      where: { chatbot_id },
     });
 
     const allArticles = await articles.findAll({
-      where: { organization_id: chatbot.organization_id },
+      where: { chatbot_id },
     });
 
     const articleMap = {};

@@ -1,6 +1,14 @@
 const { chatbots, subscriptions, onboardings, whatsapp_accounts, customers } = require("../models");
 const { logActivity } = require("../utils/activityLogger");
 
+const PLAN_CHATBOT_LIMITS = {
+  Trial: 1,
+  Free: 1,
+  Starter: 1,
+  Growth: 2,
+  Scale: 4,
+};
+
 const getWhatsAppConfig = async (req, res) => {
   try {
     const { app_id } = req.query; // app_id corresponds to chatbot_id
@@ -166,9 +174,15 @@ const setChatbotInstalled = async (req, res) => {
 const createAndUpdateChatbotConfig = async (req, res) => {
   const io = req.app.get("io"); // get WebSocket instance
   const { organization_id, user_id } = req.user;
-  const { chatbot_config = {}, chatbot_base_url, chatbot_id } = req.body;
+  const { chatbot_config = {}, chatbot_base_url, chatbot_id, create_new } = req.body;
 
   try {
+    if (!chatbot_id && !create_new) {
+      return res.status(400).json({
+        message: "chatbot_id is required (pass create_new: true to create a new chatbot instead)",
+      });
+    }
+
     if (chatbot_id) {
       let chatbot = await chatbots.findOne({
         where: { organization_id, chatbot_id },
@@ -207,16 +221,22 @@ const createAndUpdateChatbotConfig = async (req, res) => {
         .json({ message: "Chatbot config updated successfully", chatbot });
     }
 
-    // Create new chatbot if none exists
-    const existingChatbot = await chatbots.findOne({
+    // Create new chatbot, gated by the org's subscription tier
+    const existingChatbotCount = await chatbots.count({
       where: { organization_id },
     });
-    if (existingChatbot)
-      return res.status(400).json({
-        message:
-          "An organization can only have one chatbot. Please update the existing chatbot instead.",
-        chatbot: existingChatbot,
+
+    const subscription = await subscriptions.findOne({
+      where: { organization_id },
+    });
+    const tier = subscription?.subscription_tier || "Trial";
+    const chatbotLimit = PLAN_CHATBOT_LIMITS[tier] || 1;
+
+    if (existingChatbotCount >= chatbotLimit) {
+      return res.status(403).json({
+        message: `Your ${tier} plan allows up to ${chatbotLimit} chatbot(s). Upgrade your plan to add more.`,
       });
+    }
 
     const { customAlphabet } = await import("nanoid");
     const nanoid = customAlphabet("1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ", 6);
@@ -261,24 +281,63 @@ const createAndUpdateChatbotConfig = async (req, res) => {
   }
 };
 
+const deleteChatbot = async (req, res) => {
+  try {
+    const { organization_id } = req.user;
+    const { chatbot_id } = req.params;
+
+    const chatbot = await chatbots.findOne({ where: { chatbot_id, organization_id } });
+    if (!chatbot) {
+      return res.status(404).json({ message: "Chatbot not found" });
+    }
+
+    const totalChatbots = await chatbots.count({ where: { organization_id } });
+    if (totalChatbots <= 1) {
+      return res.status(400).json({
+        message: "An organization must have at least one chatbot. Cannot delete the last one.",
+      });
+    }
+
+    await chatbot.destroy();
+
+    return res.status(200).json({ message: "Chatbot deleted successfully" });
+  } catch (err) {
+    console.error("Error deleting chatbot:", err);
+    return res.status(500).json({ message: "Error deleting chatbot", error: err.message });
+  }
+};
+
 const getChatbotConfigForWebApp = async (req, res) => {
   try {
     const { organization_id } = req.user;
+    const { chatbot_id } = req.query;
 
     if (!organization_id) {
       return res.status(400).json({ message: "organization_id is required" });
     }
 
-    const chatbot = await chatbots.findOne({
-      where: { organization_id },
-      attributes: { exclude: ["api_key"] },
-    });
+    // Detail lookup for one specific chatbot
+    if (chatbot_id) {
+      const chatbot = await chatbots.findOne({
+        where: { organization_id, chatbot_id },
+        attributes: { exclude: ["api_key"] },
+      });
 
-    if (!chatbot) {
-      return res.status(404).json({ message: "Chatbot not found" });
+      if (!chatbot) {
+        return res.status(404).json({ message: "Chatbot not found" });
+      }
+
+      return res.status(200).json(chatbot);
     }
 
-    res.status(200).json(chatbot);
+    // List all chatbots for the org
+    const allChatbots = await chatbots.findAll({
+      where: { organization_id },
+      attributes: { exclude: ["api_key"] },
+      order: [["created_at", "ASC"]],
+    });
+
+    res.status(200).json(allChatbots);
   } catch (err) {
     console.error("Error fetching chatbot configs:", err);
     res.status(500).json({
@@ -497,4 +556,5 @@ module.exports = {
   getWhatsAppConfig,
   getCustomerPhone,
   saveCustomerPhone,
+  deleteChatbot,
 };

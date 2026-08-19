@@ -1,4 +1,4 @@
-const { automations, onboardings, articles } = require("../models");
+const { automations, onboardings, articles, chatbots } = require("../models");
 const axios = require("axios");
 const { logActivity } = require("../utils/activityLogger");
 
@@ -13,17 +13,31 @@ function normalizeTrainingItems(items, type) {
   }));
 }
 
+// Confirms the given chatbot_id actually belongs to the requesting org
+async function assertChatbotBelongsToOrg(chatbot_id, organization_id) {
+  const chatbot = await chatbots.findOne({ where: { chatbot_id, organization_id } });
+  return chatbot;
+}
+
 const getAllAutomation = async (req, res) => {
   const { organization_id } = req.user;
+  const { chatbot_id } = req.query;
 
   if (!organization_id) {
     return res.status(400).json({ error: "Organization ID is required" });
   }
+  if (!chatbot_id) {
+    return res.status(400).json({ error: "chatbot_id is required" });
+  }
 
   try {
-    // Assuming organization_id is NOT the primary key
+    const chatbot = await assertChatbotBelongsToOrg(chatbot_id, organization_id);
+    if (!chatbot) {
+      return res.status(404).json({ error: "Chatbot not found" });
+    }
+
     const automation = await automations.findOne({
-      where: { organization_id },
+      where: { chatbot_id },
     });
 
     if (automation) {
@@ -51,8 +65,12 @@ const getAllAutomation = async (req, res) => {
 const createOrUpdateAutomation = async (req, res) => {
   const io = req.app.get("io"); // get WebSocket instance
   const { organization_id, user_id } = req.user;
-  const { training_url, training_pdf, training_article, isChatbotTrained } =
+  const { chatbot_id, training_url, training_pdf, training_article, isChatbotTrained } =
     req.body;
+
+  if (!chatbot_id) {
+    return res.status(400).json({ error: "chatbot_id is required" });
+  }
 
   if (
     !training_url &&
@@ -67,8 +85,13 @@ const createOrUpdateAutomation = async (req, res) => {
   }
 
   try {
+    const chatbot = await assertChatbotBelongsToOrg(chatbot_id, organization_id);
+    if (!chatbot) {
+      return res.status(404).json({ error: "Chatbot not found" });
+    }
+
     // STEP 1: create/update automation
-    let automation = await automations.findOne({ where: { organization_id } });
+    let automation = await automations.findOne({ where: { chatbot_id } });
 
     if (automation) {
       if (training_url) automation.training_url = training_url;
@@ -81,6 +104,7 @@ const createOrUpdateAutomation = async (req, res) => {
     } else {
       automation = await automations.create({
         organization_id,
+        chatbot_id,
         training_url: training_url || [],
         training_pdf: training_pdf || [],
         training_article: training_article || [],
@@ -126,8 +150,18 @@ const createOrUpdateAutomation = async (req, res) => {
 const getArticleForAutomation = async (req, res) => {
   try {
     const { organization_id } = req.user;
+    const { chatbot_id } = req.query;
 
-    const article = await articles.findAll({ where: { organization_id } });
+    if (!chatbot_id) {
+      return res.status(400).json({ message: "chatbot_id is required" });
+    }
+
+    const chatbot = await assertChatbotBelongsToOrg(chatbot_id, organization_id);
+    if (!chatbot) {
+      return res.status(404).json({ message: "Chatbot not found" });
+    }
+
+    const article = await articles.findAll({ where: { chatbot_id } });
 
     if (!article) {
       return res.status(404).json({ message: "Article not found" });
@@ -192,18 +226,21 @@ const analyzeURL = async (req, res) => {
 const triggerTraining = async (req, res) => {
   const io = req.app.get("io");
   const { organization_id } = req.user;
+  const { chatbot_id } = req.body;
+
+  if (!chatbot_id) {
+    return res.status(400).json({ error: "chatbot_id is required" });
+  }
 
   try {
-    // Get chatbot for this organization
-    const { chatbots } = require("../models");
-    const chatbot = await chatbots.findOne({ where: { organization_id } });
+    const chatbot = await assertChatbotBelongsToOrg(chatbot_id, organization_id);
 
     if (!chatbot) {
       return res.status(404).json({ error: "Chatbot not found" });
     }
 
     // Check current status to prevent double-triggering
-    const automation = await automations.findOne({ where: { organization_id } });
+    const automation = await automations.findOne({ where: { chatbot_id } });
     if (automation && automation.training_status === 'training') {
       return res.status(200).json({
         status: 'already_training',
@@ -226,9 +263,9 @@ const triggerTraining = async (req, res) => {
     console.error("Error triggering training:", error);
 
     // Emit error event
-    io.emit(`training:error:${organization_id}`, {
+    io.emit(`training:error:${chatbot_id}`, {
       message: "Failed to start training",
-      organization_id,
+      chatbot_id,
       error: error.message
     });
 
@@ -242,11 +279,11 @@ const triggerTraining = async (req, res) => {
 // Webhook endpoint for backendai to send progress updates
 const trainingWebhook = async (req, res) => {
   const io = req.app.get("io");
-  const { organization_id, status, progress, message, error } = req.body;
+  const { chatbot_id, status, progress, message, error } = req.body;
 
   try {
     // Update database
-    const automation = await automations.findOne({ where: { organization_id } });
+    const automation = await automations.findOne({ where: { chatbot_id } });
     if (automation) {
       automation.training_status = status;
       automation.training_progress = progress;
@@ -256,19 +293,19 @@ const trainingWebhook = async (req, res) => {
 
     // Emit WebSocket event based on status
     if (status === 'training') {
-      io.emit(`training:progress:${organization_id}`, {
-        organization_id,
+      io.emit(`training:progress:${chatbot_id}`, {
+        chatbot_id,
         progress,
         message
       });
     } else if (status === 'completed') {
-      io.emit(`training:completed:${organization_id}`, {
-        organization_id,
+      io.emit(`training:completed:${chatbot_id}`, {
+        chatbot_id,
         message
       });
     } else if (status === 'failed') {
-      io.emit(`training:error:${organization_id}`, {
-        organization_id,
+      io.emit(`training:error:${chatbot_id}`, {
+        chatbot_id,
         message,
         error
       });
@@ -283,19 +320,17 @@ const trainingWebhook = async (req, res) => {
 
 const deleteTrainingSource = async (req, res) => {
   const { organization_id } = req.user;
-  const { source, type } = req.body;
+  const { chatbot_id, source, type } = req.body;
 
-  if (!source || !type) {
-    return res.status(400).json({ error: "Source and type are required" });
+  if (!chatbot_id || !source || !type) {
+    return res.status(400).json({ error: "chatbot_id, source and type are required" });
   }
 
   try {
-    const { chatbots } = require("../models");
-    const chatbot = await chatbots.findOne({ where: { organization_id } });
+    const chatbot = await assertChatbotBelongsToOrg(chatbot_id, organization_id);
 
     if (!chatbot) {
-      // Should usually exist if they are deleting
-      console.warn(`Chatbot not found for org ${organization_id} during delete`);
+      console.warn(`Chatbot ${chatbot_id} not found for org ${organization_id} during delete`);
     }
 
     // 1. Call backendai to delete vectors (idempotent - if not found, ok)
@@ -313,21 +348,7 @@ const deleteTrainingSource = async (req, res) => {
     }
 
     // 2. Remove from 'automations' list in Postgres (JSONB)
-    // NOTE: The frontend actually sends a full 'createOrUpdateAutomation' call after this
-    // OR the frontend *only* calls this?
-    // User logic: "currently if delete any thing it just remove from the automation table"
-    // The frontend code I saw calls `createOrUpdateAutomation` with the *filtered* list.
-    // So the list update is handled by the frontend calling 'createOrUpdateAutomation'.
-    // BUT we need this NEW endpoint to handle the VECTOR deletion.
-    // So frontend should call:
-    // 1. deleteTrainingSource (to clean vectors)
-    // 2. createOrUpdateAutomation (to clean list) - OR -
-    // BETTER: deleteTrainingSource should do BOTH.
-
-    // For now, I will assume Frontend calls this *in addition* or I update the frontend to call this *instead*.
-    // Updating frontend to call this *instead* is cleaner.
-
-    const automation = await automations.findOne({ where: { organization_id } });
+    const automation = await automations.findOne({ where: { chatbot_id } });
     if (automation) {
       let updated = false;
       if (type === 'url' && automation.training_url) {

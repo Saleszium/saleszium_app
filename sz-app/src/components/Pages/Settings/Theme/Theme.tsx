@@ -64,12 +64,13 @@ export default function Theme() {
   const [isDirty, setIsDirty] = useState(false);
   const [loading, setLoading] = useState(false);
   const [fetching, setFetching] = useState(true);
-  const chatbotId = useUserStore((state) => state.userData.chatbotId);
+  const chatbotId = useUserStore((state) => state.activeChatbotId);
 
   const getChatbotConfig = async () => {
     try {
       setFetching(true);
-      const response = await fetchChatbotConfig();
+      if (!chatbotId) return;
+      const response = await fetchChatbotConfig(chatbotId);
       const config = response.chatbot_config;
 
       console.log(config);
@@ -109,7 +110,7 @@ export default function Theme() {
 
   useEffect(() => {
     getChatbotConfig();
-  }, []);
+  }, [chatbotId]);
 
   const handleSubmit = async () => {
     try {
