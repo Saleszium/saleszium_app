@@ -4,15 +4,20 @@ import Cookies from 'js-cookie';
 import type {
   Campaign,
   Folder,
-  RhinontechConfig,
+  SalesziumConfig,
   ChatbotConfig,
   SelectedNewsProps,
   SelectedHelpArticleProps,
   ConversationItem,
 } from '@/types';
 import { useConfigStore } from '@/store';
-import { getChatbotConfig, getForms } from '@/services/config';
+import { getChatbotConfig, getForms, type FormsResponse } from '@/services/config';
 import { getEffectiveTheme } from '@/constants/theme';
+import {
+  DEFAULT_PRE_CHAT_FORM,
+  DEFAULT_POST_CHAT_FORM,
+  DEFAULT_TICKET_FORM,
+} from '@/constants/defaults';
 import {
   getChatHistory,
   getConversationByUserId,
@@ -78,7 +83,7 @@ export interface UseMessengerStateReturn {
 }
 
 export function useMessengerState(
-  config: RhinontechConfig | null | undefined,
+  config: SalesziumConfig | null | undefined,
 ): UseMessengerStateReturn {
   const { chatbot_config, setConfig } = useConfigStore();
 
@@ -160,8 +165,17 @@ export function useMessengerState(
           setFreePlan(response.plan === 'Free');
           const isFree = response.plan === 'Free';
 
-          const cfg = response.chatbot_config;
-          const formResponse = await getForms(config.app_id);
+          const cfg = response.chatbot_config || {};
+          let formResponse: FormsResponse = {
+            pre_chat_form: DEFAULT_PRE_CHAT_FORM,
+            post_chat_form: DEFAULT_POST_CHAT_FORM,
+            ticket_form: DEFAULT_TICKET_FORM,
+          };
+          try {
+            formResponse = await getForms(config.app_id);
+          } catch (e) {
+            console.warn('[useMessengerState] Form fetch failed, using fallback:', e);
+          }
 
           setConfig({
             app_id: config.app_id,

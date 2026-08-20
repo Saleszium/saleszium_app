@@ -39,7 +39,7 @@ export interface PostChatFormConfig {
   fields?: FormField[]; // For backwards compatibility
 }
 
-export interface RhinontechConfig {
+export interface SalesziumConfig {
   app_id: string;
   admin?: boolean;
   adminTestingMode?: boolean;

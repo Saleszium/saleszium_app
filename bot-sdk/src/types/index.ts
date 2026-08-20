@@ -14,7 +14,7 @@ export {
   type ChatbotConfig,
   type FormField,
   type PostChatFormConfig,
-  type RhinontechConfig,
+  type SalesziumConfig,
   type WhatsAppConfig,
 } from './config.types';
 

@@ -1,2 +1,2 @@
 // src/index.ts
-export { default, initRhinontech, ChatBotElement, RhinontechConfig } from './main';
+export { default, initSaleszium, ChatBotElement, SalesziumConfig } from './main';
